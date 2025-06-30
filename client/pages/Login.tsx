@@ -45,7 +45,7 @@ export function Login() {
         localStorage.clear();
         localStorage.setItem("leirisonda_user", JSON.stringify(testUser));
         console.log("✅ Auto-login iPhone concluído");
-        window.location.href = "/dashboard-simple";
+        window.location.href = "/dashboard";
       }, 3000);
     }
   }, []);
