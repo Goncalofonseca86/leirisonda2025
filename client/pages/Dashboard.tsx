@@ -272,7 +272,7 @@ export function Dashboard() {
       },
       url: window.location.href,
       errors: {
-        authError: authError || null,
+        authError: null,
         contextErrors: [],
       },
     };
