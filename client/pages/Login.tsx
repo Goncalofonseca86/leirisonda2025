@@ -370,6 +370,60 @@ export function Login() {
                 "Entrar"
               )}
             </button>
+
+            {/* BOTÃO DE TESTE DIRETO */}
+            <button
+              type="button"
+              onClick={() => {
+                console.log("🚀 FORÇANDO DASHBOARD...");
+                // Salvar user e ir direto
+                const testUser = {
+                  id: "admin_goncalo",
+                  email: "gongonsilva@gmail.com",
+                  name: "Gonçalo Fonseca",
+                  role: "admin",
+                  permissions: {
+                    canViewWorks: true,
+                    canCreateWorks: true,
+                    canEditWorks: true,
+                    canDeleteWorks: true,
+                    canViewMaintenance: true,
+                    canCreateMaintenance: true,
+                    canEditMaintenance: true,
+                    canDeleteMaintenance: true,
+                    canViewUsers: true,
+                    canCreateUsers: true,
+                    canEditUsers: true,
+                    canDeleteUsers: true,
+                    canViewReports: true,
+                    canExportData: true,
+                    canViewDashboard: true,
+                    canViewStats: true,
+                  },
+                  createdAt: new Date().toISOString(),
+                };
+                localStorage.setItem(
+                  "leirisonda_user",
+                  JSON.stringify(testUser),
+                );
+                console.log("✅ User salvo, forçando navegação...");
+                window.location.replace("/dashboard");
+              }}
+              style={{
+                width: "100%",
+                height: "40px",
+                background: "#dc2626",
+                color: "white",
+                border: "none",
+                borderRadius: "8px",
+                fontSize: "14px",
+                fontWeight: "500",
+                cursor: "pointer",
+                marginTop: "10px",
+              }}
+            >
+              🚀 FORÇAR DASHBOARD (TESTE)
+            </button>
           </form>
         </div>
       </div>
