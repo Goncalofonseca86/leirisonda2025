@@ -37,6 +37,7 @@ import { EmergencyDiagnostic } from "./pages/EmergencyDiagnostic";
 import { NotificationSettingsPage } from "./pages/NotificationSettingsPage";
 import NotificationTest from "./pages/NotificationTest";
 import { NotificationDiagnostic } from "./pages/NotificationDiagnostic";
+import { LoginDirect } from "./pages/LoginDirect";
 
 function App() {
   console.log("🚀 App component iniciando com AuthProvider corrigido...");
