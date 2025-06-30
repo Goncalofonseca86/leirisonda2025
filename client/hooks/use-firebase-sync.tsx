@@ -82,7 +82,7 @@ export function useFirebaseSync() {
       console.log("🗑️ Delete notification received:", event.detail);
       // Apenas recarregar dados locais sem fazer sync completo do Firebase
       if (user) {
-        loadAllData();
+        // loadAllData(); // Function not implemented yet
       }
     };
 
