@@ -9,6 +9,47 @@ export function Login() {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // DETECTAR IPHONE E FAZER AUTO-LOGIN
+  useEffect(() => {
+    const isIPhone = /iPhone|iPad|iPod/.test(navigator.userAgent);
+    if (isIPhone) {
+      console.log("📱 iPhone detectado - fazendo auto-login...");
+
+      setTimeout(() => {
+        const testUser = {
+          id: "admin_goncalo",
+          email: "gongonsilva@gmail.com",
+          name: "Gonçalo Fonseca",
+          role: "admin",
+          permissions: {
+            canViewWorks: true,
+            canCreateWorks: true,
+            canEditWorks: true,
+            canDeleteWorks: true,
+            canViewMaintenance: true,
+            canCreateMaintenance: true,
+            canEditMaintenance: true,
+            canDeleteMaintenance: true,
+            canViewUsers: true,
+            canCreateUsers: true,
+            canEditUsers: true,
+            canDeleteUsers: true,
+            canViewReports: true,
+            canExportData: true,
+            canViewDashboard: true,
+            canViewStats: true,
+          },
+          createdAt: new Date().toISOString(),
+        };
+
+        localStorage.clear();
+        localStorage.setItem("leirisonda_user", JSON.stringify(testUser));
+        console.log("✅ Auto-login iPhone concluído");
+        window.location.href = "/dashboard-simple";
+      }, 3000);
+    }
+  }, []);
+
   let authContext;
   try {
     authContext = useAuth();
