@@ -558,11 +558,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       console.log("❌ CREDENCIAIS INVÁLIDAS");
+      console.log("📊 Estado ao falhar credenciais:");
+      console.log("  • Email testado:", normalizedEmail);
+      console.log("  • Utilizadores globais:", Object.keys(globalUsers));
+      console.log("  • Utilizadores dinâmicos:", users.length);
+
       setIsLoading(false);
+      console.log(
+        "🔄 setIsLoading(false) executado para credenciais inválidas",
+      );
       return false;
     } catch (error) {
       console.error("❌ ERRO LOGIN:", error);
+      console.error("❌ ERRO DETALHADO:", {
+        message: error.message,
+        stack: error.stack,
+        name: error.name,
+      });
+      console.log("📊 Estado ao erro crítico:");
+      console.log("  • isLoading antes:", isLoading);
+      console.log("  • isInitialized:", isInitialized);
+      console.log("  • user atual:", user);
+
       setIsLoading(false);
+      console.log("🔄 setIsLoading(false) executado para erro crítico");
       return false;
     }
   };
