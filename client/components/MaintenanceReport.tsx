@@ -515,7 +515,7 @@ export function MaintenanceReport({
           <img src="/leirisonda-logo-complete.svg" alt="Leirisonda" style="height: 60px; width: auto;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
           <div style="display: none; font-size: 24px; font-weight: bold; color: #007784; font-family: Arial, sans-serif;">LEIRISONDA</div>
         </div>
-        <div style="color: white; margin-top: 12px; font-size: 16px; font-weight: 600;">RELATÓRIO DE MANUTENÇ��O</div>
+        <div style="color: white; margin-top: 12px; font-size: 16px; font-weight: 600;">RELATÓRIO DE MANUTENÇÃO</div>
         <div style="color: rgba(255,255,255,0.9); font-size: 14px; margin-top: 4px;">${maintenance.poolName} • ${format(new Date(), "dd 'de' MMMM 'de' yyyy", { locale: pt })}</div>
       </div>
 
@@ -916,7 +916,11 @@ export function MaintenanceReport({
       <DialogTrigger asChild>
         <Button
           variant="outline"
-          className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:from-blue-600 hover:to-indigo-700 border-0"
+          className={`w-full text-white border-0 ${
+            intervention
+              ? "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
+              : "bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700"
+          }`}
         >
           <FileText className="mr-2 h-4 w-4" />
           {intervention ? "Relatório Última Intervenção" : "Relatório Completo"}
