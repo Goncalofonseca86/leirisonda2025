@@ -31,15 +31,29 @@ export function SystemStatus() {
 
   // Tentar acessar o auth context de forma segura
   React.useEffect(() => {
-    try {
-      const context = useAuth();
-      setAuthContext(context);
-      setAuthError(null);
-    } catch (error) {
-      console.error("❌ Erro ao acessar auth no SystemStatus:", error);
-      setAuthError(error.message || "Erro desconhecido");
-      setAuthContext(null);
-    }
+    const initializeAuthCheck = () => {
+      try {
+        console.log("🔍 SystemStatus tentando acessar AuthContext...");
+        const context = useAuth();
+        console.log("✅ AuthContext acessado com sucesso:", !!context);
+        setAuthContext(context);
+        setAuthError(null);
+      } catch (error) {
+        console.error("❌ Erro ao acessar auth no SystemStatus:", error);
+        setAuthError(error.message || "Erro desconhecido");
+        setAuthContext(null);
+
+        // Se o erro é sobre contexto, pode indicar problema estrutural
+        if (error.message?.includes("must be used within")) {
+          console.error(
+            "💥 ERRO ESTRUTURAL: AuthProvider não está envolvendo SystemStatus corretamente",
+          );
+        }
+      }
+    };
+
+    // Aguardar um tick para garantir que o contexto está pronto
+    setTimeout(initializeAuthCheck, 100);
   }, []);
 
   React.useEffect(() => {
