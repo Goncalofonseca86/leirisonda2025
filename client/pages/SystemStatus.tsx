@@ -5,6 +5,9 @@ import {
   AlertCircle,
   RefreshCw,
   ArrowLeft,
+  Download,
+  RotateCcw,
+  Home,
 } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import { Link } from "react-router-dom";
@@ -57,6 +60,7 @@ export function SystemStatus() {
       localStorage.removeItem("test_diagnostic");
       newChecks.localStorage = retrieved === "test";
       diagInfo.localStorageSize = Object.keys(localStorage).length;
+      diagInfo.localStorageKeys = Object.keys(localStorage);
     } catch (error) {
       newChecks.localStorage = false;
       diagInfo.localStorageError = error.message;
@@ -76,6 +80,7 @@ export function SystemStatus() {
     newChecks.routing = !!window.location;
     diagInfo.currentPath = window.location.pathname;
     diagInfo.currentURL = window.location.href;
+    diagInfo.hasHistory = !!window.history;
 
     // Check auth context
     newChecks.contextAccess = !!authContext && !authError;
@@ -108,26 +113,30 @@ export function SystemStatus() {
         const parsed = JSON.parse(storedUser);
         diagInfo.storedUserEmail = parsed.email;
         diagInfo.storedUserName = parsed.name;
+        diagInfo.storedUserRole = parsed.role;
+        diagInfo.storedUserPermissions = Object.keys(
+          parsed.permissions || {},
+        ).length;
       }
     } catch (error) {
       diagInfo.storedUserError = error.message;
     }
+
+    // Check browser compatibility
+    diagInfo.hasServiceWorker = "serviceWorker" in navigator;
+    diagInfo.hasNotifications = "Notification" in window;
+    diagInfo.hasIndexedDB = "indexedDB" in window;
+    diagInfo.hasLocalStorage = "localStorage" in window;
 
     // Environment info
     diagInfo.userAgent = navigator.userAgent;
     diagInfo.timestamp = new Date().toISOString();
     diagInfo.reactVersion = React.version;
     diagInfo.isDevelopment = process.env.NODE_ENV === "development";
-
-    // Check auth context
-    try {
-      const { useAuth } = await import("@/components/AuthProvider");
-      newChecks.auth = true;
-    } catch {
-      newChecks.auth = false;
-    }
+    diagInfo.onlineStatus = navigator.onLine;
 
     setChecks(newChecks);
+    setDiagnosticInfo(diagInfo);
     setLoading(false);
   };
 
@@ -146,123 +155,265 @@ export function SystemStatus() {
     return status ? "✅ OK" : "❌ Erro";
   };
 
-  const allSystemsOk = Object.values(checks).every(Boolean) && !loading;
+  const exportDiagnostic = () => {
+    const report = {
+      timestamp: new Date().toISOString(),
+      checks,
+      diagnosticInfo,
+      url: window.location.href,
+      userAgent: navigator.userAgent,
+    };
 
-  // Only admin Gonçalo can access this page
-  if (!user || user.email !== "gongonsilva@gmail.com") {
-    return (
-      <div className="min-h-screen bg-gray-50 p-4">
-        <div className="max-w-md mx-auto mt-20">
-          <div className="bg-white rounded-lg shadow p-6 text-center">
-            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <AlertCircle className="w-8 h-8 text-red-600" />
-            </div>
-            <h2 className="text-xl font-semibold mb-2">Acesso Restrito</h2>
-            <p className="text-gray-600 mb-4">
-              Esta página é exclusiva para o administrador principal.
-            </p>
-            <Link
-              to="/login"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <ArrowLeft size={16} />
-              Voltar ao Login
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
+    const blob = new Blob([JSON.stringify(report, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `leirisonda-diagnostic-${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const clearAllData = () => {
+    if (confirm("ATENÇÃO: Isto irá limpar TODOS os dados. Continuar?")) {
+      try {
+        localStorage.clear();
+        sessionStorage.clear();
+
+        // Clear caches if available
+        if ("caches" in window) {
+          caches.keys().then((names) => {
+            names.forEach((name) => {
+              caches.delete(name);
+            });
+          });
+        }
+
+        alert("Dados limpos! A página será recarregada.");
+        window.location.reload();
+      } catch (error) {
+        alert("Erro ao limpar dados: " + error.message);
+      }
+    }
+  };
+
+  const forceReload = () => {
+    window.location.reload();
+  };
+
+  const goToLogin = () => {
+    window.location.href = "/login";
+  };
+
+  const allSystemsOk = Object.values(checks).every(Boolean) && !loading;
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-lg shadow p-6">
-          <h1 className="text-2xl font-bold mb-6 flex items-center">
-            <AlertCircle className="w-6 h-6 mr-2" />
-            Status do Sistema
-          </h1>
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-2xl font-bold flex items-center">
+              <AlertCircle className="w-6 h-6 mr-2" />
+              Diagnóstico do Sistema
+            </h1>
 
-          <div className="space-y-4">
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
-              <span className="font-medium">Armazenamento Local</span>
-              <div className="flex items-center gap-2">
-                {getIcon(checks.localStorage)}
-                <span className="text-sm">
-                  {getStatus(checks.localStorage)}
-                </span>
+            <div className="flex gap-2">
+              <button
+                onClick={exportDiagnostic}
+                className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                <Download size={16} />
+                Exportar
+              </button>
+              <button
+                onClick={runSystemChecks}
+                className="flex items-center gap-2 px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+              >
+                <RefreshCw size={16} />
+                Atualizar
+              </button>
+            </div>
+          </div>
+
+          {/* Status Overview */}
+          <div
+            className={`p-4 rounded-lg mb-6 ${allSystemsOk ? "bg-green-50 border border-green-200" : "bg-red-50 border border-red-200"}`}
+          >
+            <div className="flex items-center">
+              {allSystemsOk ? (
+                <CheckCircle className="w-6 h-6 text-green-600 mr-2" />
+              ) : (
+                <AlertCircle className="w-6 h-6 text-red-600 mr-2" />
+              )}
+              <span className="text-lg font-semibold">
+                {allSystemsOk
+                  ? "Sistema Funcionando Corretamente"
+                  : "Problemas Detectados"}
+              </span>
+            </div>
+          </div>
+
+          {/* System Checks */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div className="space-y-3">
+              <h3 className="font-semibold text-lg">Verificações do Sistema</h3>
+
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                <span>Armazenamento Local</span>
+                <div className="flex items-center gap-2">
+                  {getIcon(checks.localStorage)}
+                  <span className="text-sm">
+                    {getStatus(checks.localStorage)}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                <span>Firebase</span>
+                <div className="flex items-center gap-2">
+                  {getIcon(checks.firebase)}
+                  <span className="text-sm">{getStatus(checks.firebase)}</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                <span>Navegação</span>
+                <div className="flex items-center gap-2">
+                  {getIcon(checks.routing)}
+                  <span className="text-sm">{getStatus(checks.routing)}</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                <span>Contexto de Autenticação</span>
+                <div className="flex items-center gap-2">
+                  {getIcon(checks.contextAccess)}
+                  <span className="text-sm">
+                    {getStatus(checks.contextAccess)}
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
-              <span className="font-medium">Firebase</span>
-              <div className="flex items-center gap-2">
-                {getIcon(checks.firebase)}
-                <span className="text-sm">{getStatus(checks.firebase)}</span>
-              </div>
-            </div>
+            <div className="space-y-3">
+              <h3 className="font-semibold text-lg">Estado do Utilizador</h3>
 
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
-              <span className="font-medium">Sistema de Routing</span>
-              <div className="flex items-center gap-2">
-                {getIcon(checks.routing)}
-                <span className="text-sm">{getStatus(checks.routing)}</span>
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                <span>AuthProvider Disponível</span>
+                <div className="flex items-center gap-2">
+                  {getIcon(checks.authProvider)}
+                  <span className="text-sm">
+                    {getStatus(checks.authProvider)}
+                  </span>
+                </div>
               </div>
-            </div>
 
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
-              <span className="font-medium">Sistema de Autenticação</span>
-              <div className="flex items-center gap-2">
-                {getIcon(checks.auth)}
-                <span className="text-sm">{getStatus(checks.auth)}</span>
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                <span>Utilizador Autenticado</span>
+                <div className="flex items-center gap-2">
+                  {getIcon(checks.auth)}
+                  <span className="text-sm">{getStatus(checks.auth)}</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                <span>Dados Utilizador Válidos</span>
+                <div className="flex items-center gap-2">
+                  {getIcon(checks.userData)}
+                  <span className="text-sm">{getStatus(checks.userData)}</span>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="mt-6 p-4 rounded-lg">
-            {allSystemsOk ? (
-              <div className="bg-green-50 text-green-800 p-3 rounded flex items-center">
-                <CheckCircle className="w-5 h-5 mr-2" />
-                Todos os sistemas estão funcionais
-              </div>
-            ) : (
-              <div className="bg-yellow-50 text-yellow-800 p-3 rounded flex items-center">
-                <AlertCircle className="w-5 h-5 mr-2" />
-                {loading
-                  ? "Verificando sistemas..."
-                  : "Alguns sistemas apresentam problemas"}
-              </div>
-            )}
-          </div>
+          {/* Diagnostic Info */}
+          {!loading && (
+            <div className="mb-6">
+              <h3 className="font-semibold text-lg mb-3">
+                Informações de Diagnóstico
+              </h3>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <strong>Estado Actual:</strong>
+                    <ul className="mt-1 space-y-1">
+                      <li>Caminho: {diagnosticInfo.currentPath}</li>
+                      <li>
+                        Online: {diagnosticInfo.onlineStatus ? "Sim" : "Não"}
+                      </li>
+                      <li>
+                        Utilizador:{" "}
+                        {diagnosticInfo.userEmail || "Não autenticado"}
+                      </li>
+                      <li>Papel: {diagnosticInfo.userRole || "N/A"}</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <strong>Marcações de Sessão:</strong>
+                    <ul className="mt-1 space-y-1">
+                      <li>
+                        Acabou de fazer login:{" "}
+                        {diagnosticInfo.justLoggedIn || "Não"}
+                      </li>
+                      <li>
+                        Criou obra: {diagnosticInfo.justCreatedWork || "Não"}
+                      </li>
+                      <li>
+                        A eliminar obra: {diagnosticInfo.deletingWork || "Não"}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
 
-          <div className="mt-6 space-y-2">
+                {diagnosticInfo.authContextError && (
+                  <div className="mt-4 p-3 bg-red-100 border border-red-200 rounded">
+                    <strong className="text-red-800">Erro do Contexto:</strong>
+                    <p className="text-red-700 text-sm mt-1">
+                      {diagnosticInfo.authContextError}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Action Buttons */}
+          <div className="flex flex-wrap gap-3">
             <button
-              onClick={runSystemChecks}
-              disabled={loading}
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 disabled:opacity-50"
+              onClick={forceReload}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
-              {loading ? "Verificando..." : "Verificar Novamente"}
+              <RotateCcw size={16} />
+              Recarregar Página
             </button>
 
             <button
-              onClick={() => (window.location.href = "/login")}
-              className="w-full bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700"
+              onClick={goToLogin}
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
             >
+              <Home size={16} />
               Ir para Login
             </button>
 
             <button
-              onClick={() => window.location.reload()}
-              className="w-full bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700"
+              onClick={clearAllData}
+              className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
             >
-              Recarregar Página
+              <AlertCircle size={16} />
+              Limpar Todos os Dados
             </button>
           </div>
 
-          <div className="mt-6 text-xs text-gray-500 space-y-1">
-            <div>Versão: {import.meta.env.VITE_APP_VERSION || "1.0.0"}</div>
-            <div>Ambiente: {import.meta.env.NODE_ENV}</div>
-            <div>Hora: {new Date().toLocaleString()}</div>
+          {/* Back to Login Link */}
+          <div className="mt-6 pt-4 border-t">
+            <Link
+              to="/login"
+              className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800"
+            >
+              <ArrowLeft size={16} />
+              Voltar ao Login
+            </Link>
           </div>
         </div>
       </div>
