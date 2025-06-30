@@ -279,7 +279,7 @@ export function WorkDetail() {
           <div>
             <div className="flex items-center space-x-3 mb-2">
               <h1 className="text-3xl font-bold text-gray-900">
-                {work.clientName}
+                {safeWork.clientName}
               </h1>
               <span
                 className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusInfo.bg} ${statusInfo.color}`}
@@ -289,7 +289,7 @@ export function WorkDetail() {
               </span>
             </div>
             <p className="text-gray-600">
-              {work.workSheetNumber} • {getWorkTypeLabel(work.type)}
+              {safeWork.workSheetNumber} • {getWorkTypeLabel(safeWork.type)}
             </p>
           </div>
         </div>
