@@ -31,7 +31,7 @@ import { pt } from "date-fns/locale";
 export function Dashboard() {
   console.log("🏠 Dashboard component iniciando...");
 
-  // PROTEÇÃO MÁXIMA: Try-catch para contextos
+  // PROTEÇÃO MÁXIMA: Try-catch para contextos com fallbacks robustos
   let user,
     navigate,
     works,
@@ -43,11 +43,23 @@ export function Dashboard() {
 
   try {
     const authContext = useAuth();
+    if (!authContext) {
+      throw new Error("AuthContext não disponível");
+    }
     user = authContext.user;
     console.log("✅ Auth context carregado:", { hasUser: !!user });
   } catch (authError) {
     console.error("❌ Erro no auth context:", authError);
     user = null;
+
+    // Se não conseguir acessar auth context, pode ser erro crítico
+    if (authError.message?.includes("must be used within")) {
+      console.error("💥 ERRO CRÍTICO DE CONTEXTO - redirecionando para login");
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 100);
+      return <div>A redireccionar...</div>;
+    }
   }
 
   try {
@@ -55,11 +67,17 @@ export function Dashboard() {
     console.log("✅ Navigate hook carregado");
   } catch (navError) {
     console.error("❌ Erro no navigate hook:", navError);
-    navigate = () => console.warn("Navigate não disponível");
+    navigate = (path: string) => {
+      console.warn("Navigate não disponível, usando window.location:", path);
+      window.location.href = path;
+    };
   }
 
   try {
     const firebaseContext = useFirebaseSync();
+    if (!firebaseContext) {
+      throw new Error("FirebaseContext não disponível");
+    }
     works = firebaseContext.works || [];
     maintenances = firebaseContext.maintenances || [];
     isOnline = firebaseContext.isOnline ?? true;
@@ -78,12 +96,28 @@ export function Dashboard() {
     isSyncing = false;
     lastSync = undefined;
     syncData = () => Promise.resolve();
+
+    // Tentar carregar dados do localStorage como fallback
+    try {
+      const localWorks = JSON.parse(localStorage.getItem("works") || "[]");
+      const localMaintenances = JSON.parse(
+        localStorage.getItem("leirisonda_maintenances") || "[]",
+      );
+      works = Array.isArray(localWorks) ? localWorks : [];
+      maintenances = Array.isArray(localMaintenances) ? localMaintenances : [];
+      console.log("📱 Dados carregados do localStorage como fallback");
+    } catch (localError) {
+      console.error("❌ Erro ao carregar dados locais:", localError);
+    }
   }
 
-  // Hook de notificações
+  // Hook de notificações com proteção
   let checkPendingWorks;
   try {
     const notificationsContext = useNotifications();
+    if (!notificationsContext) {
+      throw new Error("NotificationsContext não disponível");
+    }
     checkPendingWorks = notificationsContext.checkPendingWorks;
     console.log("✅ Notifications context carregado");
   } catch (notificationsError) {
