@@ -352,8 +352,8 @@ export function CreateIntervention() {
         });
       }, 100);
 
-      // Force page reload to ensure fresh data
-      window.location.href = `/maintenance/${maintenance.id}`;
+      // Navigate back to maintenance detail page
+      navigate(`/maintenance/${maintenance.id}`);
     } catch (err) {
       console.error("❌ Erro ao guardar intervenção:", err);
       console.error(
