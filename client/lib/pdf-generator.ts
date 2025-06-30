@@ -137,16 +137,20 @@ export class PDFGenerator {
       );
       await this.waitForImages(tempContainer);
 
-      // Mobile-optimized canvas settings
+      // Enhanced canvas settings for better image capture
       const canvasOptions = {
-        scale: isMobile ? 1.5 : 2, // Lower scale on mobile to prevent memory issues
+        scale: isMobile ? 1.5 : 2.5, // Higher scale for better image quality
         useCORS: true,
         allowTaint: true,
         backgroundColor: "#ffffff",
-        logging: false,
+        logging: true, // Enable logging to debug image issues
         height: tempContainer.scrollHeight,
         width: tempContainer.scrollWidth,
         removeContainer: true,
+        imageTimeout: 15000, // 15 seconds timeout for image loading
+        foreignObjectRendering: true, // Better handling of complex content
+        scrollX: 0,
+        scrollY: 0,
         imageTimeout: 5000,
         onclone: (clonedDoc: Document) => {
           // Ensure all styles are properly cloned
