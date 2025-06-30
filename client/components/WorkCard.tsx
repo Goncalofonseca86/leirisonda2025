@@ -38,7 +38,7 @@ export function WorkCard({ work }: WorkCardProps) {
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
           <h3 className="font-semibold text-foreground text-lg mb-1">
-            {work.client}
+            {(work as any).client || work.title}
           </h3>
           <div className="flex items-center text-muted-foreground text-sm mb-2">
             <MapPin className="w-4 h-4 mr-1" />
@@ -53,9 +53,13 @@ export function WorkCard({ work }: WorkCardProps) {
       <div className="flex items-center justify-between text-sm text-muted-foreground">
         <div className="flex items-center">
           <Calendar className="w-4 h-4 mr-1" />
-          {format(new Date(work.entryDate), "dd/MM/yyyy HH:mm", {
-            locale: pt,
-          })}
+          {format(
+            new Date((work as any).entryDate || work.createdAt),
+            "dd/MM/yyyy HH:mm",
+            {
+              locale: pt,
+            },
+          )}
         </div>
 
         {work.photos.length > 0 && (

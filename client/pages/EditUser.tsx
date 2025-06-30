@@ -51,7 +51,6 @@ export function EditUser() {
         // Update user with Firebase sync
         await updateUserWithSync(user.id, {
           permissions: permissions,
-          updatedAt: new Date().toISOString(),
         });
 
         setSuccess(
