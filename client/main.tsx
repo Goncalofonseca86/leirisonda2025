@@ -56,6 +56,7 @@ function App() {
             {/* Public routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/system-status" element={<SystemStatus />} />
+            <Route path="/simple-test" element={<SimpleTest />} />
             <Route
               path="/emergency-diagnostic"
               element={<EmergencyDiagnostic />}
