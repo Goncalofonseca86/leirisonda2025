@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { User, Work, PoolMaintenance } from "@shared/types";
 import { firebaseService } from "@/services/FirebaseService";
-import { useAuth } from "@/components/AuthProvider";
+import { useAuthFixed as useAuth } from "@/components/AuthProviderFixed";
 
 export function useFirebaseSync() {
   console.log("🔄 useFirebaseSync hook iniciando...");
