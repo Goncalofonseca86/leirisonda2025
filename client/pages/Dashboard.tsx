@@ -54,7 +54,7 @@ export function Dashboard() {
     navigate = useNavigate();
     console.log("✅ Navigate hook carregado");
   } catch (navError) {
-    console.error("❌ Erro no navigate hook:", navError);
+    console.error("�� Erro no navigate hook:", navError);
     navigate = () => console.warn("Navigate não disponível");
   }
 
@@ -496,14 +496,19 @@ export function Dashboard() {
                   className="border-blue-300 text-blue-700 hover:bg-blue-100"
                   onClick={async () => {
                     try {
-                      const { useNotifications } = await import(
-                        "@/hooks/use-notifications"
+                      const { notificationService } = await import(
+                        "@/services/NotificationService"
                       );
-                      const { checkPendingWorks } = useNotifications();
-                      console.log("🧪 Testando verificação de notificações...");
-                      const pendingCount = await checkPendingWorks();
+                      console.log(
+                        "🧪 Testando verificação de notificações para:",
+                        user.name,
+                      );
+                      const pendingCount =
+                        await notificationService.checkPendingAssignedWorks(
+                          user.id,
+                        );
                       alert(
-                        `Teste concluído! ${pendingCount} obras pendentes verificadas. Verifique o console para logs detalhados.`,
+                        `Teste concluído! ${pendingCount} obras pendentes verificadas para ${user.name}. Verifique o console para logs detalhados.`,
                       );
                     } catch (error) {
                       console.error("❌ Erro no teste:", error);
