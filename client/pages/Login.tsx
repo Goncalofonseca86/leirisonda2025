@@ -149,7 +149,7 @@ export function Login() {
           </div>
         </div>
 
-        {/* Copyright */}
+        {/* Copyright Footer */}
         <div className="text-center mt-6">
           <p className="text-white/80 text-sm font-medium">
             © 2024 Leirisonda - Sistema Profissional de Gestão
