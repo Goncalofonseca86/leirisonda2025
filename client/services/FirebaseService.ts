@@ -418,19 +418,7 @@ export class FirebaseService {
             JSON.stringify(notificationData),
           );
 
-          // Trigger cross-device sync immediately
-          window.dispatchEvent(
-            new CustomEvent("leirisonda_sync_trigger", {
-              detail: {
-                source: "new_work_created",
-                workId: newWork.id,
-                urgent: true,
-                notificationData,
-              },
-            }),
-          );
-
-          // Force a storage event for cross-tab communication
+          // Storage sync without notification events
           localStorage.setItem(
             "leirisonda_force_sync",
             JSON.stringify({
