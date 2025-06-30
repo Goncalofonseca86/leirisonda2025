@@ -35,211 +35,109 @@ export function Login() {
     }
   };
 
-  const handleDirectDashboard = () => {
-    console.log("🚀 Forçando acesso direto ao dashboard...");
-    localStorage.setItem(
-      "leirisonda_user",
-      JSON.stringify({
-        id: "admin_goncalo_direct",
-        email: "gongonsilva@gmail.com",
-        name: "Gonçalo Fonseca Silva",
-        role: "admin",
-      }),
-    );
-    navigate("/dashboard");
-  };
-
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "linear-gradient(135deg, #61a5d6 0%, #007784 100%)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "20px",
-        fontFamily: "Open Sans, sans-serif",
-      }}
-    >
-      <div
-        style={{
-          backgroundColor: "white",
-          padding: "40px",
-          borderRadius: "12px",
-          boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-          width: "100%",
-          maxWidth: "400px",
-        }}
-      >
-        <div style={{ textAlign: "center", marginBottom: "30px" }}>
+    <div className="min-h-screen bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center p-5">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+        {/* Header com logo */}
+        <div className="bg-gradient-to-r from-blue-500 to-blue-700 p-8 text-center">
           <img
             src="https://cdn.builder.io/api/v1/image/assets%2F24b5ff5dbb9f4bb493659e90291d92bc%2Fb4eb4a9e6feb44b09201dbb824b8737c?format=webp&width=800"
             alt="Leirisonda Logo"
-            style={{ height: "60px", marginBottom: "15px" }}
+            className="h-16 mx-auto mb-4 filter brightness-0 invert"
           />
-          <h1
-            style={{
-              margin: "0 0 10px 0",
-              color: "#007784",
-              fontSize: "28px",
-              fontWeight: "700",
-            }}
-          >
-            Leirisonda
-          </h1>
-          <p
-            style={{
-              margin: 0,
-              color: "#666",
-              fontSize: "14px",
-            }}
-          >
+          <h1 className="text-2xl font-bold text-white mb-2">Leirisonda</h1>
+          <p className="text-blue-100 text-sm">
             Sistema de Gestão de Obras e Manutenções
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
-          <div style={{ marginBottom: "20px" }}>
-            <label
-              style={{
-                display: "block",
-                marginBottom: "6px",
-                color: "#333",
-                fontSize: "14px",
-                fontWeight: "500",
-              }}
-            >
-              Email
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email de acesso"
-              style={{
-                width: "100%",
-                padding: "12px",
-                border: "1px solid #ddd",
-                borderRadius: "6px",
-                fontSize: "16px",
-                boxSizing: "border-box",
-              }}
-              required
-            />
-          </div>
-
-          <div style={{ marginBottom: "20px" }}>
-            <label
-              style={{
-                display: "block",
-                marginBottom: "6px",
-                color: "#333",
-                fontSize: "14px",
-                fontWeight: "500",
-              }}
-            >
-              Palavra-passe
-            </label>
-            <div style={{ position: "relative" }}>
+        {/* Formulário */}
+        <div className="p-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Email
+              </label>
               <input
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Palavra-passe"
-                style={{
-                  width: "100%",
-                  padding: "12px",
-                  paddingRight: "45px",
-                  border: "1px solid #ddd",
-                  borderRadius: "6px",
-                  fontSize: "16px",
-                  boxSizing: "border-box",
-                }}
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email de acesso"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                 required
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                style={{
-                  position: "absolute",
-                  right: "12px",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  fontSize: "16px",
-                }}
-              >
-                {showPassword ? "🙈" : "👁️"}
-              </button>
             </div>
-          </div>
 
-          {error && (
-            <div
-              style={{
-                backgroundColor: "#fee",
-                color: "#c33",
-                padding: "12px",
-                borderRadius: "6px",
-                marginBottom: "20px",
-                fontSize: "14px",
-                textAlign: "center",
-              }}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Palavra-passe
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Palavra-passe"
+                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                  {showPassword ? "🙈" : "👁️"}
+                </button>
+              </div>
+            </div>
+
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-blue-600 hover:to-blue-800 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
-              {error}
-            </div>
-          )}
+              {isSubmitting ? (
+                <span className="flex items-center justify-center">
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Entrando...
+                </span>
+              ) : (
+                "Entrar"
+              )}
+            </button>
+          </form>
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            style={{
-              width: "100%",
-              padding: "14px",
-              backgroundColor: "#007784",
-              color: "white",
-              border: "none",
-              borderRadius: "6px",
-              fontSize: "16px",
-              fontWeight: "600",
-              cursor: isSubmitting ? "not-allowed" : "pointer",
-              opacity: isSubmitting ? 0.7 : 1,
-              marginBottom: "15px",
-            }}
-          >
-            {isSubmitting ? "Entrando..." : "Entrar"}
-          </button>
-
-          <button
-            type="button"
-            onClick={handleDirectDashboard}
-            style={{
-              width: "100%",
-              padding: "12px",
-              backgroundColor: "#dc3545",
-              color: "white",
-              border: "none",
-              borderRadius: "6px",
-              fontSize: "14px",
-              fontWeight: "600",
-              cursor: "pointer",
-            }}
-          >
-            🚀 FORÇAR DASHBOARD (TESTE)
-          </button>
-        </form>
-
-        <div
-          style={{
-            textAlign: "center",
-            fontSize: "12px",
-            color: "#999",
-            marginTop: "30px",
-          }}
-        >
-          © 2025 Leirisonda - Sistema Avançado de Gestão de Obras
+          {/* Footer */}
+          <div className="mt-8 pt-6 border-t border-gray-200 text-center">
+            <p className="text-xs text-gray-500">
+              © 2025 Leirisonda - Sistema Avançado de Gestão de Obras
+            </p>
+          </div>
         </div>
       </div>
     </div>
