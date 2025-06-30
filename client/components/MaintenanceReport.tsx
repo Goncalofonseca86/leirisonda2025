@@ -340,7 +340,7 @@ export function MaintenanceReport({
             </div>
             <div class="info-card">
               <div class="label">Morada</div>
-              <div class="value">${maintenance.address}</div>
+              <div class="value">${(maintenance as any).address || "Endereço não especificado"}</div>
             </div>
             <div class="info-card">
               <div class="label">Tipo</div>
@@ -352,7 +352,7 @@ export function MaintenanceReport({
             </div>
             <div class="info-card">
               <div class="label">Estado</div>
-              <div class="value">${maintenance.status === "ativa" ? "Ativa" : "Inativa"}</div>
+              <div class="value">${maintenance.status === "active" ? "Ativa" : "Inativa"}</div>
             </div>
           </div>
         </div>
