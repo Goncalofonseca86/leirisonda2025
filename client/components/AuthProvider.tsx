@@ -290,18 +290,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     console.log("🔐 TENTATIVA LOGIN:", { email, password });
+    console.log("📊 Estado inicial do AuthProvider:");
+    console.log("  • isLoading:", isLoading);
+    console.log("  • isInitialized:", isInitialized);
+    console.log("  • user:", user);
+
     setIsLoading(true);
+    console.log("⏳ setIsLoading(true) executado");
 
     try {
       // Normalizar email
       const normalizedEmail = email.trim().toLowerCase();
+      console.log("🔄 Email normalizado:", normalizedEmail);
 
       // Verificar utilizadores globais primeiro
       const globalUser = Object.values(globalUsers).find(
         (u) => u.email.toLowerCase() === normalizedEmail,
       );
+      console.log("👤 Utilizador global encontrado:", !!globalUser);
 
       if (globalUser && globalUser.password === password) {
+        console.log("🔑 Password válida para utilizador global");
+
         const loginUser: User = {
           id: globalUser.id,
           email: globalUser.email,
@@ -310,10 +320,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           permissions: globalUser.permissions,
           createdAt: new Date().toISOString(),
         };
+        console.log("🏗️ Objeto loginUser criado:", loginUser);
 
-        localStorage.setItem("leirisonda_user", JSON.stringify(loginUser));
-        localStorage.setItem("leirisonda_last_user", globalUser.email); // Guardar último utilizador
+        try {
+          localStorage.setItem("leirisonda_user", JSON.stringify(loginUser));
+          console.log("💾 User guardado no localStorage");
+        } catch (storageError) {
+          console.error("❌ Erro ao guardar no localStorage:", storageError);
+          throw storageError;
+        }
+
+        try {
+          localStorage.setItem("leirisonda_last_user", globalUser.email);
+          console.log("📝 Last user guardado");
+        } catch (lastUserError) {
+          console.error("❌ Erro ao guardar last user:", lastUserError);
+          // Não é crítico, continuar
+        }
+
+        console.log("🔄 Executando setUser...");
         setUser(loginUser);
+        console.log("✅ setUser executado com sucesso");
+
         console.log(`✅ ${globalUser.name.toUpperCase()} LOGIN SUCESSO`);
 
         // Inicializar notificações automaticamente após login com debug detalhado
