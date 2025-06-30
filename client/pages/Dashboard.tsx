@@ -262,13 +262,12 @@ export function Dashboard() {
       },
     };
 
-    // Testar se consegue acessar diferentes contextos
-    try {
-      const testAuth = useAuth();
-      debugData.contextTest = { auth: "OK" };
-    } catch (err) {
-      debugData.errors.contextErrors.push(`Auth: ${err.message}`);
-    }
+    // Testar contextos (não usando hooks aqui para evitar erro)
+    debugData.contextTest = {
+      auth: user ? "OK" : "No User",
+      firebase: works ? "OK" : "No Works",
+      notifications: checkPendingWorks ? "OK" : "No Notifications",
+    };
 
     setDebugInfo(debugData);
     console.log("🔍 DEBUG DATA:", debugData);
