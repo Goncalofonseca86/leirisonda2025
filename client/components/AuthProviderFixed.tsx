@@ -106,10 +106,25 @@ export function AuthProviderFixed({ children }: { children: React.ReactNode }) {
 
     try {
       const normalizedEmail = email.trim().toLowerCase();
+      console.log("📧 Email normalizado:", normalizedEmail);
+
       const credentials = validCredentials[normalizedEmail];
+      console.log("🔑 Credenciais encontradas:", !!credentials);
+
+      if (credentials) {
+        console.log("🔍 Debug credenciais:", {
+          emailMatch: credentials.user.email === normalizedEmail,
+          passwordProvided: password,
+          passwordExpected: credentials.password,
+          passwordMatch: credentials.password === password,
+        });
+      }
 
       if (credentials && credentials.password === password) {
         console.log("✅ Credenciais válidas");
+
+        // Limpar dados antigos antes de definir novos
+        localStorage.removeItem("leirisonda_user");
 
         const loginUser = credentials.user;
         setUser(loginUser);
@@ -121,6 +136,7 @@ export function AuthProviderFixed({ children }: { children: React.ReactNode }) {
       }
 
       console.log("❌ Credenciais inválidas");
+      console.log("🔍 Credenciais disponíveis:", Object.keys(validCredentials));
       setIsLoading(false);
       return false;
     } catch (error) {
