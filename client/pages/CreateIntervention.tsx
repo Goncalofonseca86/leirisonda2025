@@ -227,18 +227,10 @@ export function CreateIntervention() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("🚀 handleSubmit iniciado - CreateIntervention");
     setError("");
     setIsSubmitting(true);
 
     try {
-      console.log("✅ Validações iniciais:", {
-        maintenance: !!maintenance,
-        timeStart: formData.timeStart,
-        timeEnd: formData.timeEnd,
-        technicians: formData.technicians,
-      });
-
       if (!maintenance) {
         console.error("❌ Manutenção não encontrada");
         throw new Error("Piscina não encontrada");
