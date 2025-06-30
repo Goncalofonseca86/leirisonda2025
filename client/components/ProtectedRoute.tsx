@@ -7,23 +7,33 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const [redirecting, setRedirecting] = React.useState(false);
-  let authData;
+  const [user, setUser] = React.useState(null);
+  const [isLoading, setIsLoading] = React.useState(true);
 
-  try {
-    authData = useAuth();
-  } catch (error) {
-    console.error("❌ Erro no ProtectedRoute ao acessar auth:", error);
-    // Redirecionar para login se não conseguir acessar contexto
-    return <Navigate to="/login" replace />;
-  }
+  // SOLUÇÃO RADICAL: Ignorar AuthProvider completamente, usar apenas localStorage
+  React.useEffect(() => {
+    console.log("🔒 ProtectedRoute verificando localStorage...");
 
-  if (!authData) {
-    console.error("❌ AuthData é null, redirecionando para login");
-    return <Navigate to="/login" replace />;
-  }
+    try {
+      const storedUser = localStorage.getItem("leirisonda_user");
+      if (storedUser) {
+        const parsedUser = JSON.parse(storedUser);
+        console.log("✅ ProtectedRoute: User encontrado:", parsedUser.name);
+        setUser(parsedUser);
+      } else {
+        console.log("❌ ProtectedRoute: Nenhum user no localStorage");
+        setUser(null);
+      }
+    } catch (error) {
+      console.error("❌ ProtectedRoute: Erro ao ler localStorage:", error);
+      setUser(null);
+    }
 
-  const { user, isLoading, isInitialized } = authData;
+    setIsLoading(false);
+  }, []);
+
+  // Ignorar AuthProvider completamente
+  const isInitialized = true;
 
   // Show loading while auth is initializing or processing
   // Adicionar timeout de segurança para evitar loading infinito
