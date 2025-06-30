@@ -222,6 +222,61 @@ export function Dashboard() {
     }
   };
 
+  const runDebugCheck = () => {
+    console.log("🔍 EXECUTANDO DEBUG CHECK...");
+
+    const debugData: any = {
+      timestamp: new Date().toISOString(),
+      user: user
+        ? {
+            email: user.email,
+            name: user.name,
+            role: user.role,
+            hasPermissions: !!user.permissions,
+          }
+        : null,
+      authContext: {
+        hasUser: !!user,
+        userType: typeof user,
+        isLoadingAuth:
+          typeof isLoading !== "undefined" ? isLoading : "undefined",
+      },
+      firebaseContext: {
+        worksCount: works.length,
+        maintenancesCount: maintenances.length,
+        isOnline,
+        isSyncing,
+        lastSync: lastSync ? lastSync.toISOString() : null,
+      },
+      localStorage: {
+        hasUser: !!localStorage.getItem("leirisonda_user"),
+        hasWorks: !!localStorage.getItem("works"),
+        hasMaintenances: !!localStorage.getItem("leirisonda_maintenances"),
+        justLoggedIn: sessionStorage.getItem("just_logged_in"),
+        loginTimestamp: sessionStorage.getItem("login_timestamp"),
+      },
+      url: window.location.href,
+      errors: {
+        authError: authError || null,
+        contextErrors: [],
+      },
+    };
+
+    // Testar se consegue acessar diferentes contextos
+    try {
+      const testAuth = useAuth();
+      debugData.contextTest = { auth: "OK" };
+    } catch (err) {
+      debugData.errors.contextErrors.push(`Auth: ${err.message}`);
+    }
+
+    setDebugInfo(debugData);
+    console.log("🔍 DEBUG DATA:", debugData);
+
+    // Salvar debug info para exportar se necessário
+    localStorage.setItem("dashboard_debug", JSON.stringify(debugData));
+  };
+
   const loadDashboardData = () => {
     try {
       console.log("📊 Processando dados para dashboard...");
