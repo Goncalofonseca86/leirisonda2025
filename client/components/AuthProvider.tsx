@@ -277,6 +277,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             );
             await notificationService.initialize();
             console.log("🔔 Notificações inicializadas após login");
+
+            // Aguardar mais um pouco e verificar obras atribuídas pendentes
+            setTimeout(async () => {
+              try {
+                const pendingCount =
+                  await notificationService.checkPendingAssignedWorks(
+                    loginUser.id,
+                  );
+                if (pendingCount > 0) {
+                  console.log(
+                    `🎯 ${pendingCount} obras atribuídas pendentes notificadas para ${loginUser.name}`,
+                  );
+                } else {
+                  console.log(
+                    `ℹ️ Nenhuma obra atribuída pendente para ${loginUser.name}`,
+                  );
+                }
+              } catch (pendingError) {
+                console.warn(
+                  "⚠️ Erro ao verificar obras pendentes:",
+                  pendingError,
+                );
+              }
+            }, 2000);
           } catch (notificationError) {
             console.warn(
               "⚠️ Erro ao inicializar notificações:",
