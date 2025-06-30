@@ -11,7 +11,9 @@ export function FirebaseStatus() {
   // Check if Firebase is available
   const isFirebaseAvailable = React.useMemo(() => {
     try {
-      return typeof window !== "undefined" && window.firebase !== undefined;
+      return (
+        typeof window !== "undefined" && (window as any).firebase !== undefined
+      );
     } catch {
       return false;
     }

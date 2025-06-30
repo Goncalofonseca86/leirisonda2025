@@ -239,7 +239,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const newUser: User = {
             ...globalUser,
             createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
           };
           delete (newUser as any).password; // Remove password do objeto user
           existingUsers.push(newUser);
