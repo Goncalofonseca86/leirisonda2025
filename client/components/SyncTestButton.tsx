@@ -222,7 +222,7 @@ export function SyncTestButton() {
                   <AlertDescription className="text-sm">
                     <div className="flex items-center justify-between">
                       <span>{result.message}</span>
-                      <Badge variant={getBadgeVariant(result.type)} size="sm">
+                      <Badge variant={getBadgeVariant(result.type)}>
                         {result.type}
                       </Badge>
                     </div>

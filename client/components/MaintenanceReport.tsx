@@ -160,7 +160,7 @@ export function MaintenanceReport({
         </div>
         <div class="info-item">
           <div class="info-label">Endereço</div>
-          <div class="info-value">${maintenance.address}</div>
+          <div class="info-value">${(maintenance as any).address || "Endereço não especificado"}</div>
         </div>
       </div>
 
@@ -210,7 +210,7 @@ export function MaintenanceReport({
           </tr>
           <tr>
             <td>Filtros</td>
-            <td>${intervention.workPerformed.limpezaFiltros ? "Conforme" : "Verificado"}</td>
+            <td>${(intervention.workPerformed as any).limpezaFiltros ? "Conforme" : "Verificado"}</td>
             <td></td>
           </tr>
           <tr>
@@ -422,7 +422,7 @@ export function MaintenanceReport({
               (problem) => `
             <div style="margin-bottom: 10px; padding: 10px; background: #fef2f2; border-left: 4px solid #ef4444; border-radius: 4px;">
               ❌ ${problem.description}
-              ${problem.priority ? `<br><small>Prioridade: ${problem.priority}</small>` : ""}
+              ${problem.severity ? `<br><small>Prioridade: ${problem.severity}</small>` : ""}
             </div>
           `,
             )

@@ -15,11 +15,6 @@ const statusConfig: Record<
   WorkStatus,
   { label: string; color: string; bgColor: string }
 > = {
-  open: {
-    label: "Aberta",
-    color: "text-red-700",
-    bgColor: "bg-red-100 hover:bg-red-200",
-  },
   "in-progress": {
     label: "Em Curso",
     color: "text-orange-700",
