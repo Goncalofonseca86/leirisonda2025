@@ -374,19 +374,47 @@ export function MaintenanceReport({
       ${
         intervention.photos && intervention.photos.length > 0
           ? `
-      <div class="section-title">Fotografias da Intervenção</div>
+      <div class="section-title">Fotografias da Intervenção (${intervention.photos.length} foto${intervention.photos.length > 1 ? "s" : ""})</div>
       <div class="section-content">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin: 20px 0;">
           ${intervention.photos
             .map(
-              (photo) => `
-            <div style="text-align: center;">
-              <img src="${photo.url}" alt="${photo.description || "Foto da intervenção"}" style="width: 100%; max-width: 200px; height: 150px; object-fit: cover; border-radius: 4px; border: 1px solid #e5e7eb;">
-              ${photo.description ? `<div style="font-size: 10px; color: #666; margin-top: 4px;">${photo.description}</div>` : ""}
+              (photo, index) => `
+            <div style="text-align: center; page-break-inside: avoid;">
+              <div style="position: relative; margin-bottom: 8px;">
+                <img
+                  src="${photo.url}"
+                  alt="${photo.description || `Foto ${index + 1} da intervenção`}"
+                  style="width: 100%; max-width: 180px; height: 135px; object-fit: cover; border-radius: 6px; border: 2px solid #e5e7eb; display: block; margin: 0 auto;"
+                  crossorigin="anonymous"
+                  onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                >
+                <div style="display: none; width: 180px; height: 135px; background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 6px; margin: 0 auto; display: flex; align-items: center; justify-content: center; color: #6b7280; font-size: 12px;">
+                  📷 Foto não disponível
+                </div>
+              </div>
+              ${
+                photo.description
+                  ? `
+                <div style="font-size: 11px; color: #4b5563; font-weight: 500; line-height: 1.3; max-width: 180px; margin: 0 auto;">
+                  ${photo.description}
+                </div>
+              `
+                  : `
+                <div style="font-size: 10px; color: #9ca3af;">
+                  Foto ${index + 1}
+                </div>
+              `
+              }
             </div>
           `,
             )
             .join("")}
+        </div>
+        <div style="margin-top: 15px; padding: 10px; background: #f0f9ff; border-left: 4px solid #0ea5e9; border-radius: 4px;">
+          <div style="font-size: 12px; color: #0c4a6e;">
+            <strong>📸 Total de fotografias:</strong> ${intervention.photos.length} imagem${intervention.photos.length > 1 ? "ns" : ""} da intervenção
+          </div>
         </div>
       </div>
       `
