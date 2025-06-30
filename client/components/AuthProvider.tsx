@@ -14,9 +14,17 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  console.log("🏗️ AuthProvider component iniciando...");
+
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
+
+  console.log("📊 AuthProvider estado inicial:", {
+    hasUser: !!user,
+    isLoading,
+    isInitialized,
+  });
 
   // Utilizadores globais predefinidos que devem estar em todos os dispositivos
   const globalUsers = {
