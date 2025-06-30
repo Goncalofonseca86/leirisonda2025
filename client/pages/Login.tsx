@@ -1,15 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/use-auth";
 
 export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-
-  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -18,11 +14,65 @@ export function Login() {
     setError("");
 
     try {
-      console.log("🔐 Tentando login com:", email);
-      const success = await login(email, password);
+      // Verificar credenciais hardcoded
+      if (email === "gongonsilva@gmail.com" && password === "19867gsf") {
+        // Criar usuário no localStorage
+        const user = {
+          id: "admin_goncalo_working",
+          email: "gongonsilva@gmail.com",
+          name: "Gonçalo Fonseca Silva",
+          role: "admin",
+          permissions: {
+            canViewWorks: true,
+            canCreateWorks: true,
+            canEditWorks: true,
+            canDeleteWorks: true,
+            canViewUsers: true,
+            canCreateUsers: true,
+            canEditUsers: true,
+            canDeleteUsers: true,
+            canViewReports: true,
+            canExportData: true,
+            canViewDashboard: true,
+            canViewStats: true,
+            canManageSystem: true,
+            canManageNotifications: true,
+            canViewMaintenance: true,
+            canCreateMaintenance: true,
+          },
+        };
 
-      if (success) {
-        console.log("✅ Login bem-sucedido, redirecionando...");
+        localStorage.setItem("leirisonda_user", JSON.stringify(user));
+        console.log("✅ Login bem-sucedido para Gonçalo");
+        navigate("/dashboard");
+      } else if (
+        email === "alexkamaryta@gmail.com" &&
+        password === "69alexandre"
+      ) {
+        // Login do Alexandre
+        const user = {
+          id: "user_alexandre",
+          email: "alexkamaryta@gmail.com",
+          name: "Alexandre Fernandes",
+          role: "user",
+          permissions: {
+            canViewWorks: true,
+            canCreateWorks: false,
+            canEditWorks: true,
+            canDeleteWorks: false,
+            canViewUsers: false,
+            canCreateUsers: false,
+            canEditUsers: false,
+            canDeleteUsers: false,
+            canViewReports: true,
+            canExportData: false,
+            canViewDashboard: true,
+            canViewStats: true,
+          },
+        };
+
+        localStorage.setItem("leirisonda_user", JSON.stringify(user));
+        console.log("✅ Login bem-sucedido para Alexandre");
         navigate("/dashboard");
       } else {
         setError("Credenciais inválidas. Tente novamente.");
@@ -39,8 +89,7 @@ export function Login() {
     <div
       style={{
         minHeight: "100vh",
-        background:
-          "linear-gradient(135deg, rgb(97, 165, 214) 0%, rgb(0, 119, 132) 100%)",
+        background: "linear-gradient(135deg, #61a5d6 0%, #007784 100%)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -63,7 +112,7 @@ export function Login() {
         <div style={{ marginBottom: "40px" }}>
           <img
             src="https://cdn.builder.io/api/v1/image/assets%2F24b5ff5dbb9f4bb493659e90291d92bc%2Fb4eb4a9e6feb44b09201dbb824b8737c?format=webp&width=800"
-            alt="Leirisonda Logo"
+            alt="Logo"
             style={{
               height: "80px",
               marginBottom: "20px",
@@ -71,7 +120,6 @@ export function Login() {
               margin: "0 auto 20px auto",
             }}
           />
-
           <p
             style={{
               fontSize: "16px",
@@ -109,14 +157,7 @@ export function Login() {
                 borderRadius: "12px",
                 fontSize: "16px",
                 outline: "none",
-                transition: "border-color 0.3s ease",
                 boxSizing: "border-box",
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = "#007784";
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = "#e0e6ed";
               }}
               required
             />
@@ -134,49 +175,22 @@ export function Login() {
             >
               Palavra-passe
             </label>
-            <div style={{ position: "relative" }}>
-              <input
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Digite sua senha"
-                style={{
-                  width: "100%",
-                  padding: "16px",
-                  paddingRight: "50px",
-                  border: "2px solid #e0e6ed",
-                  borderRadius: "12px",
-                  fontSize: "16px",
-                  outline: "none",
-                  transition: "border-color 0.3s ease",
-                  boxSizing: "border-box",
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = "#007784";
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = "#e0e6ed";
-                }}
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                style={{
-                  position: "absolute",
-                  right: "15px",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  fontSize: "18px",
-                  color: "#666",
-                }}
-              >
-                {showPassword ? "🙈" : "👁️"}
-              </button>
-            </div>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Digite sua senha"
+              style={{
+                width: "100%",
+                padding: "16px",
+                border: "2px solid #e0e6ed",
+                borderRadius: "12px",
+                fontSize: "16px",
+                outline: "none",
+                boxSizing: "border-box",
+              }}
+              required
+            />
           </div>
 
           {error && (
@@ -208,25 +222,30 @@ export function Login() {
               fontSize: "18px",
               fontWeight: "600",
               cursor: isSubmitting ? "not-allowed" : "pointer",
-              transition: "background-color 0.3s ease",
               marginBottom: "20px",
-            }}
-            onMouseEnter={(e) => {
-              if (!isSubmitting) {
-                (e.target as HTMLButtonElement).style.backgroundColor =
-                  "#005f6b";
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!isSubmitting) {
-                (e.target as HTMLButtonElement).style.backgroundColor =
-                  "#007784";
-              }
             }}
           >
             {isSubmitting ? "Entrando..." : "Entrar"}
           </button>
         </form>
+
+        {/* Credenciais para teste */}
+        <div
+          style={{
+            marginTop: "20px",
+            padding: "15px",
+            backgroundColor: "#f8f9fa",
+            borderRadius: "8px",
+            fontSize: "12px",
+            color: "#666",
+          }}
+        >
+          <strong>Credenciais de teste:</strong>
+          <br />
+          Admin: gongonsilva@gmail.com / 19867gsf
+          <br />
+          User: alexkamaryta@gmail.com / 69alexandre
+        </div>
 
         {/* Footer */}
         <div
