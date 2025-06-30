@@ -403,50 +403,24 @@ export class FirebaseService {
     maintenanceId: string,
     updates: Partial<PoolMaintenance>,
   ): Promise<void> {
-    console.log("🚀 updateMaintenance INICIADO:", {
-      maintenanceId,
-      interventionsCount: updates.interventions?.length || 0,
-      firebaseAvailable: this.isFirebaseAvailable,
-      updatesKeys: Object.keys(updates),
-    });
+    if (!this.isFirebaseAvailable) {
+      return this.updateLocalMaintenance(maintenanceId, updates);
+    }
 
-    // ALWAYS try local first to ensure data is saved
-    console.log("💾 Salvando localmente primeiro...");
     try {
-      this.updateLocalMaintenance(maintenanceId, updates);
-      console.log("✅ Salvamento local concluído");
-    } catch (localError) {
-      console.error("❌ ERRO no salvamento local:", localError);
-      throw new Error("Falha crítica no salvamento local");
-    }
-
-    // Then try Firebase if available
-    if (this.isFirebaseAvailable) {
-      try {
-        console.log("🔥 Tentando sincronizar com Firebase...");
-        const maintenanceRef = doc(db, "maintenances", maintenanceId);
-        await updateDoc(maintenanceRef, {
-          ...updates,
-          updatedAt: serverTimestamp(),
-        });
-        console.log("✅ Firebase sync concluído:", {
-          maintenanceId,
-          interventionsUpdated: updates.interventions?.length || 0,
-        });
-      } catch (firebaseError) {
-        console.error(
-          "⚠️ Firebase sync falhou (dados já salvos localmente):",
-          firebaseError,
-        );
-        // Don't throw - local save succeeded
-      }
-    } else {
-      console.log(
-        "📱 Firebase não disponível - usando apenas salvamento local",
+      const maintenanceRef = doc(db, "maintenances", maintenanceId);
+      await updateDoc(maintenanceRef, {
+        ...updates,
+        updatedAt: serverTimestamp(),
+      });
+      console.log("🔥 Maintenance updated in Firebase:", maintenanceId);
+    } catch (error) {
+      console.error(
+        "Error updating maintenance in Firebase, falling back to local:",
+        error,
       );
+      this.updateLocalMaintenance(maintenanceId, updates);
     }
-
-    console.log("🎉 updateMaintenance CONCLUÍDO");
   }
 
   private updateLocalMaintenance(
