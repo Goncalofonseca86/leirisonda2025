@@ -355,8 +355,14 @@ export function CreateIntervention() {
       // Force page reload to ensure fresh data
       window.location.href = `/maintenance/${maintenance.id}`;
     } catch (err) {
+      console.error("❌ Erro ao guardar intervenção:", err);
+      console.error(
+        "❌ Stack trace:",
+        err instanceof Error ? err.stack : "N/A",
+      );
       setError(err instanceof Error ? err.message : "Erro desconhecido");
     } finally {
+      console.log("🏁 handleSubmit finalizado");
       setIsSubmitting(false);
     }
   };
