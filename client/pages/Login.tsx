@@ -71,16 +71,7 @@ export function Login() {
               margin: "0 auto 20px auto",
             }}
           />
-          <h1
-            style={{
-              fontSize: "32px",
-              fontWeight: "700",
-              color: "#007784",
-              margin: "0 0 10px 0",
-            }}
-          >
-            Leirisonda
-          </h1>
+
           <p
             style={{
               fontSize: "16px",
