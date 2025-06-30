@@ -100,22 +100,42 @@ export function Login() {
     }
 
     try {
+      console.log("🔐 Iniciando processo de login...");
       const success = await login(email, password);
 
       if (success) {
+        console.log("✅ Login function retornou success=true");
+
         // Marcar login bem-sucedido para detectar possíveis problemas de contexto
         sessionStorage.setItem("just_logged_in", "true");
-        console.log("✅ Login bem-sucedido, marcação criada");
+        sessionStorage.setItem("login_timestamp", Date.now().toString());
+        console.log("📝 Marcações de debug criadas");
 
-        // Remover marcação após 5 segundos (tempo suficiente para navegação)
+        // Log detalhado do estado após login
+        console.log("📊 Estado pós-login:");
+        console.log("  • User logado:", !!authContext.user);
+        console.log("  • Auth initialized:", authContext.isInitialized);
+        console.log("  • Auth loading:", authContext.isLoading);
+
+        // Aguardar um momento para o estado se estabilizar
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        console.log(
+          "🏠 Login completo - redirecionamento deve ocorrer via ProtectedRoute",
+        );
+
+        // Remover marcação após tempo suficiente
         setTimeout(() => {
           sessionStorage.removeItem("just_logged_in");
-        }, 5000);
+          sessionStorage.removeItem("login_timestamp");
+        }, 10000);
       } else {
+        console.log("❌ Login function retornou success=false");
         setError("Email ou palavra-passe incorretos.");
       }
     } catch (err) {
       console.error("❌ Erro durante login:", err);
+      console.error("❌ Error stack:", err.stack);
       setError("Erro ao iniciar sessão. Tente novamente.");
     } finally {
       setIsSubmitting(false);
