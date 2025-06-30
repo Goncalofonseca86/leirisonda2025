@@ -3,6 +3,8 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./global.css";
 
+// Leirisonda App v2.1 - Sistema de Gestão Completo
+
 // Components
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { AuthProvider } from "./components/AuthProvider";
