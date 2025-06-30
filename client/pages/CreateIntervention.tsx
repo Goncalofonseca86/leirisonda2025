@@ -232,12 +232,24 @@ export function CreateIntervention() {
     setIsSubmitting(true);
 
     try {
+      console.log("✅ Validações iniciais:", {
+        maintenance: !!maintenance,
+        timeStart: formData.timeStart,
+        timeEnd: formData.timeEnd,
+        technicians: formData.technicians,
+      });
+
       if (!maintenance) {
+        console.error("❌ Manutenção não encontrada");
         throw new Error("Piscina não encontrada");
       }
 
       // Validation
       if (!formData.timeStart || !formData.timeEnd) {
+        console.error("❌ Horários em falta:", {
+          timeStart: formData.timeStart,
+          timeEnd: formData.timeEnd,
+        });
         throw new Error("Hora de início e fim são obrigatórias");
       }
 
@@ -246,7 +258,10 @@ export function CreateIntervention() {
       );
       const filteredVehicles = formData.vehicles.filter((v) => v.trim() !== "");
 
+      console.log("✅ Técnicos filtrados:", filteredTechnicians);
+
       if (filteredTechnicians.length === 0) {
+        console.error("❌ Nenhum técnico válido");
         throw new Error("Pelo menos um técnico é obrigatório");
       }
 
