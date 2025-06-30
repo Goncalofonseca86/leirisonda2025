@@ -86,6 +86,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
+    // Clear any corrupted auth data that might cause 400 errors
+    try {
+      // Check for corrupted localStorage data
+      const storedUser = localStorage.getItem("leirisonda_user");
+      if (storedUser) {
+        const parsed = JSON.parse(storedUser);
+        // If stored user looks invalid, clear it
+        if (!parsed.email || !parsed.id) {
+          console.warn("🔄 Clearing corrupted user data");
+          localStorage.removeItem("leirisonda_user");
+        }
+      }
+    } catch (error) {
+      console.warn("🔄 Clearing corrupted localStorage");
+      localStorage.removeItem("leirisonda_user");
+    }
+
     // Load stored user on mount
     loadStoredUser();
   }, []);
