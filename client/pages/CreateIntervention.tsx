@@ -323,62 +323,66 @@ export function CreateIntervention() {
         interventionDate: newIntervention.date,
       });
 
-      // Use Firebase sync to update maintenance with automatic sync
-      await updateMaintenance(maintenance.id, updatedMaintenance);
+      console.log("🚀 INICIANDO SALVAMENTO DE INTERVENÇÃO");
 
-      console.log(
-        "✅ Intervenção criada e sincronizada automaticamente:",
-        newIntervention.id,
-        "Total intervenções:",
-        currentInterventions.length,
-      );
-
-      // Robust verification with retry mechanism
-      let verified = false;
-      let attempts = 0;
-      const maxAttempts = 3;
-
-      while (!verified && attempts < maxAttempts) {
-        attempts++;
-
-        await new Promise((resolve) => setTimeout(resolve, 200 * attempts)); // Increasing delay
-
-        const storedMaintenances = JSON.parse(
-          localStorage.getItem("pool_maintenances") || "[]",
-        );
-        const updatedStoredMaintenance = storedMaintenances.find(
-          (m: PoolMaintenance) => m.id === maintenance.id,
-        );
-        const storedInterventions =
-          updatedStoredMaintenance?.interventions?.length || 0;
-        const latestStoredIntervention =
-          updatedStoredMaintenance?.interventions?.[storedInterventions - 1];
-
-        console.log(`🔍 Verificação ${attempts}/${maxAttempts}:`, {
-          maintenanceId: maintenance.id,
-          interventionsInStorage: storedInterventions,
-          latestInterventionId: latestStoredIntervention?.id,
-          esperadoId: newIntervention.id,
-          verified: latestStoredIntervention?.id === newIntervention.id,
-        });
-
-        if (latestStoredIntervention?.id === newIntervention.id) {
-          verified = true;
-          console.log("✅ Dados verificados com sucesso!");
-        } else if (attempts === maxAttempts) {
-          console.error(
-            "❌ FALHA na verificação após",
-            maxAttempts,
-            "tentativas",
-          );
-          setError(
-            "Aviso: A intervenção pode não ter sido guardada corretamente. Verifique na lista.",
-          );
-        }
+      try {
+        // Method 1: Try Firebase sync first
+        await updateMaintenance(maintenance.id, updatedMaintenance);
+        console.log("✅ Método 1 (Firebase sync) executado");
+      } catch (error) {
+        console.error("❌ Método 1 falhou:", error);
       }
 
-      // Only navigate if verified or after all attempts
-      navigate(`/maintenance/${maintenance.id}`);
+      try {
+        // Method 2: DIRECT localStorage write as failsafe
+        console.log("🔄 Executando salvamento direto como backup...");
+
+        const stored = localStorage.getItem("pool_maintenances") || "[]";
+        const allMaintenances = JSON.parse(stored);
+        const targetIndex = allMaintenances.findIndex(
+          (m: any) => m.id === maintenance.id,
+        );
+
+        if (targetIndex !== -1) {
+          allMaintenances[targetIndex] = updatedMaintenance;
+          localStorage.setItem(
+            "pool_maintenances",
+            JSON.stringify(allMaintenances),
+          );
+          console.log("✅ Método 2 (salvamento direto) concluído");
+        }
+      } catch (error) {
+        console.error("❌ Método 2 falhou:", error);
+      }
+
+      // FINAL VERIFICATION
+      setTimeout(() => {
+        const finalCheck = localStorage.getItem("pool_maintenances");
+        if (finalCheck) {
+          const parsed = JSON.parse(finalCheck);
+          const finalMaintenance = parsed.find(
+            (m: any) => m.id === maintenance.id,
+          );
+          const finalInterventions =
+            finalMaintenance?.interventions?.length || 0;
+
+          console.log("🔍 VERIFICAÇÃO FINAL:", {
+            maintenanceId: maintenance.id,
+            interventionsGuardadas: finalInterventions,
+            interventionEsperada: newIntervention.id,
+            ultimaIntervencao:
+              finalMaintenance?.interventions?.[finalInterventions - 1]?.id,
+          });
+
+          if (finalInterventions === 0) {
+            setError("ERRO: A intervenção não foi guardada! Tente novamente.");
+            return;
+          }
+        }
+
+        console.log("🎉 INTERVENÇÃO GUARDADA COM SUCESSO!");
+        navigate(`/maintenance/${maintenance.id}`);
+      }, 500);
     } catch (err) {
       console.error("❌ Erro ao guardar intervenção:", err);
       console.error(
