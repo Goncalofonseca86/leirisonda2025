@@ -403,6 +403,12 @@ export class FirebaseService {
     maintenanceId: string,
     updates: Partial<PoolMaintenance>,
   ): Promise<void> {
+    console.log("🔄 updateMaintenance called:", {
+      maintenanceId,
+      interventionsCount: updates.interventions?.length || 0,
+      firebaseAvailable: this.isFirebaseAvailable,
+    });
+
     if (!this.isFirebaseAvailable) {
       return this.updateLocalMaintenance(maintenanceId, updates);
     }
@@ -413,7 +419,10 @@ export class FirebaseService {
         ...updates,
         updatedAt: serverTimestamp(),
       });
-      console.log("🔥 Maintenance updated in Firebase:", maintenanceId);
+      console.log("🔥 Maintenance updated in Firebase:", {
+        maintenanceId,
+        interventionsUpdated: updates.interventions?.length || 0,
+      });
     } catch (error) {
       console.error(
         "Error updating maintenance in Firebase, falling back to local:",
