@@ -11,7 +11,21 @@ export interface NotificationStatus {
 }
 
 export function useNotifications() {
-  const { user } = useAuth();
+  let user = null;
+  try {
+    const authContext = useAuth();
+    if (authContext) {
+      user = authContext.user;
+    }
+  } catch (error) {
+    console.error("❌ Erro no useNotifications ao acessar auth:", error);
+    if (error.message?.includes("must be used within")) {
+      console.error("💥 ERRO CRÍTICO: useNotifications usado fora do contexto");
+      throw new Error(
+        "Notifications context error - component may need remounting",
+      );
+    }
+  }
   const [status, setStatus] = useState<NotificationStatus>({
     isSupported: false,
     isEnabled: false,
