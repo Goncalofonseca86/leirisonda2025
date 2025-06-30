@@ -145,12 +145,13 @@ const initializeApp = () => {
       throw new Error("React or ReactDOM not available");
     }
 
-    // Clear any previous content
-    rootElement.innerHTML = "";
-
     // Verificar se já existe um root (para HMR)
     let root;
     if (!(window as any).__react_root__) {
+      // Só limpar se não houver root React existente
+      if (rootElement.children.length > 0) {
+        rootElement.innerHTML = "";
+      }
       root = ReactDOM.createRoot(rootElement);
       (window as any).__react_root__ = root;
       console.log("✅ Novo root criado");
