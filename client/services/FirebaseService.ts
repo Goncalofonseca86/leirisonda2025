@@ -36,9 +36,6 @@ export class FirebaseService {
         db !== null && db !== undefined && typeof db === "object";
       if (this.isFirebaseAvailable) {
         console.log("🔥 FirebaseService running with Firebase sync");
-
-        // Setup global error handler for Firebase 400 errors
-        this.setupGlobalErrorHandler();
       } else {
         console.log("📱 FirebaseService running in local-only mode");
       }
@@ -47,37 +44,6 @@ export class FirebaseService {
       this.isFirebaseAvailable = false;
     }
   }
-
-  // Setup global error handler for Firebase errors
-  private setupGlobalErrorHandler(): void {
-    window.addEventListener("unhandledrejection", (event) => {
-      if (event.reason && typeof event.reason === "object") {
-        const error = event.reason;
-
-        // Handle Firebase auth errors (400, Unknown SID, etc.)
-        if (
-          error.code &&
-          (error.code.includes("auth/") ||
-            error.message?.includes("Unknown SID") ||
-            error.message?.includes("400"))
-        ) {
-          console.warn(
-            "🔄 Firebase auth error detected, cleaning up session:",
-            error,
-          );
-
-          // Clean up corrupted auth state
-          localStorage.removeItem("leirisonda_user");
-
-          // Reload page to restart clean
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
-
-          event.preventDefault(); // Prevent the error from propagating
-        }
-      }
-    });
   }
 
   // Users Collection
