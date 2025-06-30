@@ -136,6 +136,7 @@ export function Dashboard() {
   const [recentWorks, setRecentWorks] = useState<Work[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<Work[]>([]);
+  const [debugInfo, setDebugInfo] = useState<any>({});
 
   const navigateToWorks = (status?: string) => {
     try {
