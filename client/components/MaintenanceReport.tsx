@@ -374,7 +374,7 @@ export function MaintenanceReport({
       ${
         intervention.photos && intervention.photos.length > 0
           ? `
-      <div class="section-title">Fotografias da Intervenção (${intervention.photos.length} foto${intervention.photos.length > 1 ? 's' : ''})</div>
+      <div class="section-title">Fotografias da Intervenção (${intervention.photos.length} foto${intervention.photos.length > 1 ? "s" : ""})</div>
       <div class="section-content">
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin: 20px 0;">
           ${intervention.photos
@@ -393,15 +393,19 @@ export function MaintenanceReport({
                   📷 Foto não disponível
                 </div>
               </div>
-              ${photo.description ? `
+              ${
+                photo.description
+                  ? `
                 <div style="font-size: 11px; color: #4b5563; font-weight: 500; line-height: 1.3; max-width: 180px; margin: 0 auto;">
                   ${photo.description}
                 </div>
-              ` : `
+              `
+                  : `
                 <div style="font-size: 10px; color: #9ca3af;">
                   Foto ${index + 1}
                 </div>
-              `}
+              `
+              }
             </div>
           `,
             )
@@ -409,7 +413,7 @@ export function MaintenanceReport({
         </div>
         <div style="margin-top: 15px; padding: 10px; background: #f0f9ff; border-left: 4px solid #0ea5e9; border-radius: 4px;">
           <div style="font-size: 12px; color: #0c4a6e;">
-            <strong>📸 Total de fotografias:</strong> ${intervention.photos.length} imagem${intervention.photos.length > 1 ? 'ns' : ''} da intervenção
+            <strong>📸 Total de fotografias:</strong> ${intervention.photos.length} imagem${intervention.photos.length > 1 ? "ns" : ""} da intervenção
           </div>
         </div>
       </div>
@@ -509,14 +513,18 @@ export function MaintenanceReport({
       </div>
 
       <!-- Pool Photos -->
-      ${maintenance.photos && maintenance.photos.length > 0 ? `
+      ${
+        maintenance.photos && maintenance.photos.length > 0
+          ? `
       <div class="section">
         <div class="section-header">
-          <div class="section-title">📷 Fotografias da Piscina (${maintenance.photos.length} foto${maintenance.photos.length > 1 ? 's' : ''})</div>
+          <div class="section-title">📷 Fotografias da Piscina (${maintenance.photos.length} foto${maintenance.photos.length > 1 ? "s" : ""})</div>
         </div>
         <div class="section-content">
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin: 20px 0;">
-            ${maintenance.photos.map((photo, index) => `
+            ${maintenance.photos
+              .map(
+                (photo, index) => `
               <div style="text-align: center; page-break-inside: avoid;">
                 <div style="position: relative; margin-bottom: 8px;">
                   <img
@@ -530,21 +538,21 @@ export function MaintenanceReport({
                     📷 Foto não disponível
                   </div>
                 </div>
-                ${photo.description ? `
+                ${
+                  photo.description
+                    ? `
                   <div style="font-size: 11px; color: #4b5563; font-weight: 500; line-height: 1.3; max-width: 180px; margin: 0 auto;">
                     ${photo.description}
                   </div>
-                ` : `
+                `
+                    : `
                   <div style="font-size: 10px; color: #9ca3af;">
                     Foto ${index + 1}
                   </div>
-                `}
+                `
+                }
               </div>
-            `).join("")}
-          </div>
-        </div>
-      </div>
-      ` : ""}
+            `,
               )
               .join("")}
           </div>
