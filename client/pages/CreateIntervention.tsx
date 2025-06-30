@@ -309,7 +309,8 @@ export function CreateIntervention() {
         currentInterventions.length,
       );
 
-      navigate(`/maintenance/${maintenance.id}`);
+      // Force page reload to ensure fresh data
+      window.location.href = `/maintenance/${maintenance.id}`;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro desconhecido");
     } finally {
