@@ -76,7 +76,7 @@ export function PoolMaintenancePage() {
   const loadMaintenances = () => {
     try {
       // First check if we already have maintenances loaded
-      if (maintenances.length > 0) {
+      if (maintenances && maintenances.length > 0) {
         console.log("Maintenances already loaded, skipping");
         return;
       }
