@@ -251,6 +251,18 @@ export function WorkDetail() {
     );
   }
 
+  // Safety checks for required fields to prevent crashes
+  const safeWork = {
+    ...work,
+    clientName: work.clientName || "Cliente não especificado",
+    workSheetNumber: (work as any).workSheetNumber || work.id,
+    type: work.type || "geral",
+    status: work.status || "pendente",
+    address: (work as any).address || "Endereço não especificado",
+    phone: (work as any).phone || "Telefone não especificado",
+    description: work.description || "Sem descrição",
+  };
+
   const statusInfo = getStatusInfo(safeWork.status);
   const StatusIcon = statusInfo.icon;
 
