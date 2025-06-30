@@ -19,8 +19,6 @@ import {
   MapPin,
   RefreshCw,
   Bell,
-  Bug,
-  Trash2,
 } from "lucide-react";
 import { Work, DashboardStats } from "@shared/types";
 import { useAuthFixed as useAuth } from "@/components/AuthProviderFixed";
@@ -29,44 +27,28 @@ import { useFirebaseSync } from "@/hooks/use-firebase-sync";
 import { useNotifications } from "@/hooks/use-notifications";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
-import { emergencyDataCleanup } from "@/utils/emergency-fix";
 
 export function Dashboard() {
   console.log("🏠 Dashboard component iniciando...");
 
-  // Functions for debugging and cleanup
-  const cleanupDuplicateData = () => {
-    console.log("🧹 Limpando dados duplicados...");
+  // Automatic cleanup on load (silent)
+  React.useEffect(() => {
+    // Silent cleanup of duplicate data
     const duplicateKeys = ["works", "pool_maintenances", "users", "messages"];
+    let needsCleanup = false;
+
     duplicateKeys.forEach((key) => {
       if (localStorage.getItem(key)) {
-        console.log(`🗑️ Removendo chave duplicada: ${key}`);
+        console.log(`🧹 Auto-removing duplicate key: ${key}`);
         localStorage.removeItem(key);
+        needsCleanup = true;
       }
     });
-    window.location.reload();
-  };
 
-  const debugWorks = () => {
-    console.log("🔍 DEBUG - Estado das obras:");
-    console.log("Works do hook:", works?.length || 0);
-    console.log(
-      "LocalStorage leirisonda_works:",
-      localStorage.getItem("leirisonda_works")
-        ? JSON.parse(localStorage.getItem("leirisonda_works")!).length
-        : 0,
-    );
-
-    if (works && works.length > 0) {
-      console.table(
-        works.map((w) => ({
-          id: w.id,
-          cliente: w.clientName,
-          status: w.status,
-        })),
-      );
+    if (needsCleanup) {
+      console.log("✅ Automatic cleanup completed");
     }
-  };
+  }, []);
 
   // PROTEÇÃO MÁXIMA: Try-catch para contextos com fallbacks robustos
   let user,
