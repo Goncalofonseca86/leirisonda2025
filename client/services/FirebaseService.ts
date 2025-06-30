@@ -1035,15 +1035,9 @@ export class FirebaseService {
           sessionStorage.setItem("temp_works", JSON.stringify(uniqueWorks));
           localStorage.setItem("works_metadata", JSON.stringify(storageData));
 
-          // Dispará evento customizado para notificar outras abas/janelas
+          // Simple sync logging without notification events
           try {
-            window.dispatchEvent(
-              new CustomEvent("leirisonda_works_updated", {
-                detail: { works: uniqueWorks, timestamp: currentTime },
-              }),
-            );
-
-            // Cross-device notification via localStorage
+            // Cross-device sync via localStorage (no notification events)
             localStorage.setItem(
               "leirisonda_last_update",
               JSON.stringify({
@@ -1053,18 +1047,8 @@ export class FirebaseService {
                 device: navigator.userAgent.substring(0, 50),
               }),
             );
-
-            // Trigger sync notification across devices
-            window.dispatchEvent(
-              new CustomEvent("leirisonda_sync_trigger", {
-                detail: {
-                  source: "firebase_listener",
-                  works: uniqueWorks.length,
-                },
-              }),
-            );
           } catch (e) {
-            console.log("Não foi possível disparar evento customizado");
+            console.log("Storage sync failed");
           }
 
           // Trigger callback with consolidated data
