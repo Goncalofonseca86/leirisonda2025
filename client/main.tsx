@@ -1,243 +1,203 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./global.css";
 
-// Página de teste simples
-function SimpleLogin() {
-  const [email, setEmail] = React.useState("gongonsilva@gmail.com");
-  const [password, setPassword] = React.useState("19867gsf");
-  const [message, setMessage] = React.useState("");
+// Components
+import { ErrorBoundary } from "./components/ErrorBoundary";
+import { AuthProviderFixed } from "./components/AuthProviderFixed";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { Layout } from "./components/Layout";
 
-  const handleLogin = async () => {
-    console.log("🔐 Tentando login simples...");
+// Pages
+import { Login } from "./pages/Login";
+import { Dashboard } from "./pages/Dashboard";
+import { WorksList } from "./pages/WorksList";
+import { WorkDetail } from "./pages/WorkDetail";
+import { CreateWork } from "./pages/CreateWork";
+import { EditWork } from "./pages/EditWork";
+import { CreateUser } from "./pages/CreateUser";
+import { UsersList } from "./pages/UsersList";
+import { EditUser } from "./pages/EditUser";
+import { UserDataManager } from "./pages/UserDataManager";
+import { PoolMaintenancePage } from "./pages/PoolMaintenance";
+import { MaintenanceList } from "./pages/MaintenanceList";
+import { CreateMaintenance } from "./pages/CreateMaintenance";
+import { MaintenanceDetail } from "./pages/MaintenanceDetail";
+import { CreateIntervention } from "./pages/CreateIntervention";
+import { NewMaintenanceSelector } from "./pages/NewMaintenanceSelector";
+import { MobileDeploy } from "./pages/MobileDeploy";
+import { SystemStatus } from "./pages/SystemStatus";
+import { UserSyncDiagnostic } from "./pages/UserSyncDiagnostic";
+import { DebugWorks } from "./pages/DebugWorks";
+import { SyncMonitor } from "./pages/SyncMonitor";
+import SyncDiagnostic from "./pages/SyncDiagnostic";
+import { NotFound } from "./pages/NotFound";
+import { EmergencyDiagnostic } from "./pages/EmergencyDiagnostic";
+import { NotificationSettingsPage } from "./pages/NotificationSettingsPage";
+import NotificationTest from "./pages/NotificationTest";
+import { NotificationDiagnostic } from "./pages/NotificationDiagnostic";
 
-    try {
-      // Simular login direto
-      const testUser = {
-        id: "admin_goncalo",
-        email: "gongonsilva@gmail.com",
-        name: "Gonçalo Fonseca",
-        role: "admin",
-        permissions: {
-          canViewWorks: true,
-          canCreateWorks: true,
-          canEditWorks: true,
-          canDeleteWorks: true,
-          canViewMaintenance: true,
-          canCreateMaintenance: true,
-          canEditMaintenance: true,
-          canDeleteMaintenance: true,
-          canViewUsers: true,
-          canCreateUsers: true,
-          canEditUsers: true,
-          canDeleteUsers: true,
-          canViewReports: true,
-          canExportData: true,
-          canViewDashboard: true,
-          canViewStats: true,
-        },
-        createdAt: new Date().toISOString(),
-      };
-
-      localStorage.setItem("leirisonda_user", JSON.stringify(testUser));
-      setMessage("✅ Login realizado com sucesso!");
-
-      // Redirecionar para dashboard
-      setTimeout(() => {
-        window.location.href = "/dashboard-simple";
-      }, 1000);
-    } catch (error) {
-      console.error("❌ Erro no login:", error);
-      setMessage("❌ Erro no login: " + error.message);
-    }
-  };
+function App() {
+  console.log("🚀 App component iniciando com AuthProvider corrigido...");
 
   return (
-    <div className="min-h-screen bg-blue-500 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-4">🧪 Login Simples</h1>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <AuthProviderFixed>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/system-status" element={<SystemStatus />} />
+            <Route
+              path="/emergency-diagnostic"
+              element={<EmergencyDiagnostic />}
+            />
 
-        <div className="space-y-4">
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-2 border rounded"
-            placeholder="Email"
-          />
-
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-2 border rounded"
-            placeholder="Password"
-          />
-
-          <button
-            onClick={handleLogin}
-            className="w-full p-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            Login Direto (Teste)
-          </button>
-
-          {message && (
-            <div
-              className={`p-2 rounded ${message.includes("✅") ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
+            {/* Protected routes */}
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Layout />
+                </ProtectedRoute>
+              }
             >
-              {message}
-            </div>
-          )}
+              <Route index element={<Navigate to="/dashboard" replace />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="works" element={<WorksList />} />
+              <Route path="works/:id" element={<WorkDetail />} />
+              <Route path="create-work" element={<CreateWork />} />
+              <Route path="edit-work/:id" element={<EditWork />} />
+              <Route path="users" element={<UsersList />} />
+              <Route path="create-user" element={<CreateUser />} />
+              <Route path="edit-user/:id" element={<EditUser />} />
+              <Route path="user-data" element={<UserDataManager />} />
+              <Route
+                path="user-sync-diagnostic"
+                element={<UserSyncDiagnostic />}
+              />
+              <Route path="debug-works" element={<DebugWorks />} />
+              <Route path="sync-monitor" element={<SyncMonitor />} />
+              <Route path="sync-diagnostic" element={<SyncDiagnostic />} />
+              <Route path="pool-maintenance" element={<MaintenanceList />} />
+              <Route
+                path="create-maintenance"
+                element={<CreateMaintenance />}
+              />
+              <Route path="maintenance/:id" element={<MaintenanceDetail />} />
+              <Route
+                path="maintenance/:maintenanceId/new-intervention"
+                element={<CreateIntervention />}
+              />
+              <Route
+                path="maintenance/new-general"
+                element={<NewMaintenanceSelector />}
+              />
+              <Route path="mobile-deploy" element={<MobileDeploy />} />
+              <Route
+                path="old-pool-maintenance"
+                element={<PoolMaintenancePage />}
+              />
+              <Route
+                path="notification-settings"
+                element={<NotificationSettingsPage />}
+              />
+              <Route path="notification-test" element={<NotificationTest />} />
+              <Route
+                path="notification-diagnostic"
+                element={<NotificationDiagnostic />}
+              />
+            </Route>
 
-          <div className="text-sm text-gray-600">
-            <p>
-              <strong>Teste:</strong> Este é um login ultra-simplificado
-            </p>
-            <p>
-              <strong>Objetivo:</strong> Verificar se o problema é no
-              AuthProvider
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+            {/* Catch-all route */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthProviderFixed>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 
-function SimpleDashboard() {
-  const [userInfo, setUserInfo] = React.useState<any>(null);
+// Inicialização com proteção contra múltiplos roots
+const initializeApp = () => {
+  try {
+    console.log("🚀 Starting Leirisonda com AuthProvider corrigido...");
 
-  React.useEffect(() => {
-    try {
-      const stored = localStorage.getItem("leirisonda_user");
-      if (stored) {
-        const user = JSON.parse(stored);
-        setUserInfo(user);
-        console.log("✅ Usuário carregado no dashboard:", user);
-      } else {
-        console.log("❌ Nenhum usuário no localStorage");
-      }
-    } catch (error) {
-      console.error("❌ Erro ao carregar usuário:", error);
+    // Verify DOM is ready
+    if (document.readyState === "loading") {
+      console.log("⏳ DOM still loading, waiting...");
+      document.addEventListener("DOMContentLoaded", initializeApp);
+      return;
     }
-  }, []);
 
-  if (!userInfo) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">❌ Não autenticado</h1>
-          <a href="/login-simple" className="text-blue-600 hover:underline">
-            Ir para Login
-          </a>
-        </div>
-      </div>
+    const rootElement = document.getElementById("root");
+    if (!rootElement) {
+      throw new Error("Root element not found");
+    }
+
+    // Check for React availability
+    if (!React || !ReactDOM) {
+      throw new Error("React or ReactDOM not available");
+    }
+
+    // Clear any previous content
+    rootElement.innerHTML = "";
+
+    // Verificar se já existe um root (para HMR)
+    let root;
+    if (!(window as any).__react_root__) {
+      root = ReactDOM.createRoot(rootElement);
+      (window as any).__react_root__ = root;
+      console.log("✅ Novo root criado");
+    } else {
+      root = (window as any).__react_root__;
+      console.log("✅ Usando root existente (HMR)");
+    }
+
+    root.render(
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>,
     );
+
+    console.log("✅ Leirisonda carregado com AuthProvider corrigido!");
+  } catch (error) {
+    console.error("❌ Error loading app:", error);
+    showFallbackError(error);
+  }
+};
+
+const showFallbackError = (error: any) => {
+  console.error("💥 Showing fallback error interface");
+
+  const rootElement = document.getElementById("root");
+  if (!rootElement) {
+    document.body.innerHTML = createErrorHTML(error);
+    return;
   }
 
-  return (
-    <div className="min-h-screen bg-gray-100 p-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg p-6">
-          <h1 className="text-3xl font-bold mb-6">
-            ✅ Dashboard Simples Funcionando!
-          </h1>
+  rootElement.innerHTML = createErrorHTML(error);
+};
 
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-            <h2 className="text-lg font-semibold text-green-800 mb-2">
-              🎉 Sucesso! O login funcionou!
-            </h2>
-            <p className="text-green-700">
-              Conseguimos fazer login e chegar ao dashboard sem erros de
-              contexto. Isto significa que o problema está no AuthProvider
-              complexo original.
-            </p>
-          </div>
-
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-            <h3 className="font-semibold mb-2">👤 Informações do Usuário:</h3>
-            <pre className="text-sm bg-blue-100 p-2 rounded overflow-auto">
-              {JSON.stringify(userInfo, null, 2)}
-            </pre>
-          </div>
-
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-            <h3 className="font-semibold mb-2">🔍 Próximos Passos:</h3>
-            <ol className="list-decimal list-inside text-sm space-y-1">
-              <li>Este teste prova que React/Router funcionam</li>
-              <li>O problema está no AuthProvider complexo</li>
-              <li>Vamos voltar ao AuthProvider original e corrigir</li>
-              <li>Focar na inicialização e hooks do useAuth</li>
-            </ol>
-          </div>
-
-          <div className="flex gap-4">
-            <button
-              onClick={() => {
-                localStorage.removeItem("leirisonda_user");
-                window.location.href = "/login-simple";
-              }}
-              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-            >
-              Logout
-            </button>
-
-            <button
-              onClick={() => {
-                alert(
-                  "Agora vamos voltar ao sistema original e corrigir o AuthProvider!",
-                );
-              }}
-              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-            >
-              Teste Concluído
-            </button>
-          </div>
-        </div>
+const createErrorHTML = (error: any) => {
+  const errorMessage = error instanceof Error ? error.message : String(error);
+  return `
+    <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background-color: #f9fafb; padding: 1rem; font-family: system-ui, -apple-system, sans-serif;">
+      <div style="max-width: 32rem; width: 100%; background: white; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); padding: 2rem; text-align: center;">
+        <h1 style="color: #dc2626; margin-bottom: 1rem;">Erro de Inicialização</h1>
+        <p style="color: #6b7280; margin-bottom: 1.5rem;">${errorMessage}</p>
+        <button onclick="window.location.reload()" style="background: #3b82f6; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; cursor: pointer;">
+          Recarregar Página
+        </button>
       </div>
     </div>
-  );
-}
+  `;
+};
 
-function SimpleApp() {
-  console.log("🚀 SimpleApp iniciando...");
-
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login-simple" element={<SimpleLogin />} />
-        <Route path="/dashboard-simple" element={<SimpleDashboard />} />
-        <Route path="/login" element={<SimpleLogin />} />
-        <Route path="/dashboard" element={<SimpleDashboard />} />
-        <Route path="/" element={<SimpleLogin />} />
-        <Route path="*" element={<SimpleLogin />} />
-      </Routes>
-    </BrowserRouter>
-  );
-}
-
-// Inicialização simples com proteção contra múltiplos roots
-const rootElement = document.getElementById("root");
-if (rootElement) {
-  console.log("🏗️ Inicializando app simples...");
-
-  // Limpar conteúdo existente para evitar conflitos
-  rootElement.innerHTML = "";
-
-  // Verificar se já existe um root (para HMR)
-  let root;
-  if (!(window as any).__react_root__) {
-    root = ReactDOM.createRoot(rootElement);
-    (window as any).__react_root__ = root;
-    console.log("✅ Novo root criado");
-  } else {
-    root = (window as any).__react_root__;
-    console.log("✅ Usando root existente (HMR)");
-  }
-
-  root.render(<SimpleApp />);
-  console.log("✅ App simples inicializado!");
+// Handle different loading states
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initializeApp);
 } else {
-  console.error("❌ Root element não encontrado!");
+  initializeApp();
 }
