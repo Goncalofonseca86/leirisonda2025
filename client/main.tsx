@@ -14,7 +14,7 @@ try {
 
 // Components
 import { ErrorBoundary } from "./components/ErrorBoundary";
-import { AuthProvider } from "./components/AuthProvider_simple";
+import { AuthProvider } from "./components/AuthProvider";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { Layout } from "./components/Layout";
 
