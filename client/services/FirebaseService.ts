@@ -44,7 +44,6 @@ export class FirebaseService {
       this.isFirebaseAvailable = false;
     }
   }
-  }
 
   // Users Collection
   async getUsers(): Promise<User[]> {
