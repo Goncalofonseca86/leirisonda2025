@@ -232,11 +232,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         setIsLoading(true);
         console.log("🔐 Local login attempt for:", email);
-
-            // Get user data from Firestore
-            const userData = await getUserFromFirestore(firebaseUser);
-
-            if (userData) {
               setUser(userData);
               localStorage.setItem("leirisonda_user", JSON.stringify(userData));
 
