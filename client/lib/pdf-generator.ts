@@ -23,54 +23,78 @@ export class PDFGenerator {
     );
   }
 
-  // Wait for images to load completely
+  // Convert image URL to base64 data URI
+  private static async imageToBase64(url: string): Promise<string> {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+
+      return new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    } catch (error) {
+      console.warn("Failed to convert image to base64:", url, error);
+      throw error;
+    }
+  }
+
+  // Wait for images to load and convert to base64
   private static async waitForImages(container: HTMLElement): Promise<void> {
     const images = container.querySelectorAll("img");
-    console.log(`📷 Aguardando carregamento de ${images.length} imagens...`);
+    console.log(`📷 Processando ${images.length} imagens para PDF...`);
 
-    const imagePromises = Array.from(images).map((img, index) => {
-      if (img.complete && img.naturalWidth > 0) {
+    const imagePromises = Array.from(images).map(async (img, index) => {
+      const originalSrc = img.src;
+
+      try {
+        console.log(`🔄 Convertendo imagem ${index + 1} para base64...`);
+
+        // Convert image to base64
+        const base64 = await this.imageToBase64(originalSrc);
+
+        // Replace src with base64 data URI
+        img.src = base64;
+
         console.log(
-          `✅ Imagem ${index + 1} já carregada:`,
-          img.src.substring(0, 50) + "...",
+          `✅ Imagem ${index + 1} convertida para base64 com sucesso`,
         );
+
+        // Wait for the base64 image to load
+        return new Promise<void>((resolve) => {
+          if (img.complete) {
+            resolve();
+            return;
+          }
+
+          const timeout = setTimeout(() => {
+            console.warn(`⏰ Timeout na imagem base64 ${index + 1}`);
+            resolve();
+          }, 3000);
+
+          img.onload = () => {
+            clearTimeout(timeout);
+            resolve();
+          };
+
+          img.onerror = () => {
+            clearTimeout(timeout);
+            console.warn(`❌ Erro ao carregar imagem base64 ${index + 1}`);
+            img.style.display = "none";
+            resolve();
+          };
+        });
+      } catch (error) {
+        console.warn(
+          `❌ Falha ao processar imagem ${index + 1}:`,
+          originalSrc.substring(0, 50) + "...",
+          error,
+        );
+        img.style.display = "none";
         return Promise.resolve();
       }
-
-      return new Promise<void>((resolve) => {
-        const timeout = setTimeout(() => {
-          console.warn(
-            `⏰ Timeout na imagem ${index + 1}:`,
-            img.src.substring(0, 50) + "...",
-          );
-          // Try to set a fallback or continue without the image
-          img.style.display = "none";
-          resolve();
-        }, 8000); // Increased timeout to 8 seconds
-
-        img.onload = () => {
-          clearTimeout(timeout);
-          console.log(`✅ Imagem ${index + 1} carregada com sucesso`);
-          resolve();
-        };
-
-        img.onerror = () => {
-          clearTimeout(timeout);
-          console.warn(
-            `❌ Erro ao carregar imagem ${index + 1}:`,
-            img.src.substring(0, 50) + "...",
-          );
-          img.style.display = "none";
-          resolve();
-        };
-
-        // Force reload if src is set but not loading
-        if (img.src && !img.complete) {
-          const originalSrc = img.src;
-          img.src = "";
-          img.src = originalSrc;
-        }
-      });
     });
 
     await Promise.all(imagePromises);
