@@ -26,17 +26,39 @@ export class PDFGenerator {
   // Convert image URL to base64 data URI
   private static async imageToBase64(url: string): Promise<string> {
     try {
+      // If already a data URI, return as-is
+      if (url.startsWith("data:")) {
+        console.log("Image is already base64 data URI");
+        return url;
+      }
+
+      // For blob URLs or regular URLs
       const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
       const blob = await response.blob();
 
       return new Promise<string>((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = reject;
+        reader.onload = () => {
+          const result = reader.result as string;
+          console.log(`✅ Converted to base64: ${result.substring(0, 50)}...`);
+          resolve(result);
+        };
+        reader.onerror = () => {
+          console.error("FileReader error");
+          reject(new Error("Failed to read blob as data URL"));
+        };
         reader.readAsDataURL(blob);
       });
     } catch (error) {
-      console.warn("Failed to convert image to base64:", url, error);
+      console.warn(
+        "Failed to convert image to base64:",
+        url.substring(0, 100),
+        error,
+      );
       throw error;
     }
   }
