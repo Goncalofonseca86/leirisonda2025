@@ -32,7 +32,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useFirebaseSync } from "@/hooks/use-firebase-sync";
-import { useAuth } from "@/components/AuthProvider";
+import { useAuthFixed as useAuth } from "@/components/AuthProviderFixed";
 
 export function WorkDetail() {
   const { id } = useParams<{ id: string }>();
