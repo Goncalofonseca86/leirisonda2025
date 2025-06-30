@@ -436,105 +436,80 @@ export class FirebaseService {
     maintenanceId: string,
     updates: Partial<PoolMaintenance>,
   ): void {
+    console.log("🚀 FORÇANDO SALVAMENTO DIRETO - updateLocalMaintenance");
+
     try {
-      const maintenances = this.getLocalMaintenances();
+      // Get current data
+      const stored = localStorage.getItem("pool_maintenances");
+      let maintenances: PoolMaintenance[] = [];
+
+      if (stored) {
+        maintenances = JSON.parse(stored);
+      }
+
+      console.log("📊 Estado atual:", {
+        maintenanceId,
+        totalMaintenances: maintenances.length,
+        targetMaintenance:
+          maintenances.find((m) => m.id === maintenanceId)?.poolName ||
+          "NÃO ENCONTRADA",
+      });
+
+      // Find and update maintenance
       const maintenanceIndex = maintenances.findIndex(
         (m) => m.id === maintenanceId,
       );
 
-      console.log("🔄 updateLocalMaintenance:", {
+      if (maintenanceIndex === -1) {
+        console.error("❌ MANUTENÇÃO NÃO ENCONTRADA:", maintenanceId);
+        return;
+      }
+
+      const before = maintenances[maintenanceIndex].interventions?.length || 0;
+
+      // DIRECT REPLACEMENT - No spread operator issues
+      maintenances[maintenanceIndex] = {
+        ...maintenances[maintenanceIndex],
+        ...updates,
+        updatedAt: new Date().toISOString(),
+      };
+
+      const after = maintenances[maintenanceIndex].interventions?.length || 0;
+
+      console.log("💾 SALVANDO DADOS:", {
         maintenanceId,
-        foundIndex: maintenanceIndex,
-        totalMaintenances: maintenances.length,
-        interventionsInUpdate: updates.interventions?.length || 0,
-        existingInterventions:
-          maintenances[maintenanceIndex]?.interventions?.length || 0,
+        interventionsBefore: before,
+        interventionsAfter: after,
+        newInterventions: after - before,
       });
 
-      if (maintenanceIndex !== -1) {
-        const previousInterventions =
-          maintenances[maintenanceIndex].interventions?.length || 0;
+      // FORCE SAVE
+      const dataString = JSON.stringify(maintenances, null, 2);
+      localStorage.setItem("pool_maintenances", dataString);
 
-        // Create backup before updating
-        const timestamp = new Date().toISOString();
-        const backupKey = `pool_maintenances_backup_${timestamp.split("T")[0]}`;
-        localStorage.setItem(backupKey, JSON.stringify(maintenances));
+      // IMMEDIATE VERIFICATION
+      const immediate = localStorage.getItem("pool_maintenances");
+      if (immediate) {
+        const check = JSON.parse(immediate);
+        const verified = check.find((m: any) => m.id === maintenanceId);
+        const finalCount = verified?.interventions?.length || 0;
 
-        maintenances[maintenanceIndex] = {
-          ...maintenances[maintenanceIndex],
-          ...updates,
-          updatedAt: new Date().toISOString(),
-        };
-
-        const newInterventions =
-          maintenances[maintenanceIndex].interventions?.length || 0;
-
-        // Primary save
-        localStorage.setItem("pool_maintenances", JSON.stringify(maintenances));
-
-        // Secondary backup save
-        localStorage.setItem(
-          "pool_maintenances_backup",
-          JSON.stringify(maintenances),
-        );
-
-        // Tertiary save with timestamp
-        localStorage.setItem(
-          `pool_maintenances_${timestamp}`,
-          JSON.stringify(maintenances),
-        );
-
-        // Verify the save worked
-        setTimeout(() => {
-          const verification = localStorage.getItem("pool_maintenances");
-          if (verification) {
-            const parsed = JSON.parse(verification);
-            const verifiedMaintenance = parsed.find(
-              (m: any) => m.id === maintenanceId,
-            );
-            const verifiedInterventions =
-              verifiedMaintenance?.interventions?.length || 0;
-
-            console.log("✅ Verificação de salvamento:", {
-              maintenanceId,
-              interventionsGuardadas: verifiedInterventions,
-              salvamentoCorreto: verifiedInterventions === newInterventions,
-            });
-
-            if (verifiedInterventions !== newInterventions) {
-              console.error("❌ FALHA NA VERIFICAÇÃO! Tentando recuperar...");
-              // Try to restore from backup
-              const backup = localStorage.getItem("pool_maintenances_backup");
-              if (backup) {
-                localStorage.setItem("pool_maintenances", backup);
-                console.log("🔄 Dados restaurados do backup");
-              }
-            }
-          }
-        }, 100);
-
-        console.log("📱 Maintenance updated locally with triple backup:", {
-          maintenanceId,
-          previousInterventions,
-          newInterventions,
-          interventionsSaved: newInterventions > previousInterventions,
+        console.log("✅ VERIFICAÇÃO IMEDIATA:", {
+          salvou: !!immediate,
+          interventionsVerificadas: finalCount,
+          sucessoCompleto: finalCount === after,
         });
-      } else {
-        console.error("❌ Maintenance not found for update:", maintenanceId);
-      }
-    } catch (error) {
-      console.error("Error updating local maintenance:", error);
 
-      // Try to restore from backup on error
-      try {
-        const backup = localStorage.getItem("pool_maintenances_backup");
-        if (backup) {
-          localStorage.setItem("pool_maintenances", backup);
-          console.log("🔄 Dados restaurados do backup após erro");
+        if (finalCount !== after) {
+          console.error("❌ FALHA CRÍTICA NO SALVAMENTO!");
+          throw new Error("Falha na verificação do salvamento");
         }
-      } catch (backupError) {
-        console.error("❌ Erro ao restaurar backup:", backupError);
       }
+
+      console.log("🎉 SALVAMENTO CONCLUÍDO COM SUCESSO!");
+    } catch (error) {
+      console.error("❌ ERRO CRÍTICO no updateLocalMaintenance:", error);
+      throw error; // Re-throw to handle upstream
     }
   }
 
