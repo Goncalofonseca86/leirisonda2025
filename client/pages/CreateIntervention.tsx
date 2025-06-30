@@ -309,6 +309,25 @@ export function CreateIntervention() {
         currentInterventions.length,
       );
 
+      // Verify data was saved to localStorage
+      setTimeout(() => {
+        const storedMaintenances = JSON.parse(
+          localStorage.getItem("pool_maintenances") || "[]",
+        );
+        const updatedStoredMaintenance = storedMaintenances.find(
+          (m: PoolMaintenance) => m.id === maintenance.id,
+        );
+        console.log("🔍 Verificação localStorage após salvamento:", {
+          maintenanceId: maintenance.id,
+          interventionsInStorage:
+            updatedStoredMaintenance?.interventions?.length || 0,
+          latestIntervention:
+            updatedStoredMaintenance?.interventions?.[
+              updatedStoredMaintenance.interventions.length - 1
+            ]?.id,
+        });
+      }, 100);
+
       // Force page reload to ensure fresh data
       window.location.href = `/maintenance/${maintenance.id}`;
     } catch (err) {
