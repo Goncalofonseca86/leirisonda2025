@@ -1,32 +1,11 @@
-import React, { useEffect, useState } from "react";
-import {
-  CheckCircle,
-  AlertCircle,
-  RefreshCw,
-  Wifi,
-  WifiOff,
-  Users,
-} from "lucide-react";
+import React from "react";
 import { useAuth } from "./AuthProvider";
 import { useFirebaseSync } from "@/hooks/use-firebase-sync";
-
-interface SyncEvent {
-  type: "sync_complete" | "sync_error" | "new_data" | "offline" | "online";
-  message: string;
-  timestamp: Date;
-  details?: any;
-}
+import { Wifi, WifiOff } from "lucide-react";
 
 export function SyncNotification() {
   const { user } = useAuth();
-  const { isOnline, isSyncing, lastSync, works, maintenances } =
-    useFirebaseSync();
-  const [notifications, setNotifications] = useState<SyncEvent[]>([]);
-  const [lastWorksCount, setLastWorksCount] = useState(works.length);
-  const [lastMaintenancesCount, setLastMaintenancesCount] = useState(
-    maintenances.length,
-  );
-  const [isVisible, setIsVisible] = useState(false);
+  const { isOnline, isSyncing } = useFirebaseSync();
 
   // Monitor changes in data count for sync notifications
   useEffect(() => {
