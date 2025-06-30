@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import * as ReactDOM from "react-dom/client";
 
 export function EmergencyDiagnostic() {
   const [diagnostics, setDiagnostics] = useState<any>({});
