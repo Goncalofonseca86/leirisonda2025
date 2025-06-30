@@ -227,6 +227,7 @@ export function CreateIntervention() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("🚀 handleSubmit iniciado - CreateIntervention");
     setError("");
     setIsSubmitting(true);
 
