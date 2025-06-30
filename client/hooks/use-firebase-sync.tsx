@@ -109,6 +109,38 @@ export function useFirebaseSync() {
     }
   }, []);
 
+  // Auto-backup system - runs every minute to prevent data loss
+  useEffect(() => {
+    const backupInterval = setInterval(() => {
+      try {
+        const maintenancesData = localStorage.getItem("pool_maintenances");
+        const worksData = localStorage.getItem("works");
+
+        if (maintenancesData) {
+          const timestamp = new Date().toISOString().split("T")[0];
+          localStorage.setItem(
+            `pool_maintenances_auto_backup_${timestamp}`,
+            maintenancesData,
+          );
+        }
+
+        if (worksData) {
+          const timestamp = new Date().toISOString().split("T")[0];
+          localStorage.setItem(`works_auto_backup_${timestamp}`, worksData);
+        }
+
+        console.log(
+          "💾 Auto-backup executado:",
+          new Date().toLocaleTimeString(),
+        );
+      } catch (error) {
+        console.error("❌ Erro no auto-backup:", error);
+      }
+    }, 60000); // Every minute
+
+    return () => clearInterval(backupInterval);
+  }, []);
+
   // Set up real-time listeners when user is authenticated
   useEffect(() => {
     if (!user) {
