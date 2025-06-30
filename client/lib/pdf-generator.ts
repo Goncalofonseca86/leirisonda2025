@@ -173,29 +173,33 @@ export class PDFGenerator {
       );
       await this.waitForImages(tempContainer);
 
-      // Mobile-optimized settings to prevent black PDF
+      // High-quality settings for crisp PDF
       const canvasOptions = {
-        scale: isMobile ? 0.75 : 1.5, // Very low scale for mobile
-        useCORS: false, // Disable CORS for mobile compatibility
-        allowTaint: true, // Allow tainted canvas
+        scale: isMobile ? 1.5 : 2.5, // Higher scale for better quality
+        useCORS: true,
+        allowTaint: false,
         backgroundColor: "#ffffff",
         logging: true,
         height: isMobile
-          ? Math.min(tempContainer.scrollHeight, 4000)
+          ? Math.min(tempContainer.scrollHeight, 6000)
           : tempContainer.scrollHeight,
         width: isMobile
-          ? Math.min(tempContainer.scrollWidth, 800)
+          ? Math.min(tempContainer.scrollWidth, 1200)
           : tempContainer.scrollWidth,
         removeContainer: false,
-        imageTimeout: isMobile ? 2000 : 5000, // Much shorter timeout on mobile
+        imageTimeout: isMobile ? 3000 : 8000,
+        dpi: 300, // High DPI for crisp text
         onclone: (clonedDoc: Document) => {
-          // Ensure styles are applied in cloned document
+          // Ensure high-quality rendering
           const clonedContainer = clonedDoc.body.querySelector("div");
           if (clonedContainer) {
             (clonedContainer as HTMLElement).style.background = "#ffffff";
             (clonedContainer as HTMLElement).style.color = "#000000";
             (clonedContainer as HTMLElement).style.width = "210mm";
             (clonedContainer as HTMLElement).style.overflow = "visible";
+            (clonedContainer as HTMLElement).style.fontFamily =
+              "'Helvetica Neue', Helvetica, Arial, sans-serif";
+            (clonedContainer as HTMLElement).style.fontSize = "14px";
           }
         },
       };
