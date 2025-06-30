@@ -284,14 +284,6 @@ export function CreateIntervention() {
         updatedAt: new Date().toISOString(),
       };
 
-      console.log("✅ Nova intervenção criada:", {
-        id: newIntervention.id,
-        maintenanceId: newIntervention.maintenanceId,
-        date: newIntervention.date,
-        technicians: newIntervention.technicians,
-        photos: newIntervention.photos.length,
-      });
-
       // Ensure interventions array exists and create deep copy
       const currentInterventions = Array.isArray(maintenance.interventions)
         ? [...maintenance.interventions]
@@ -307,15 +299,6 @@ export function CreateIntervention() {
         lastMaintenanceDate: formData.date,
         updatedAt: new Date().toISOString(),
       };
-
-      console.log("💾 Attempting to save intervention:", {
-        maintenanceId: maintenance.id,
-        interventionId: newIntervention.id,
-        totalInterventions: currentInterventions.length,
-        interventionDate: newIntervention.date,
-      });
-
-      console.log("🚀 INICIANDO SALVAMENTO DE INTERVENÇÃO");
 
       try {
         // Method 1: Try Firebase sync first
