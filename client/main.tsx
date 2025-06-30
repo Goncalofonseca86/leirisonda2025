@@ -39,6 +39,14 @@ import NotificationTest from "./pages/NotificationTest";
 import { NotificationDiagnostic } from "./pages/NotificationDiagnostic";
 
 function App() {
+  console.log("🚀 App component iniciando...");
+  console.log("📦 Componentes disponíveis:", {
+    ErrorBoundary: !!ErrorBoundary,
+    BrowserRouter: !!BrowserRouter,
+    AuthProvider: !!AuthProvider,
+    Routes: !!Routes,
+  });
+
   return (
     <ErrorBoundary>
       <BrowserRouter>
