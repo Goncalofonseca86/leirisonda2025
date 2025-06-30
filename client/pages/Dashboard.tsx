@@ -475,6 +475,49 @@ export function Dashboard() {
         </Link>
       </div>
 
+      {/* Botão de Teste de Notificações - Apenas para Gonçalo */}
+      {user && user.email === "gongonsilva@gmail.com" && (
+        <div className="mb-6">
+          <Card className="border-blue-200 bg-blue-50">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-semibold text-blue-900">
+                    🔔 Teste de Notificações (Admin)
+                  </h3>
+                  <p className="text-xs text-blue-700 mt-1">
+                    Verificar sistema de notificações entre dispositivos
+                  </p>
+                </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="border-blue-300 text-blue-700 hover:bg-blue-100"
+                  onClick={async () => {
+                    try {
+                      const { useNotifications } = await import(
+                        "@/hooks/use-notifications"
+                      );
+                      const { checkPendingWorks } = useNotifications();
+                      console.log("🧪 Testando verificação de notificações...");
+                      const pendingCount = await checkPendingWorks();
+                      alert(
+                        `Teste concluído! ${pendingCount} obras pendentes verificadas. Verifique o console para logs detalhados.`,
+                      );
+                    } catch (error) {
+                      console.error("❌ Erro no teste:", error);
+                      alert("Erro no teste. Verifique o console.");
+                    }
+                  }}
+                >
+                  🧪 Testar Notificações
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       {/* Obras Atribuídas */}
       {user &&
         (() => {
