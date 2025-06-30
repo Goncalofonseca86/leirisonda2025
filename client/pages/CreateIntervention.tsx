@@ -276,19 +276,37 @@ export function CreateIntervention() {
         updatedAt: new Date().toISOString(),
       };
 
+      // Ensure interventions array exists and create deep copy
+      const currentInterventions = Array.isArray(maintenance.interventions)
+        ? [...maintenance.interventions]
+        : [];
+
+      // Add new intervention to the array
+      currentInterventions.push(newIntervention);
+
       // Update maintenance with new intervention using Firebase sync
       const updatedMaintenance: PoolMaintenance = {
         ...maintenance,
-        interventions: [...maintenance.interventions, newIntervention],
+        interventions: currentInterventions,
         lastMaintenanceDate: formData.date,
         updatedAt: new Date().toISOString(),
       };
 
+      console.log("💾 Attempting to save intervention:", {
+        maintenanceId: maintenance.id,
+        interventionId: newIntervention.id,
+        totalInterventions: currentInterventions.length,
+        interventionDate: newIntervention.date,
+      });
+
       // Use Firebase sync to update maintenance with automatic sync
       await updateMaintenance(maintenance.id, updatedMaintenance);
+
       console.log(
         "✅ Intervenção criada e sincronizada automaticamente:",
         newIntervention.id,
+        "Total intervenções:",
+        currentInterventions.length,
       );
 
       navigate(`/maintenance/${maintenance.id}`);
