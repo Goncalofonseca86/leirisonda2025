@@ -16,6 +16,7 @@ import {
   FileText,
   AlertTriangle,
   CheckCircle,
+  RefreshCw,
 } from "lucide-react";
 import { Work } from "@shared/types";
 import { Button } from "@/components/ui/button";

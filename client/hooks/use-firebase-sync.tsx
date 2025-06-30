@@ -230,11 +230,10 @@ export function useFirebaseSync() {
         setLastSync(new Date());
         pendingChanges.current.clear();
 
-        // 8. Backup em múltiplas localizações
-        localStorage.setItem("works", JSON.stringify(latestWorks));
+        // 8. Backup em múltiplas localizações (sem duplicação)
         localStorage.setItem("leirisonda_works", JSON.stringify(latestWorks));
         localStorage.setItem(
-          "pool_maintenances",
+          "leirisonda_pool_maintenances",
           JSON.stringify(latestMaintenances),
         );
 
