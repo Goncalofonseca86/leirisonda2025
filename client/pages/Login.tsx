@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "@/components/AuthProvider";
+import { useAuthFixed as useAuth } from "@/components/AuthProviderFixed";
 
 export function Login() {
   const [email, setEmail] = useState("");
