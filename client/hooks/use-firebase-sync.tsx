@@ -19,6 +19,16 @@ export function useFirebaseSync() {
     });
   } catch (error) {
     console.error("❌ Erro no useFirebaseSync ao acessar auth:", error);
+
+    // Se for erro de contexto, pode ser sinal de problema mais grave
+    if (error.message?.includes("must be used within")) {
+      console.error("💥 ERRO CRÍTICO: useFirebaseSync usado fora do contexto");
+      // Retornar estado de erro para componente pai lidar
+      throw new Error(
+        "Firebase sync context error - component may need remounting",
+      );
+    }
+
     authData = { user: null };
   }
 
