@@ -15,6 +15,7 @@ export function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRecovering, setIsRecovering] = useState(false);
 
   // Redirect if already logged in (only when user exists)
   if (user) {
