@@ -27,7 +27,7 @@ export class PDFGenerator {
   private static async imageToBase64(url: string): Promise<string> {
     try {
       // If already a data URI, return as-is
-      if (url.startsWith("data:")) {
+      if (url.startsWith('data:')) {
         console.log("Image is already base64 data URI");
         return url;
       }
@@ -54,68 +54,41 @@ export class PDFGenerator {
         reader.readAsDataURL(blob);
       });
     } catch (error) {
-      console.warn(
-        "Failed to convert image to base64:",
-        url.substring(0, 100),
-        error,
-      );
+      console.warn("Failed to convert image to base64:", url.substring(0, 100), error);
       throw error;
     }
   }
 
-  // Wait for images to load and convert to base64
+  // Simplified image handling for mobile compatibility
   private static async waitForImages(container: HTMLElement): Promise<void> {
     const images = container.querySelectorAll("img");
-    console.log(`📷 Processando ${images.length} imagens para PDF...`);
+    console.log(`📷 Modo mobile: substituindo ${images.length} imagens por placeholders...`);
 
-    const imagePromises = Array.from(images).map(async (img, index) => {
-      const originalSrc = img.src;
+    // For mobile, replace images with simple placeholders to avoid PDF generation issues
+    Array.from(images).forEach((img, index) => {
+      const placeholder = document.createElement('div');
+      placeholder.style.cssText = `
+        width: 100px;
+        height: 75px;
+        background: #f3f4f6;
+        border: 2px dashed #9ca3af;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        color: #6b7280;
+        margin: 0 auto;
+      `;
+      placeholder.textContent = `📷 Foto ${index + 1}`;
 
-      try {
-        console.log(`🔄 Convertendo imagem ${index + 1} para base64...`);
+      if (img.parentNode) {
+        img.parentNode.replaceChild(placeholder, img);
+      }
+    });
 
-        // Convert image to base64
-        const base64 = await this.imageToBase64(originalSrc);
-
-        // Replace src with base64 data URI
-        img.src = base64;
-
-        console.log(
-          `✅ Imagem ${index + 1} convertida para base64 com sucesso`,
-        );
-
-        // Wait for the base64 image to load
-        return new Promise<void>((resolve) => {
-          if (img.complete) {
-            resolve();
-            return;
-          }
-
-          const timeout = setTimeout(() => {
-            console.warn(`⏰ Timeout na imagem base64 ${index + 1}`);
-            resolve();
-          }, 3000);
-
-          img.onload = () => {
-            clearTimeout(timeout);
-            resolve();
-          };
-
-          img.onerror = () => {
-            clearTimeout(timeout);
-            console.warn(`❌ Erro ao carregar imagem base64 ${index + 1}`);
-            img.style.display = "none";
-            resolve();
-          };
-        });
-      } catch (error) {
-        console.warn(
-          `❌ Falha ao processar imagem ${index + 1}:`,
-          originalSrc.substring(0, 50) + "...",
-          error,
-        );
-        img.style.display = "none";
-        return Promise.resolve();
+    console.log("✅ Imagens substituídas por placeholders para compatibilidade mobile");
+  }
       }
     });
 
