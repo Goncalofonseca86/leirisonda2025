@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { NotificationService } from "@/services/NotificationService";
-import { useAuth } from "@/components/AuthProvider";
+import { useAuthFixed as useAuth } from "@/components/AuthProviderFixed";
 
 export interface NotificationStatus {
   isSupported: boolean;
