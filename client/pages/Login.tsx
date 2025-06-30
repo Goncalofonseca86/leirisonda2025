@@ -164,6 +164,27 @@ export function Login() {
                   "Entrar"
                 )}
               </Button>
+
+              {/* Emergency Recovery Button */}
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full h-10 border-orange-300 text-orange-700 hover:bg-orange-50"
+                disabled={isRecovering}
+                onClick={handleEmergencyRecovery}
+              >
+                {isRecovering ? (
+                  <div className="flex items-center space-x-2">
+                    <RefreshCw className="animate-spin h-4 w-4" />
+                    <span>Recuperando...</span>
+                  </div>
+                ) : (
+                  <>
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    <span>Recuperar Dados</span>
+                  </>
+                )}
+              </Button>
             </form>
           </div>
         </div>
