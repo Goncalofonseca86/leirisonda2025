@@ -611,58 +611,6 @@ export function Dashboard() {
         </Link>
       </div>
 
-      {/* DEBUG SECTION - ADMIN ONLY */}
-      {user?.email === "gongonsilva@gmail.com" && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <h3 className="text-red-800 text-sm font-bold mb-3">
-            🔧 Ferramentas de Debug
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-            <button
-              onClick={debugWorks}
-              className="px-3 py-2 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 flex items-center"
-            >
-              <Bug className="w-3 h-3 mr-1" />
-              Debug Obras
-            </button>
-            <button
-              onClick={cleanupDuplicateData}
-              className="px-3 py-2 bg-red-600 text-white text-xs rounded hover:bg-red-700 flex items-center"
-            >
-              <Trash2 className="w-3 h-3 mr-1" />
-              Limpar Duplicados
-            </button>
-            <button
-              onClick={() => {
-                emergencyDataCleanup();
-                window.location.reload();
-              }}
-              className="px-3 py-2 bg-orange-600 text-white text-xs rounded hover:bg-orange-700 flex items-center"
-            >
-              <RefreshCw className="w-3 h-3 mr-1" />
-              RESET COMPLETO
-            </button>
-            <button
-              onClick={runDebugCheck}
-              className="px-3 py-2 bg-green-600 text-white text-xs rounded hover:bg-green-700 flex items-center"
-            >
-              <RefreshCw className="w-3 h-3 mr-1" />
-              Debug Sistema
-            </button>
-          </div>
-          {debugInfo.timestamp && (
-            <details className="mt-2">
-              <summary className="text-xs text-red-600 cursor-pointer">
-                Ver Resultados
-              </summary>
-              <pre className="text-xs bg-red-100 p-2 rounded mt-1 overflow-auto max-h-40">
-                {JSON.stringify(debugInfo, null, 2)}
-              </pre>
-            </details>
-          )}
-        </div>
-      )}
-
       {/* Obras Atribuídas */}
       {user &&
         (() => {
