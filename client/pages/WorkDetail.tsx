@@ -41,6 +41,7 @@ export function WorkDetail() {
   const { user } = useAuth();
   const [work, setWork] = useState<Work | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadWork();
@@ -48,29 +49,64 @@ export function WorkDetail() {
 
   const loadWork = () => {
     try {
+      console.log("🔍 Carregando obra ID:", id);
+      setError(null);
+
       if (!id) {
+        setError("ID da obra não fornecido");
         setWork(null);
         setLoading(false);
         return;
       }
 
       // Use dados do Firebase sync em primeiro lugar
+      console.log("📋 Obras disponíveis:", works.length);
       const foundWork = works.find((w) => w.id === id);
+
       if (foundWork) {
+        console.log(
+          "✅ Obra encontrada no Firebase sync:",
+          foundWork.clientName,
+        );
         setWork(foundWork);
       } else {
+        console.log(
+          "🔍 Obra não encontrada no sync, verificando localStorage...",
+        );
         // Fallback para localStorage se não encontrar no Firebase
         const storedWorks = localStorage.getItem("leirisonda_works");
         if (storedWorks) {
-          const localWorks: Work[] = JSON.parse(storedWorks);
-          const localWork = localWorks.find((w) => w.id === id);
-          setWork(localWork || null);
+          try {
+            const localWorks: Work[] = JSON.parse(storedWorks);
+            console.log("📋 Obras no localStorage:", localWorks.length);
+            const localWork = localWorks.find((w) => w.id === id);
+            if (localWork) {
+              console.log(
+                "✅ Obra encontrada no localStorage:",
+                localWork.clientName,
+              );
+              setWork(localWork);
+            } else {
+              console.log("❌ Obra não encontrada em lugar nenhum");
+              setError(`Obra com ID ${id} não foi encontrada`);
+              setWork(null);
+            }
+          } catch (parseError) {
+            console.error("❌ Erro ao fazer parse das obras:", parseError);
+            setError("Erro ao carregar dados das obras");
+            setWork(null);
+          }
         } else {
+          console.log("❌ Nenhuma obra encontrada no localStorage");
+          setError("Nenhuma obra disponível");
           setWork(null);
         }
       }
     } catch (error) {
-      console.error("❌ Erro ao carregar obra:", error);
+      console.error("❌ Erro geral ao carregar obra:", error);
+      setError(
+        `Erro ao carregar obra: ${error instanceof Error ? error.message : "Erro desconhecido"}`,
+      );
       setWork(null);
     } finally {
       setLoading(false);
@@ -227,6 +263,37 @@ export function WorkDetail() {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <span className="ml-3 text-gray-600">Carregando obra...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <AlertTriangle className="w-16 h-16 text-red-400 mx-auto mb-4" />
+        <h3 className="text-lg font-medium text-gray-900 mb-2">
+          Erro ao carregar obra
+        </h3>
+        <p className="text-gray-600 mb-4">{error}</p>
+        <div className="space-x-4">
+          <Button
+            onClick={() => {
+              setError(null);
+              setLoading(true);
+              loadWork();
+            }}
+          >
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Tentar Novamente
+          </Button>
+          <Button variant="outline" asChild>
+            <Link to="/works">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Voltar à Lista
+            </Link>
+          </Button>
+        </div>
       </div>
     );
   }
