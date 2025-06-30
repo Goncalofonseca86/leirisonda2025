@@ -29,16 +29,16 @@ export function ExportData() {
       // Prepare data for Excel export
       const excelData = works.map((work, index) => ({
         Nº: index + 1,
-        Cliente: work.client,
+        Cliente: (work as any).client || work.title,
         Morada: work.address,
         Estado: getStatusLabel(work.status),
         "Data de Entrada": format(
-          new Date(work.entryDate),
+          new Date((work as any).entryDate || work.createdAt),
           "dd/MM/yyyy HH:mm",
           { locale: pt },
         ),
-        "Data de Saída": work.exitDate
-          ? format(new Date(work.exitDate), "dd/MM/yyyy HH:mm", {
+        "Data de Saída": (work as any).exitDate
+          ? format(new Date((work as any).exitDate), "dd/MM/yyyy HH:mm", {
               locale: pt,
             })
           : "",
