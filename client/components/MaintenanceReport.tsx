@@ -284,16 +284,119 @@ export function MaintenanceReport({
         </tbody>
       </table>
 
-      <!-- Outros serviços realizados -->
-      <div class="section-title">Outros serviços realizados</div>
+      <!-- Trabalhos Realizados -->
+      <div class="section-title">Trabalhos Realizados</div>
       <div class="section-content">
-        ${intervention.workPerformed.outros || intervention.observations || "Foi realizado serviço de limpeza e polimento nas escadas"}
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+          ${Object.entries(intervention.workPerformed)
+            .filter(([key, value]) => key !== "outros" && value === true)
+            .map(
+              ([key]) => `
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></div>
+                <span style="font-size: 12px;">${workLabels[key as keyof typeof workLabels] || key}</span>
+              </div>
+            `,
+            )
+            .join("")}
+        </div>
+        ${
+          intervention.workPerformed.outros
+            ? `
+          <div style="margin-top: 10px; padding: 8px; background: #f0f9ff; border-left: 3px solid #0ea5e9; border-radius: 3px;">
+            <strong>Outros trabalhos:</strong><br>
+            ${intervention.workPerformed.outros}
+          </div>
+        `
+            : ""
+        }
       </div>
+
+      <!-- Produtos Químicos Aplicados -->
+      ${
+        intervention.chemicalProducts &&
+        intervention.chemicalProducts.length > 0
+          ? `
+      <div class="section-title">Produtos Químicos Aplicados</div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th style="width: 60%;">Produto</th>
+            <th style="width: 20%;">Quantidade</th>
+            <th style="width: 20%;">Unidade</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${intervention.chemicalProducts
+            .map(
+              (product) => `
+            <tr>
+              <td>${product.productName}</td>
+              <td>${product.quantity}</td>
+              <td>${product.unit}</td>
+            </tr>
+          `,
+            )
+            .join("")}
+        </tbody>
+      </table>
+      `
+          : ""
+      }
+
+      <!-- Problemas Encontrados -->
+      ${
+        intervention.problems && intervention.problems.length > 0
+          ? `
+      <div class="section-title">Problemas Encontrados</div>
+      <div class="section-content">
+        ${intervention.problems
+          .map(
+            (problem) => `
+          <div style="margin-bottom: 8px; padding: 8px; background: ${problem.resolved ? "#f0fdf4" : "#fef2f2"}; border-left: 3px solid ${problem.resolved ? "#10b981" : "#ef4444"}; border-radius: 3px;">
+            <div style="font-weight: bold; color: ${problem.resolved ? "#059669" : "#dc2626"};">
+              ${problem.resolved ? "✓" : "⚠"} ${problem.description}
+            </div>
+            <div style="font-size: 11px; color: #666; margin-top: 4px;">
+              Gravidade: ${problem.severity === "high" ? "Alta" : problem.severity === "medium" ? "Média" : "Baixa"} •
+              ${problem.resolved ? "Resolvido" : "Pendente"}
+            </div>
+          </div>
+        `,
+          )
+          .join("")}
+      </div>
+      `
+          : ""
+      }
+
+      <!-- Fotografias -->
+      ${
+        intervention.photos && intervention.photos.length > 0
+          ? `
+      <div class="section-title">Fotografias da Intervenção</div>
+      <div class="section-content">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+          ${intervention.photos
+            .map(
+              (photo) => `
+            <div style="text-align: center;">
+              <img src="${photo.url}" alt="${photo.description || "Foto da intervenção"}" style="width: 100%; max-width: 200px; height: 150px; object-fit: cover; border-radius: 4px; border: 1px solid #e5e7eb;">
+              ${photo.description ? `<div style="font-size: 10px; color: #666; margin-top: 4px;">${photo.description}</div>` : ""}
+            </div>
+          `,
+            )
+            .join("")}
+        </div>
+      </div>
+      `
+          : ""
+      }
 
       <!-- Observações -->
       <div class="section-title">Observações</div>
       <div class="section-content" style="min-height: 40px;">
-        ${intervention.observations || ""}
+        ${intervention.observations || "Nenhuma observação adicional."}
       </div>
 
 
