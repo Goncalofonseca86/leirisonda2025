@@ -13,13 +13,17 @@ const firebaseConfig = {
   measurementId: "G-R9W43EHH2C",
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Temporarily disable Firebase to prevent 400 errors
+let app = null;
+let db = null;
+let auth = null;
 
-// Initialize Firebase services
-export const db = getFirestore(app);
-export const auth = getAuth(app);
+try {
+  // Disable Firebase initialization for now
+  console.log("📱 Running in local-only mode to prevent 400 errors");
+} catch (error) {
+  console.log("📱 Firebase disabled, using local storage only");
+}
 
-console.log("🔥 Firebase Leirisonda initialized successfully");
-
+export { db, auth };
 export default app;
