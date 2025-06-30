@@ -213,12 +213,14 @@ export function Login() {
             }}
             onMouseEnter={(e) => {
               if (!isSubmitting) {
-                e.target.style.backgroundColor = "#005f6b";
+                (e.target as HTMLButtonElement).style.backgroundColor =
+                  "#005f6b";
               }
             }}
             onMouseLeave={(e) => {
               if (!isSubmitting) {
-                e.target.style.backgroundColor = "#007784";
+                (e.target as HTMLButtonElement).style.backgroundColor =
+                  "#007784";
               }
             }}
           >
