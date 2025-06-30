@@ -528,7 +528,26 @@ export function MaintenanceReport({
               <strong>${format(new Date(intervention.date), "dd/MM/yyyy", { locale: pt })}</strong> - ${intervention.timeStart} às ${intervention.timeEnd}<br>
               <small>Técnicos: ${intervention.technicians.join(", ")}</small><br>
               <small>pH: ${intervention.waterValues.ph || "N/A"} • Cloro: ${intervention.waterValues.chlorine || "N/A"} • ORP: ${intervention.waterValues.orp || "N/A"} • Sal: ${intervention.waterValues.salt || "N/A"}</small>
+              ${
+                Object.entries(intervention.workPerformed).filter(
+                  ([key, value]) => key !== "outros" && value === true,
+                ).length > 0
+                  ? `
+                <br><small><strong>Trabalhos:</strong> ${Object.entries(
+                  intervention.workPerformed,
+                )
+                  .filter(([key, value]) => key !== "outros" && value === true)
+                  .map(
+                    ([key]) =>
+                      workLabels[key as keyof typeof workLabels] || key,
+                  )
+                  .join(", ")}</small>
+              `
+                  : ""
+              }
+              ${intervention.workPerformed.outros ? `<br><small><strong>Outros:</strong> ${intervention.workPerformed.outros}</small>` : ""}
               ${intervention.observations ? `<br><small><em>Obs: ${intervention.observations}</em></small>` : ""}
+              ${intervention.photos && intervention.photos.length > 0 ? `<br><small>📷 ${intervention.photos.length} foto(s)</small>` : ""}
             </div>
           `,
             )
