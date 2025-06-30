@@ -179,6 +179,24 @@ export function useNotifications() {
     [status],
   );
 
+  // Verificar obras atribuídas pendentes
+  const checkPendingWorks = useCallback(async (): Promise<number> => {
+    if (!user || !status.isInitialized) {
+      return 0;
+    }
+
+    try {
+      const pendingCount = await notificationService.checkPendingAssignedWorks(
+        user.id,
+      );
+      console.log(`🔍 Verificadas ${pendingCount} obras atribuídas pendentes`);
+      return pendingCount;
+    } catch (error) {
+      console.error("❌ Erro ao verificar obras pendentes:", error);
+      return 0;
+    }
+  }, [user, status.isInitialized]);
+
   // Desabilitar notificações
   const disableNotifications = useCallback(async () => {
     try {
