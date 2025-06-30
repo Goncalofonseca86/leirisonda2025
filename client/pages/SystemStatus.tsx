@@ -9,7 +9,7 @@ import {
   RotateCcw,
   Home,
 } from "lucide-react";
-import { useAuth } from "@/components/AuthProvider";
+import { useAuthFixed as useAuth } from "@/components/AuthProviderFixed";
 import { Link } from "react-router-dom";
 
 export function SystemStatus() {
