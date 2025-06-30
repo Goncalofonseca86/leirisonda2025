@@ -280,9 +280,10 @@ export function WorkDetail() {
         <div className="space-x-4">
           <Button
             onClick={() => {
+              console.log("🔄 Tentando recarregar obra...");
               setError(null);
               setLoading(true);
-              loadWork();
+              setTimeout(loadWork, 100);
             }}
           >
             <RefreshCw className="w-4 h-4 mr-2" />

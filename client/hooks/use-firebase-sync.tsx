@@ -272,24 +272,42 @@ export function useFirebaseSync() {
   // Carregar dados locais como fallback com consolidação automática
   const loadLocalDataAsFallback = useCallback(() => {
     try {
-      // Usar consolidação automática para obras
-      const consolidatedWorks =
-        firebaseService.consolidateWorksFromAllBackups();
+      console.log("📱 Carregando dados locais limpos...");
 
-      const localMaintenances = JSON.parse(
-        localStorage.getItem("pool_maintenances") || "[]",
+      // CLEAR DUPLICATE DATA FIRST
+      const duplicateKeys = ["works", "pool_maintenances", "users"];
+      duplicateKeys.forEach((key) => {
+        if (localStorage.getItem(key)) {
+          console.log(`🗑️ Removendo chave duplicada: ${key}`);
+          localStorage.removeItem(key);
+        }
+      });
+
+      // Load only from valid keys
+      const validWorksData = localStorage.getItem("leirisonda_works");
+      const validMaintenancesData = localStorage.getItem(
+        "leirisonda_pool_maintenances",
       );
-      const localUsers = JSON.parse(localStorage.getItem("users") || "[]");
+      const validUsersData = localStorage.getItem("leirisonda_users");
 
-      setWorks(consolidatedWorks);
-      setMaintenances(localMaintenances);
-      setUsers(localUsers);
+      const cleanWorks = validWorksData ? JSON.parse(validWorksData) : [];
+      const cleanMaintenances = validMaintenancesData
+        ? JSON.parse(validMaintenancesData)
+        : [];
+      const cleanUsers = validUsersData ? JSON.parse(validUsersData) : [];
+
+      setWorks(cleanWorks);
+      setMaintenances(cleanMaintenances);
+      setUsers(cleanUsers);
 
       console.log(
-        `📱 Dados locais carregados com consolidação: ${consolidatedWorks.length} obras`,
+        `📱 Dados locais LIMPOS carregados: ${cleanWorks.length} obras, ${cleanMaintenances.length} manutenções`,
       );
     } catch (error) {
       console.error("❌ Erro ao carregar dados locais:", error);
+      setWorks([]);
+      setMaintenances([]);
+      setUsers([]);
     }
   }, []);
 
@@ -446,7 +464,7 @@ export function useFirebaseSync() {
 
         console.log("✅ SISTEMA DE SINCRONIZAÇÃO CONFIGURADO COM SUCESSO");
       } catch (error) {
-        console.error("❌ ERRO na configuração de sincronização:", error);
+        console.error("❌ ERRO na configuração de sincronizaç��o:", error);
         // Fallback para dados locais
         loadLocalDataAsFallback();
       }
