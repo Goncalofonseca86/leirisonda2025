@@ -444,6 +444,85 @@ class NotificationServiceClass {
   getIsInitialized(): boolean {
     return this.isInitialized;
   }
+
+  // Método para verificar obras atribuídas ao usuário quando ele faz login
+  async checkPendingAssignedWorks(userId: string) {
+    try {
+      console.log("🔍 Verificando obras atribuídas pendentes para:", userId);
+
+      // Buscar todas as obras
+      const works = JSON.parse(localStorage.getItem("works") || "[]");
+
+      // Filtrar obras atribuídas ao usuário atual que estão pendentes ou em progresso
+      const assignedWorks = works.filter((work: any) => {
+        return (
+          work.assignedUsers &&
+          work.assignedUsers.includes(userId) &&
+          (work.status === "pendente" || work.status === "em_progresso")
+        );
+      });
+
+      console.log(
+        `📋 Encontradas ${assignedWorks.length} obras atribuídas pendentes`,
+        assignedWorks,
+      );
+
+      // Verificar se há obras atribuídas não notificadas
+      for (const work of assignedWorks) {
+        // Criar chave única para notificação já vista
+        const notificationKey = `notification_seen_${userId}_${work.id}`;
+        const alreadyNotified = localStorage.getItem(notificationKey);
+
+        if (!alreadyNotified) {
+          console.log(
+            `🔔 Mostrando notificação para obra: ${work.workSheetNumber}`,
+          );
+
+          // Mostrar notificação local
+          const payload = {
+            title: "🏗️ Obra Atribuída para Você",
+            body: `Você tem uma obra atribuída: ${work.workSheetNumber} - ${work.clientName}`,
+            data: {
+              type: "work_assigned",
+              workId: work.id,
+              workSheetNumber: work.workSheetNumber,
+              clientName: work.clientName,
+            },
+            icon: "/leirisonda-icon.svg",
+          };
+
+          await this.showLocalNotification(payload);
+
+          // Marcar como notificado para não mostrar novamente
+          localStorage.setItem(notificationKey, "true");
+
+          console.log(
+            `✅ Notificação enviada para obra ${work.workSheetNumber}`,
+          );
+        } else {
+          console.log(
+            `ℹ️ Obra ${work.workSheetNumber} já foi notificada anteriormente`,
+          );
+        }
+      }
+
+      return assignedWorks.length;
+    } catch (error) {
+      console.error("❌ Erro ao verificar obras atribuídas pendentes:", error);
+      return 0;
+    }
+  }
+
+  // Método para limpar notificações vistas quando uma obra é concluída
+  markWorkNotificationSeen(userId: string, workId: string) {
+    try {
+      const notificationKey = `notification_seen_${userId}_${workId}`;
+      localStorage.setItem(notificationKey, "true");
+      console.log(`✅ Notificação marcada como vista para obra: ${workId}`);
+    } catch (error) {
+      console.error("❌ Erro ao marcar notificação como vista:", error);
+    }
+  }
 }
 
 export const notificationService = new NotificationServiceClass();
