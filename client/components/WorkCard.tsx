@@ -38,7 +38,9 @@ export function WorkCard({ work }: WorkCardProps) {
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
           <h3 className="font-semibold text-foreground text-lg mb-1">
-            {(work as any).client || work.title}
+            {(work as any).client ||
+              (work as any).title ||
+              "Cliente não especificado"}
           </h3>
           <div className="flex items-center text-muted-foreground text-sm mb-2">
             <MapPin className="w-4 h-4 mr-1" />

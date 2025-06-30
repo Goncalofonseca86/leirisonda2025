@@ -29,7 +29,10 @@ export function ExportData() {
       // Prepare data for Excel export
       const excelData = works.map((work, index) => ({
         Nº: index + 1,
-        Cliente: (work as any).client || work.title,
+        Cliente:
+          (work as any).client ||
+          (work as any).title ||
+          "Cliente não especificado",
         Morada: work.address,
         Estado: getStatusLabel(work.status),
         "Data de Entrada": format(
