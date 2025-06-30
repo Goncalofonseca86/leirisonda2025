@@ -26,24 +26,50 @@ export class PDFGenerator {
   // Wait for images to load completely
   private static async waitForImages(container: HTMLElement): Promise<void> {
     const images = container.querySelectorAll("img");
-    const imagePromises = Array.from(images).map((img) => {
-      if (img.complete) return Promise.resolve();
+    console.log(`📷 Aguardando carregamento de ${images.length} imagens...`);
 
-      return new Promise<void>((resolve, reject) => {
+    const imagePromises = Array.from(images).map((img, index) => {
+      if (img.complete && img.naturalWidth > 0) {
+        console.log(
+          `✅ Imagem ${index + 1} já carregada:`,
+          img.src.substring(0, 50) + "...",
+        );
+        return Promise.resolve();
+      }
+
+      return new Promise<void>((resolve) => {
         const timeout = setTimeout(() => {
-          console.warn("Image timeout:", img.src);
-          resolve(); // Continue even if image fails
-        }, 5000);
+          console.warn(
+            `⏰ Timeout na imagem ${index + 1}:`,
+            img.src.substring(0, 50) + "...",
+          );
+          // Try to set a fallback or continue without the image
+          img.style.display = "none";
+          resolve();
+        }, 8000); // Increased timeout to 8 seconds
 
         img.onload = () => {
           clearTimeout(timeout);
+          console.log(`✅ Imagem ${index + 1} carregada com sucesso`);
           resolve();
         };
+
         img.onerror = () => {
           clearTimeout(timeout);
-          console.warn("Image failed to load:", img.src);
-          resolve(); // Continue even if image fails
+          console.warn(
+            `❌ Erro ao carregar imagem ${index + 1}:`,
+            img.src.substring(0, 50) + "...",
+          );
+          img.style.display = "none";
+          resolve();
         };
+
+        // Force reload if src is set but not loading
+        if (img.src && !img.complete) {
+          const originalSrc = img.src;
+          img.src = "";
+          img.src = originalSrc;
+        }
       });
     });
 
