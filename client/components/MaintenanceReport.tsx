@@ -614,7 +614,7 @@ export function MaintenanceReport({
           ? `
       <div class="section">
         <div class="section-header">
-          <div class="section-title">⚠��� Problemas Pendentes</div>
+          <div class="section-title">⚠️ Problemas Pendentes</div>
         </div>
         <div class="section-content">
           ${pendingProblems
@@ -638,29 +638,23 @@ export function MaintenanceReport({
     setIsGenerating(true);
 
     try {
+      // Check if we're on mobile
+      const isMobile =
+        window.innerWidth < 768 ||
+        /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+      if (isMobile) {
+        console.log(
+          "📱 Dispositivo mobile detectado - usando geração simplificada",
+        );
+        // For mobile, use a simpler approach
+        await generateSimpleMobilePDF();
+        return;
+      }
+
       // Force fresh content generation with current timestamp
       const currentTimestamp = new Date().toISOString();
-      console.log(`📋 Gerando relatório atualizado em: ${currentTimestamp}`);
-
-      // Log photo information for debugging
-      if (intervention?.photos?.length) {
-        console.log(
-          `📷 Relatório inclui ${intervention.photos.length} fotos da intervenção:`,
-          intervention.photos.map((p) => ({
-            url: p.url.substring(0, 50) + "...",
-            description: p.description,
-          })),
-        );
-      }
-      if (maintenance.photos?.length) {
-        console.log(
-          `📷 Relatório inclui ${maintenance.photos.length} fotos da piscina:`,
-          maintenance.photos.map((p) => ({
-            url: p.url.substring(0, 50) + "...",
-            description: p.description,
-          })),
-        );
-      }
+      console.log(`📋 Gerando relatório desktop em: ${currentTimestamp}`);
 
       const content = intervention
         ? createInterventionContent()
