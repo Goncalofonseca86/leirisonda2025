@@ -27,7 +27,7 @@ export class PDFGenerator {
   private static async imageToBase64(url: string): Promise<string> {
     try {
       // If already a data URI, return as-is
-      if (url.startsWith("data:")) {
+      if (url.startsWith('data:')) {
         console.log("Image is already base64 data URI");
         return url;
       }
@@ -54,11 +54,7 @@ export class PDFGenerator {
         reader.readAsDataURL(blob);
       });
     } catch (error) {
-      console.warn(
-        "Failed to convert image to base64:",
-        url.substring(0, 100),
-        error,
-      );
+      console.warn("Failed to convert image to base64:", url.substring(0, 100), error);
       throw error;
     }
   }
@@ -66,13 +62,11 @@ export class PDFGenerator {
   // Simplified image handling for mobile compatibility
   private static async waitForImages(container: HTMLElement): Promise<void> {
     const images = container.querySelectorAll("img");
-    console.log(
-      `📷 Modo mobile: substituindo ${images.length} imagens por placeholders...`,
-    );
+    console.log(`📷 Modo mobile: substituindo ${images.length} imagens por placeholders...`);
 
     // For mobile, replace images with simple placeholders to avoid PDF generation issues
     Array.from(images).forEach((img, index) => {
-      const placeholder = document.createElement("div");
+      const placeholder = document.createElement('div');
       placeholder.style.cssText = `
         width: 100px;
         height: 75px;
@@ -93,9 +87,7 @@ export class PDFGenerator {
       }
     });
 
-    console.log(
-      "✅ Imagens substituídas por placeholders para compatibilidade mobile",
-    );
+    console.log("✅ Imagens substituídas por placeholders para compatibilidade mobile");
   }
 
   static async generatePDFFromHTML(
@@ -135,17 +127,25 @@ export class PDFGenerator {
       );
       await this.waitForImages(tempContainer);
 
-      // Simplified, reliable canvas settings
+      // Mobile-optimized settings to prevent black PDF
       const canvasOptions = {
-        scale: isMobile ? 1 : 1.5, // Much lower scale to prevent memory issues
-        useCORS: true,
-        allowTaint: false,
+        scale: isMobile ? 0.75 : 1.5, // Very low scale for mobile
+        useCORS: false, // Disable CORS for mobile compatibility
+        allowTaint: true, // Allow tainted canvas
         backgroundColor: "#ffffff",
         logging: true,
-        height: Math.min(tempContainer.scrollHeight, 8000), // Limit height to prevent memory issues
-        width: Math.min(tempContainer.scrollWidth, 2000), // Limit width
-        removeContainer: false, // Keep container for debugging
-        imageTimeout: 5000, // Shorter timeout
+        height: isMobile ? Math.min(tempContainer.scrollHeight, 4000) : tempContainer.scrollHeight,
+        width: isMobile ? Math.min(tempContainer.scrollWidth, 800) : tempContainer.scrollWidth,
+        removeContainer: false,
+        imageTimeout: isMobile ? 2000 : 5000, // Much shorter timeout on mobile
+        onclone: (clonedDoc: Document) => {
+          // Ensure styles are applied in cloned document
+          const clonedContainer = clonedDoc.body.querySelector('div');
+          if (clonedContainer) {
+            (clonedContainer as HTMLElement).style.background = '#ffffff';
+            (clonedContainer as HTMLElement).style.color = '#000000';
+          }
+        }
         imageTimeout: 5000,
         onclone: (clonedDoc: Document) => {
           // Ensure all styles are properly cloned
