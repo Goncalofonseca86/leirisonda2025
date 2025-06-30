@@ -14,8 +14,6 @@ export function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isRecovering, setIsRecovering] = useState(false);
-
   // Redirect if already logged in (only when user exists)
   if (user) {
     return <Navigate to="/dashboard" replace />;
@@ -41,22 +39,6 @@ export function Login() {
       setError("Erro ao iniciar sessão. Tente novamente.");
     } finally {
       setIsSubmitting(false);
-    }
-  };
-
-  const handleEmergencyRecovery = async () => {
-    setIsRecovering(true);
-    setError("");
-
-    try {
-      console.log("🚨 Iniciando recuperação de emergência...");
-      await firebaseService.emergencyDataRecovery();
-      setError("Recuperação concluída! Verifique o console para detalhes.");
-    } catch (err) {
-      console.error("❌ Erro na recuperação:", err);
-      setError("Erro durante recuperação. Verifique o console.");
-    } finally {
-      setIsRecovering(false);
     }
   };
 
