@@ -36,108 +36,216 @@ export function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center p-5">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
-        {/* Header com logo */}
-        <div className="bg-gradient-to-r from-blue-500 to-blue-700 p-8 text-center">
+    <div
+      style={{
+        minHeight: "100vh",
+        background:
+          "linear-gradient(135deg, rgb(97, 165, 214) 0%, rgb(0, 119, 132) 100%)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "20px",
+        fontFamily: "Open Sans, sans-serif",
+      }}
+    >
+      <div
+        style={{
+          backgroundColor: "white",
+          borderRadius: "20px",
+          padding: "40px",
+          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.15)",
+          width: "100%",
+          maxWidth: "420px",
+          textAlign: "center",
+        }}
+      >
+        {/* Logo e Título */}
+        <div style={{ marginBottom: "40px" }}>
           <img
             src="https://cdn.builder.io/api/v1/image/assets%2F24b5ff5dbb9f4bb493659e90291d92bc%2Fb4eb4a9e6feb44b09201dbb824b8737c?format=webp&width=800"
             alt="Leirisonda Logo"
-            className="h-16 mx-auto mb-4 filter brightness-0 invert"
+            style={{
+              height: "80px",
+              marginBottom: "20px",
+              display: "block",
+              margin: "0 auto 20px auto",
+            }}
           />
-          <h1 className="text-2xl font-bold text-white mb-2">Leirisonda</h1>
-          <p className="text-blue-100 text-sm">
-            Sistema de Gestão de Obras e Manutenções
+          <h1
+            style={{
+              fontSize: "32px",
+              fontWeight: "700",
+              color: "#007784",
+              margin: "0 0 10px 0",
+            }}
+          >
+            Leirisonda
+          </h1>
+          <p
+            style={{
+              fontSize: "16px",
+              color: "#666",
+              margin: "0",
+            }}
+          >
+            Sistema de Gestão de Obras
           </p>
         </div>
 
         {/* Formulário */}
-        <div className="p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Email
-              </label>
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: "24px", textAlign: "left" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "14px",
+                fontWeight: "600",
+                color: "#333",
+                marginBottom: "8px",
+              }}
+            >
+              Email
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Digite seu email"
+              style={{
+                width: "100%",
+                padding: "16px",
+                border: "2px solid #e0e6ed",
+                borderRadius: "12px",
+                fontSize: "16px",
+                outline: "none",
+                transition: "border-color 0.3s ease",
+                boxSizing: "border-box",
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = "#007784";
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = "#e0e6ed";
+              }}
+              required
+            />
+          </div>
+
+          <div style={{ marginBottom: "24px", textAlign: "left" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "14px",
+                fontWeight: "600",
+                color: "#333",
+                marginBottom: "8px",
+              }}
+            >
+              Palavra-passe
+            </label>
+            <div style={{ position: "relative" }}>
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email de acesso"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Digite sua senha"
+                style={{
+                  width: "100%",
+                  padding: "16px",
+                  paddingRight: "50px",
+                  border: "2px solid #e0e6ed",
+                  borderRadius: "12px",
+                  fontSize: "16px",
+                  outline: "none",
+                  transition: "border-color 0.3s ease",
+                  boxSizing: "border-box",
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = "#007784";
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = "#e0e6ed";
+                }}
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: "absolute",
+                  right: "15px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: "18px",
+                  color: "#666",
+                }}
+              >
+                {showPassword ? "🙈" : "👁️"}
+              </button>
             </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Palavra-passe
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Palavra-passe"
-                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                >
-                  {showPassword ? "🙈" : "👁️"}
-                </button>
-              </div>
-            </div>
-
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
-                {error}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-blue-600 hover:to-blue-800 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-            >
-              {isSubmitting ? (
-                <span className="flex items-center justify-center">
-                  <svg
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  Entrando...
-                </span>
-              ) : (
-                "Entrar"
-              )}
-            </button>
-          </form>
-
-          {/* Footer */}
-          <div className="mt-8 pt-6 border-t border-gray-200 text-center">
-            <p className="text-xs text-gray-500">
-              © 2025 Leirisonda - Sistema Avançado de Gestão de Obras
-            </p>
           </div>
+
+          {error && (
+            <div
+              style={{
+                backgroundColor: "#fef2f2",
+                border: "1px solid #fecaca",
+                color: "#dc2626",
+                padding: "12px",
+                borderRadius: "8px",
+                marginBottom: "24px",
+                fontSize: "14px",
+              }}
+            >
+              {error}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            style={{
+              width: "100%",
+              padding: "18px",
+              backgroundColor: isSubmitting ? "#94a3b8" : "#007784",
+              color: "white",
+              border: "none",
+              borderRadius: "12px",
+              fontSize: "18px",
+              fontWeight: "600",
+              cursor: isSubmitting ? "not-allowed" : "pointer",
+              transition: "background-color 0.3s ease",
+              marginBottom: "20px",
+            }}
+            onMouseEnter={(e) => {
+              if (!isSubmitting) {
+                e.target.style.backgroundColor = "#005f6b";
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isSubmitting) {
+                e.target.style.backgroundColor = "#007784";
+              }
+            }}
+          >
+            {isSubmitting ? "Entrando..." : "Entrar"}
+          </button>
+        </form>
+
+        {/* Footer */}
+        <div
+          style={{
+            marginTop: "30px",
+            paddingTop: "20px",
+            borderTop: "1px solid #e0e6ed",
+            fontSize: "12px",
+            color: "#999",
+          }}
+        >
+          © 2025 Leirisonda - Sistema Avançado de Gestão
         </div>
       </div>
     </div>
