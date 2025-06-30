@@ -37,6 +37,7 @@ import { EmergencyDiagnostic } from "./pages/EmergencyDiagnostic";
 import { NotificationSettingsPage } from "./pages/NotificationSettingsPage";
 import NotificationTest from "./pages/NotificationTest";
 import { NotificationDiagnostic } from "./pages/NotificationDiagnostic";
+import { SimpleTest } from "./pages/SimpleTest";
 
 function App() {
   console.log("🚀 App component iniciando...");
