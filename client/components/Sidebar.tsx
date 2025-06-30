@@ -170,6 +170,20 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
               </div>
             </div>
 
+            {/* Teste de Notificações - apenas para Gonçalo */}
+            {user?.email === "gongonsilva@gmail.com" && (
+              <Link
+                to="/notification-test"
+                onClick={() => {
+                  if (window.innerWidth < 1024) onToggle();
+                }}
+                className={`nav-item-leirisonda ${location.pathname === "/notification-test" ? "active" : ""}`}
+              >
+                <Activity className="mr-3 h-5 w-5" />
+                🔔 Teste Notificações
+              </Link>
+            )}
+
             {user?.email === "gongonsilva@gmail.com" && (
               <>
                 <div className="pt-6 pb-2">
