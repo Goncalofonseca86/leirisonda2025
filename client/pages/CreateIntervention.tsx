@@ -333,26 +333,51 @@ export function CreateIntervention() {
         currentInterventions.length,
       );
 
-      // Verify data was saved to localStorage
-      setTimeout(() => {
+      // Robust verification with retry mechanism
+      let verified = false;
+      let attempts = 0;
+      const maxAttempts = 3;
+
+      while (!verified && attempts < maxAttempts) {
+        attempts++;
+
+        await new Promise((resolve) => setTimeout(resolve, 200 * attempts)); // Increasing delay
+
         const storedMaintenances = JSON.parse(
           localStorage.getItem("pool_maintenances") || "[]",
         );
         const updatedStoredMaintenance = storedMaintenances.find(
           (m: PoolMaintenance) => m.id === maintenance.id,
         );
-        console.log("🔍 Verificação localStorage após salvamento:", {
-          maintenanceId: maintenance.id,
-          interventionsInStorage:
-            updatedStoredMaintenance?.interventions?.length || 0,
-          latestIntervention:
-            updatedStoredMaintenance?.interventions?.[
-              updatedStoredMaintenance.interventions.length - 1
-            ]?.id,
-        });
-      }, 100);
+        const storedInterventions =
+          updatedStoredMaintenance?.interventions?.length || 0;
+        const latestStoredIntervention =
+          updatedStoredMaintenance?.interventions?.[storedInterventions - 1];
 
-      // Navigate back to maintenance detail page
+        console.log(`🔍 Verificação ${attempts}/${maxAttempts}:`, {
+          maintenanceId: maintenance.id,
+          interventionsInStorage: storedInterventions,
+          latestInterventionId: latestStoredIntervention?.id,
+          esperadoId: newIntervention.id,
+          verified: latestStoredIntervention?.id === newIntervention.id,
+        });
+
+        if (latestStoredIntervention?.id === newIntervention.id) {
+          verified = true;
+          console.log("✅ Dados verificados com sucesso!");
+        } else if (attempts === maxAttempts) {
+          console.error(
+            "❌ FALHA na verificação após",
+            maxAttempts,
+            "tentativas",
+          );
+          setError(
+            "Aviso: A intervenção pode não ter sido guardada corretamente. Verifique na lista.",
+          );
+        }
+      }
+
+      // Only navigate if verified or after all attempts
       navigate(`/maintenance/${maintenance.id}`);
     } catch (err) {
       console.error("❌ Erro ao guardar intervenção:", err);
