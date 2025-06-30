@@ -251,7 +251,7 @@ export function WorkDetail() {
     );
   }
 
-  const statusInfo = getStatusInfo(work.status);
+  const statusInfo = getStatusInfo(safeWork.status);
   const StatusIcon = statusInfo.icon;
 
   return (
