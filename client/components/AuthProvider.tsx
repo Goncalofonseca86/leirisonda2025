@@ -75,6 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Carrega utilizador do localStorage na inicialização
   useEffect(() => {
     let mounted = true;
+    let initTimeout: NodeJS.Timeout;
 
     const initializeAuth = async () => {
       try {
@@ -91,9 +92,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return;
         }
 
-        ensureGlobalUsers();
+        // Timeout de segurança para inicialização
+        const safeTimeout = setTimeout(() => {
+          if (mounted) {
+            console.warn(
+              "⚠️ Timeout na inicialização auth, forçando completed",
+            );
+            setIsInitialized(true);
+          }
+        }, 3000);
 
-        if (!mounted) return;
+        try {
+          ensureGlobalUsers();
+        } catch (ensureError) {
+          console.error(
+            "❌ Erro ao garantir utilizadores globais:",
+            ensureError,
+          );
+          // Continuar mesmo com erro
+        }
+
+        if (!mounted) {
+          clearTimeout(safeTimeout);
+          return;
+        }
 
         // Tentar carregar utilizador armazenado com tratamento defensivo
         try {
@@ -102,12 +124,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const parsedUser = JSON.parse(stored);
 
             // Validar se o objeto tem as propriedades essenciais
-            if (parsedUser && parsedUser.email && parsedUser.name) {
+            if (
+              parsedUser &&
+              parsedUser.email &&
+              parsedUser.name &&
+              parsedUser.permissions
+            ) {
               console.log("👤 UTILIZADOR CARREGADO:", parsedUser.email);
               setUser(parsedUser);
             } else {
               console.warn("⚠️ Dados de utilizador inválidos, a limpar...");
-              localStorage.removeItem("leirisonda_user");
+              try {
+                localStorage.removeItem("leirisonda_user");
+              } catch (removeError) {
+                console.error(
+                  "❌ Erro ao remover dados inválidos:",
+                  removeError,
+                );
+              }
             }
           }
         } catch (parseError) {
@@ -121,10 +155,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             console.error("❌ Erro ao limpar dados de utilizador:", clearError);
           }
         }
+
+        clearTimeout(safeTimeout);
       } catch (error) {
         console.error("❌ Erro na inicialização auth:", error);
         // Não quebrar, continuar com user = null
-        // Tentar limpar dados corrompidos
+        // Tentar limpar dados corrompidos de forma segura
         try {
           localStorage.removeItem("leirisonda_user");
           localStorage.removeItem("leirisonda_last_user");
@@ -138,12 +174,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     };
 
-    // Adicionar delay mínimo para garantir que DOM está pronto
+    // Adicionar delay mínimo para garantir que DOM está pronto e timeout de segurança
     const timer = setTimeout(initializeAuth, 100);
+
+    // Timeout de segurança máximo para garantir que sempre inicializa
+    initTimeout = setTimeout(() => {
+      if (mounted && !isInitialized) {
+        console.warn(
+          "⚠️ Timeout máximo de inicialização atingido, forçando completion",
+        );
+        setIsInitialized(true);
+      }
+    }, 5000);
 
     return () => {
       mounted = false;
       clearTimeout(timer);
+      clearTimeout(initTimeout);
     };
   }, []);
 
