@@ -31,6 +31,40 @@ import { pt } from "date-fns/locale";
 export function Dashboard() {
   console.log("🏠 Dashboard component iniciando...");
 
+  // Functions for debugging and cleanup
+  const cleanupDuplicateData = () => {
+    console.log("🧹 Limpando dados duplicados...");
+    const duplicateKeys = ["works", "pool_maintenances", "users", "messages"];
+    duplicateKeys.forEach((key) => {
+      if (localStorage.getItem(key)) {
+        console.log(`🗑️ Removendo chave duplicada: ${key}`);
+        localStorage.removeItem(key);
+      }
+    });
+    window.location.reload();
+  };
+
+  const debugWorks = () => {
+    console.log("🔍 DEBUG - Estado das obras:");
+    console.log("Works do hook:", works?.length || 0);
+    console.log(
+      "LocalStorage leirisonda_works:",
+      localStorage.getItem("leirisonda_works")
+        ? JSON.parse(localStorage.getItem("leirisonda_works")!).length
+        : 0,
+    );
+
+    if (works && works.length > 0) {
+      console.table(
+        works.map((w) => ({
+          id: w.id,
+          cliente: w.clientName,
+          status: w.status,
+        })),
+      );
+    }
+  };
+
   // PROTEÇÃO MÁXIMA: Try-catch para contextos com fallbacks robustos
   let user,
     navigate,
