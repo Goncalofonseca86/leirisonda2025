@@ -47,24 +47,34 @@ export function WorkDetail() {
   }, [id, works]);
 
   const loadWork = () => {
-    if (!id) return;
-
-    // Use dados do Firebase sync em primeiro lugar
-    const foundWork = works.find((w) => w.id === id);
-    if (foundWork) {
-      setWork(foundWork);
-    } else {
-      // Fallback para localStorage se não encontrar no Firebase
-      const storedWorks = localStorage.getItem("leirisonda_works");
-      if (storedWorks) {
-        const localWorks: Work[] = JSON.parse(storedWorks);
-        const localWork = localWorks.find((w) => w.id === id);
-        setWork(localWork || null);
-      } else {
+    try {
+      if (!id) {
         setWork(null);
+        setLoading(false);
+        return;
       }
+
+      // Use dados do Firebase sync em primeiro lugar
+      const foundWork = works.find((w) => w.id === id);
+      if (foundWork) {
+        setWork(foundWork);
+      } else {
+        // Fallback para localStorage se não encontrar no Firebase
+        const storedWorks = localStorage.getItem("leirisonda_works");
+        if (storedWorks) {
+          const localWorks: Work[] = JSON.parse(storedWorks);
+          const localWork = localWorks.find((w) => w.id === id);
+          setWork(localWork || null);
+        } else {
+          setWork(null);
+        }
+      }
+    } catch (error) {
+      console.error("❌ Erro ao carregar obra:", error);
+      setWork(null);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleDelete = async () => {
