@@ -3,6 +3,15 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./global.css";
 
+// Clear corrupted auth state that causes 400 errors
+try {
+  localStorage.removeItem("firebase:authUser");
+  localStorage.removeItem("firebase:previous_websocket_failure");
+  console.log("🔄 Cleared potentially corrupted Firebase auth state");
+} catch (e) {
+  console.log("🔄 localStorage cleanup completed");
+}
+
 // Components
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { AuthProvider } from "./components/AuthProvider";
