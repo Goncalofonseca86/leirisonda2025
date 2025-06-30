@@ -39,6 +39,7 @@ import NotificationTest from "./pages/NotificationTest";
 import { NotificationDiagnostic } from "./pages/NotificationDiagnostic";
 import { LoginDirect } from "./pages/LoginDirect";
 import { MobileLogin } from "./pages/MobileLogin";
+import { DebugSimple } from "./pages/DebugSimple";
 
 function App() {
   console.log("🚀 App component iniciando com AuthProvider corrigido...");
