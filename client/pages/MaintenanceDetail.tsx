@@ -196,6 +196,15 @@ export function MaintenanceDetail() {
             <MaintenanceReport maintenance={maintenance} />
           </div>
 
+          {sortedInterventions && sortedInterventions.length > 0 && (
+            <div className="w-full sm:w-auto">
+              <MaintenanceReport
+                maintenance={maintenance}
+                intervention={sortedInterventions[0]}
+              />
+            </div>
+          )}
+
           <Link
             to={`/maintenance/${maintenance.id}/new-intervention`}
             className="flex-1 sm:flex-none"
