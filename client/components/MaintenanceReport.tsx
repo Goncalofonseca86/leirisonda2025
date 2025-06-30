@@ -82,6 +82,59 @@ export function MaintenanceReport({
     return labels[type as keyof typeof labels] || type;
   };
 
+  // Simple mobile PDF generation
+  const generateSimpleMobilePDF = async () => {
+    try {
+      const { jsPDF } = await import("jspdf");
+      const doc = new jsPDF();
+
+      // Title
+      doc.setFontSize(16);
+      doc.text("Relatório de Manutenção - Leirisonda", 20, 20);
+
+      // Pool info
+      doc.setFontSize(12);
+      doc.text(`Piscina: ${maintenance.poolName}`, 20, 40);
+      doc.text(`Cliente: ${maintenance.clientName}`, 20, 50);
+      doc.text(`Local: ${maintenance.location}`, 20, 60);
+
+      if (intervention) {
+        doc.text(`Data: ${intervention.date}`, 20, 80);
+        doc.text(`Técnicos: ${intervention.technicians.join(", ")}`, 20, 90);
+        doc.text(`pH: ${intervention.waterValues.ph || "N/A"}`, 20, 110);
+        doc.text(
+          `Cloro: ${intervention.waterValues.chlorine || "N/A"}`,
+          20,
+          120,
+        );
+
+        if (intervention.observations) {
+          doc.text("Observações:", 20, 140);
+          const splitObs = doc.splitTextToSize(intervention.observations, 170);
+          doc.text(splitObs, 20, 150);
+        }
+      }
+
+      // Generate blob and save
+      const pdfBlob = doc.output("blob");
+      const url = URL.createObjectURL(pdfBlob);
+
+      // Create download link
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `relatorio_${maintenance.poolName}_${new Date().getTime()}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      console.log("✅ PDF mobile gerado com sucesso");
+    } catch (error) {
+      console.error("❌ Erro na geração PDF mobile:", error);
+      throw error;
+    }
+  };
+
   const getWaterQualityStatus = (waterValues: any) => {
     const ph = waterValues.ph;
     const chlorine = waterValues.chlorine;
@@ -122,7 +175,7 @@ export function MaintenanceReport({
       algicida: "Prevenç��o de algas",
       floculante: "Clarificação da água",
       cal: "Ajuste de alcalinidade",
-      sal: "Eletrólise salina",
+      sal: "Eletr��lise salina",
       estabilizador: "Proteção do cloro",
       clarificante: "Limpeza da água",
       choque: "Tratamento choque",
@@ -239,7 +292,7 @@ export function MaintenanceReport({
           </tr>
           <tr>
             <td>pH</td>
-            <td>${intervention.waterValues.ph ? (intervention.waterValues.ph >= 7.0 && intervention.waterValues.ph <= 7.4 ? "Conforme" : "Não conforme") : "N/A"}</td>
+            <td>${intervention.waterValues.ph ? (intervention.waterValues.ph >= 7.0 && intervention.waterValues.ph <= 7.4 ? "Conforme" : "N��o conforme") : "N/A"}</td>
             <td>${intervention.waterValues.ph ? (intervention.waterValues.ph >= 7.0 && intervention.waterValues.ph <= 7.4 ? "" : `pH acima de 7.6`) : ""}</td>
           </tr>
           <tr>
