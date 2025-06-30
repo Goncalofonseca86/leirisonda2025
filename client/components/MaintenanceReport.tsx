@@ -484,6 +484,33 @@ export function MaintenanceReport({
         </div>
       </div>
 
+      <!-- Pool Photos -->
+      ${
+        maintenance.photos && maintenance.photos.length > 0
+          ? `
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">📷 Fotografias da Piscina</div>
+        </div>
+        <div class="section-content">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+            ${maintenance.photos
+              .map(
+                (photo) => `
+              <div style="text-align: center;">
+                <img src="${photo.url}" alt="${photo.description || "Foto da piscina"}" style="width: 100%; max-width: 200px; height: 150px; object-fit: cover; border-radius: 4px; border: 1px solid #e5e7eb;">
+                ${photo.description ? `<div style="font-size: 10px; color: #666; margin-top: 4px;">${photo.description}</div>` : ""}
+              </div>
+            `,
+              )
+              .join("")}
+          </div>
+        </div>
+      </div>
+      `
+          : ""
+      }
+
       <!-- Recent Interventions -->
       ${
         sortedInterventions.length > 0
