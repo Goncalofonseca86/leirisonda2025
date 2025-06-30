@@ -217,11 +217,25 @@ function SimpleApp() {
   );
 }
 
-// Inicialização simples
+// Inicialização simples com proteção contra múltiplos roots
 const rootElement = document.getElementById("root");
 if (rootElement) {
   console.log("🏗️ Inicializando app simples...");
-  const root = ReactDOM.createRoot(rootElement);
+
+  // Limpar conteúdo existente para evitar conflitos
+  rootElement.innerHTML = "";
+
+  // Verificar se já existe um root (para HMR)
+  let root;
+  if (!(window as any).__react_root__) {
+    root = ReactDOM.createRoot(rootElement);
+    (window as any).__react_root__ = root;
+    console.log("✅ Novo root criado");
+  } else {
+    root = (window as any).__react_root__;
+    console.log("✅ Usando root existente (HMR)");
+  }
+
   root.render(<SimpleApp />);
   console.log("✅ App simples inicializado!");
 } else {
