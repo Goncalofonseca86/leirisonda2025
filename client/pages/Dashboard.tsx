@@ -29,6 +29,7 @@ import { useFirebaseSync } from "@/hooks/use-firebase-sync";
 import { useNotifications } from "@/hooks/use-notifications";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
+import { emergencyDataCleanup } from "@/utils/emergency-fix";
 
 export function Dashboard() {
   console.log("🏠 Dashboard component iniciando...");
@@ -634,7 +635,7 @@ export function Dashboard() {
           <h3 className="text-red-800 text-sm font-bold mb-3">
             🔧 Ferramentas de Debug
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
             <button
               onClick={debugWorks}
               className="px-3 py-2 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 flex items-center"
@@ -648,6 +649,16 @@ export function Dashboard() {
             >
               <Trash2 className="w-3 h-3 mr-1" />
               Limpar Duplicados
+            </button>
+            <button
+              onClick={() => {
+                emergencyDataCleanup();
+                window.location.reload();
+              }}
+              className="px-3 py-2 bg-orange-600 text-white text-xs rounded hover:bg-orange-700 flex items-center"
+            >
+              <RefreshCw className="w-3 h-3 mr-1" />
+              RESET COMPLETO
             </button>
             <button
               onClick={runDebugCheck}
