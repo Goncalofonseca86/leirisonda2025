@@ -578,6 +578,33 @@ export function Dashboard() {
         </Link>
       </div>
 
+      {/* DEBUG BUTTON - TEMPORÁRIO */}
+      {user?.email === "gongonsilva@gmail.com" && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+          <div className="flex items-center justify-between">
+            <span className="text-red-800 text-sm font-medium">
+              🔍 Debug Dashboard
+            </span>
+            <button
+              onClick={runDebugCheck}
+              className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
+            >
+              Executar Debug
+            </button>
+          </div>
+          {debugInfo.timestamp && (
+            <details className="mt-2">
+              <summary className="text-xs text-red-600 cursor-pointer">
+                Ver Resultados
+              </summary>
+              <pre className="text-xs bg-red-100 p-2 rounded mt-1 overflow-auto max-h-40">
+                {JSON.stringify(debugInfo, null, 2)}
+              </pre>
+            </details>
+          )}
+        </div>
+      )}
+
       {/* Obras Atribuídas */}
       {user &&
         (() => {
