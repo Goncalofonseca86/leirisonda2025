@@ -55,6 +55,7 @@ function App() {
             <Route path="/login-direct" element={<LoginDirect />} />
             <Route path="/mobile-login" element={<MobileLogin />} />
             <Route path="/debug" element={<DebugSimple />} />
+            <Route path="/debug-works" element={<DebugWorks />} />
             <Route path="/system-status" element={<SystemStatus />} />
             <Route
               path="/emergency-diagnostic"
