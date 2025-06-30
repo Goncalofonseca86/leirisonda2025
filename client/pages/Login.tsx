@@ -45,6 +45,22 @@ export function Login() {
     }
   };
 
+  const handleEmergencyRecovery = async () => {
+    setIsRecovering(true);
+    setError("");
+
+    try {
+      console.log("🚨 Iniciando recuperação de emergência...");
+      await firebaseService.emergencyDataRecovery();
+      setError("Recuperação concluída! Verifique o console para detalhes.");
+    } catch (err) {
+      console.error("❌ Erro na recuperação:", err);
+      setError("Erro durante recuperação. Verifique o console.");
+    } finally {
+      setIsRecovering(false);
+    }
+  };
+
   // Force no loading state - show login immediately
   // if (isLoading) removed to prevent infinite loading
 
