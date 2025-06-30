@@ -74,17 +74,41 @@ export function PoolMaintenancePage() {
   }, []);
 
   const loadMaintenances = () => {
-    // CLEAR DUPLICATES: Remove old data first
-    localStorage.removeItem("leirisonda_pool_maintenances");
+    try {
+      // First check if we already have maintenances loaded
+      if (maintenances.length > 0) {
+        console.log("Maintenances already loaded, skipping");
+        return;
+      }
 
-    // Create fresh demo data
-    const demoData = createDemoMaintenances();
-    console.log("Created fresh demo data:", demoData.length, "maintenances");
-    setMaintenances(demoData);
-    localStorage.setItem(
-      "leirisonda_pool_maintenances",
-      JSON.stringify(demoData),
-    );
+      // Check existing data
+      const existingData = localStorage.getItem("leirisonda_pool_maintenances");
+
+      if (existingData) {
+        try {
+          const parsedData = JSON.parse(existingData);
+          if (parsedData && parsedData.length > 0) {
+            console.log("Loading existing maintenances:", parsedData.length);
+            setMaintenances(parsedData);
+            return;
+          }
+        } catch (error) {
+          console.error("Error parsing existing maintenances:", error);
+        }
+      }
+
+      // Only create demo data if no existing data
+      const demoData = createDemoMaintenances();
+      console.log("Creating demo data:", demoData.length, "maintenances");
+      setMaintenances(demoData);
+      localStorage.setItem(
+        "leirisonda_pool_maintenances",
+        JSON.stringify(demoData),
+      );
+    } catch (error) {
+      console.error("Error in loadMaintenances:", error);
+      setMaintenances([]);
+    }
   };
 
   const createDemoMaintenances = (): PoolMaintenance[] => {
@@ -339,7 +363,7 @@ export function PoolMaintenancePage() {
           </DialogTrigger>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Registrar Nova Manuten��ão</DialogTitle>
+              <DialogTitle>Registrar Nova Manutenção</DialogTitle>
             </DialogHeader>
 
             <form onSubmit={handleSubmit} className="space-y-6">
