@@ -50,11 +50,27 @@ export function Dashboard() {
     console.log("✅ Auth context carregado:", { hasUser: !!user });
   } catch (authError) {
     console.error("❌ Erro no auth context:", authError);
-    user = null;
 
-    // Se não conseguir acessar auth context, pode ser erro crítico
-    if (authError.message?.includes("must be used within")) {
-      console.error("💥 ERRO CRÍTICO DE CONTEXTO - redirecionando para login");
+    // FALLBACK: Tentar ler user do localStorage
+    try {
+      const storedUser = localStorage.getItem("leirisonda_user");
+      if (storedUser) {
+        user = JSON.parse(storedUser);
+        console.log("✅ FALLBACK: User carregado do localStorage:", user.name);
+      } else {
+        user = null;
+        console.log("❌ FALLBACK: Nenhum user no localStorage");
+      }
+    } catch (fallbackError) {
+      console.error("❌ FALLBACK falhou:", fallbackError);
+      user = null;
+    }
+
+    // Só redirecionar se realmente não houver usuário
+    if (!user) {
+      console.error(
+        "💥 ERRO CRÍTICO: Sem user no AuthProvider nem localStorage",
+      );
       setTimeout(() => {
         window.location.href = "/login";
       }, 100);
