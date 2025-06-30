@@ -296,7 +296,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 }
               } catch (pendingError) {
                 console.warn(
-                  "⚠️ Erro ao verificar obras pendentes:",
+                  "��️ Erro ao verificar obras pendentes:",
                   pendingError,
                 );
               }
@@ -351,6 +351,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 console.log(
                   "🔔 Notificações inicializadas após login (usuário dinâmico)",
                 );
+
+                // Aguardar mais um pouco e verificar obras atribuídas pendentes
+                setTimeout(async () => {
+                  try {
+                    const pendingCount =
+                      await notificationService.checkPendingAssignedWorks(
+                        dynamicUser.id,
+                      );
+                    if (pendingCount > 0) {
+                      console.log(
+                        `🎯 ${pendingCount} obras atribuídas pendentes notificadas para ${dynamicUser.name}`,
+                      );
+                    } else {
+                      console.log(
+                        `ℹ️ Nenhuma obra atribuída pendente para ${dynamicUser.name}`,
+                      );
+                    }
+                  } catch (pendingError) {
+                    console.warn(
+                      "⚠️ Erro ao verificar obras pendentes:",
+                      pendingError,
+                    );
+                  }
+                }, 2000);
               } catch (notificationError) {
                 console.warn(
                   "⚠️ Erro ao inicializar notificações:",
