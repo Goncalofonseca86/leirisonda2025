@@ -10,15 +10,34 @@ import { useAuth } from "@/components/AuthProvider";
 import { Link } from "react-router-dom";
 
 export function SystemStatus() {
-  const { user } = useAuth();
+  const [authContext, setAuthContext] = React.useState<any>(null);
+  const [authError, setAuthError] = React.useState<string | null>(null);
+
   const [checks, setChecks] = React.useState({
     localStorage: false,
     firebase: false,
     routing: false,
     auth: false,
+    authProvider: false,
+    userData: false,
+    contextAccess: false,
   });
 
   const [loading, setLoading] = React.useState(true);
+  const [diagnosticInfo, setDiagnosticInfo] = React.useState<any>({});
+
+  // Tentar acessar o auth context de forma segura
+  React.useEffect(() => {
+    try {
+      const context = useAuth();
+      setAuthContext(context);
+      setAuthError(null);
+    } catch (error) {
+      console.error("❌ Erro ao acessar auth no SystemStatus:", error);
+      setAuthError(error.message || "Erro desconhecido");
+      setAuthContext(null);
+    }
+  }, []);
 
   React.useEffect(() => {
     runSystemChecks();
@@ -27,26 +46,78 @@ export function SystemStatus() {
   const runSystemChecks = async () => {
     setLoading(true);
     const newChecks = { ...checks };
+    const diagInfo: any = {};
+
+    console.log("🔍 Executando verificações do sistema...");
 
     // Check localStorage
     try {
-      localStorage.setItem("test", "test");
-      localStorage.removeItem("test");
-      newChecks.localStorage = true;
-    } catch {
+      localStorage.setItem("test_diagnostic", "test");
+      const retrieved = localStorage.getItem("test_diagnostic");
+      localStorage.removeItem("test_diagnostic");
+      newChecks.localStorage = retrieved === "test";
+      diagInfo.localStorageSize = Object.keys(localStorage).length;
+    } catch (error) {
       newChecks.localStorage = false;
+      diagInfo.localStorageError = error.message;
     }
 
     // Check Firebase
     try {
       const { auth, db } = await import("@/lib/firebase");
       newChecks.firebase = !!(auth && db);
-    } catch {
+      diagInfo.firebaseLoaded = true;
+    } catch (error) {
       newChecks.firebase = false;
+      diagInfo.firebaseError = error.message;
     }
 
     // Check routing
     newChecks.routing = !!window.location;
+    diagInfo.currentPath = window.location.pathname;
+    diagInfo.currentURL = window.location.href;
+
+    // Check auth context
+    newChecks.contextAccess = !!authContext && !authError;
+    newChecks.auth = !!authContext?.user;
+    newChecks.authProvider = !!authContext;
+
+    if (authContext) {
+      newChecks.userData = !!(
+        authContext.user?.email && authContext.user?.name
+      );
+      diagInfo.userEmail = authContext.user?.email;
+      diagInfo.userName = authContext.user?.name;
+      diagInfo.userRole = authContext.user?.role;
+      diagInfo.isLoading = authContext.isLoading;
+      diagInfo.isInitialized = authContext.isInitialized;
+    } else {
+      diagInfo.authContextError = authError;
+    }
+
+    // Check session markers
+    diagInfo.justLoggedIn = sessionStorage.getItem("just_logged_in");
+    diagInfo.justCreatedWork = sessionStorage.getItem("just_created_work");
+    diagInfo.deletingWork = sessionStorage.getItem("deleting_work");
+
+    // Check stored user data
+    try {
+      const storedUser = localStorage.getItem("leirisonda_user");
+      diagInfo.hasStoredUser = !!storedUser;
+      if (storedUser) {
+        const parsed = JSON.parse(storedUser);
+        diagInfo.storedUserEmail = parsed.email;
+        diagInfo.storedUserName = parsed.name;
+      }
+    } catch (error) {
+      diagInfo.storedUserError = error.message;
+    }
+
+    // Environment info
+    diagInfo.userAgent = navigator.userAgent;
+    diagInfo.timestamp = new Date().toISOString();
+    diagInfo.reactVersion = React.version;
+    diagInfo.isDevelopment = process.env.NODE_ENV === "development";
 
     // Check auth context
     try {
