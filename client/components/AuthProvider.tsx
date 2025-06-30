@@ -89,8 +89,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    // Load stored user on mount
-    loadStoredUser();
+    // Clean up any stale authentication state
+    const cleanupStaleAuth = async () => {
+      try {
+        // Check if auth is available
+        if (auth) {
+          // Force refresh the current user to validate session
+          const currentUser = auth.currentUser;
+          if (currentUser) {
+            try {
+              await currentUser.getIdToken(true); // Force refresh token
+            } catch (tokenError) {
+              console.warn("🔄 Token refresh failed, signing out:", tokenError);
+              await signOut(auth);
+              localStorage.removeItem("leirisonda_user");
+              setUser(null);
+              return;
+            }
+          }
+        }
+
+        // Load stored user on mount
+        loadStoredUser();
+      } catch (error) {
+        console.error("❌ Auth cleanup error:", error);
+        // Clear any corrupted auth state
+        localStorage.removeItem("leirisonda_user");
+        setUser(null);
+      }
+    };
+
+    cleanupStaleAuth();
   }, []);
 
   const createGlobalUsersInFirebase = async () => {
