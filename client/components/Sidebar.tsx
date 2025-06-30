@@ -16,7 +16,7 @@ import {
   Wrench,
   ArrowLeft,
 } from "lucide-react";
-import { useAuth } from "./AuthProvider";
+import { useAuthFixed as useAuth } from "./AuthProviderFixed";
 import { Button } from "./ui/button";
 import { NotificationIndicator } from "./NotificationIndicator";
 
