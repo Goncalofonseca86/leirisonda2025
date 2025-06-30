@@ -318,7 +318,7 @@ export function MaintenanceReport({
         </tbody>
       </table>
 
-      <!-- Serviços -->
+      <!-- Servi��os -->
       <div class="section-title">Serviços</div>
       <table class="data-table">
         <thead>
@@ -509,6 +509,16 @@ export function MaintenanceReport({
       .filter((p) => !p.resolved);
 
     return `
+      <!-- Leirisonda Header -->
+      <div style="text-align: center; margin-bottom: 30px; padding: 20px; background: linear-gradient(135deg, #007784 0%, #005f6b 100%); border-radius: 8px;">
+        <div style="background: white; border-radius: 12px; padding: 15px; display: inline-block; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+          <img src="/leirisonda-logo-complete.svg" alt="Leirisonda" style="height: 60px; width: auto;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+          <div style="display: none; font-size: 24px; font-weight: bold; color: #007784; font-family: Arial, sans-serif;">LEIRISONDA</div>
+        </div>
+        <div style="color: white; margin-top: 12px; font-size: 16px; font-weight: 600;">RELATÓRIO DE MANUTENÇÃO</div>
+        <div style="color: rgba(255,255,255,0.9); font-size: 14px; margin-top: 4px;">${maintenance.poolName} • ${format(new Date(), "dd 'de' MMMM 'de' yyyy", { locale: pt })}</div>
+      </div>
+
       <!-- Pool Information -->
       <div class="section">
         <div class="section-header">
