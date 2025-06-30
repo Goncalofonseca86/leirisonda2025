@@ -41,8 +41,8 @@ import { NotificationDiagnostic } from "./pages/NotificationDiagnostic";
 function App() {
   return (
     <ErrorBoundary>
-      <AuthProvider>
-        <BrowserRouter>
+      <BrowserRouter>
+        <AuthProvider>
           <Routes>
             {/* Public routes */}
             <Route path="/login" element={<Login />} />
