@@ -63,39 +63,77 @@ export class PDFGenerator {
     }
   }
 
-  // Simplified image handling for mobile compatibility
+  // Better image handling for all devices
   private static async waitForImages(container: HTMLElement): Promise<void> {
     const images = container.querySelectorAll("img");
-    console.log(
-      `📷 Modo mobile: substituindo ${images.length} imagens por placeholders...`,
-    );
-
-    // For mobile, replace images with simple placeholders to avoid PDF generation issues
-    Array.from(images).forEach((img, index) => {
-      const placeholder = document.createElement("div");
-      placeholder.style.cssText = `
-        width: 100px;
-        height: 75px;
-        background: #f3f4f6;
-        border: 2px dashed #9ca3af;
-        border-radius: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 10px;
-        color: #6b7280;
-        margin: 0 auto;
-      `;
-      placeholder.textContent = `📷 Foto ${index + 1}`;
-
-      if (img.parentNode) {
-        img.parentNode.replaceChild(placeholder, img);
-      }
-    });
+    const isMobile = window.innerWidth < 768;
 
     console.log(
-      "✅ Imagens substituídas por placeholders para compatibilidade mobile",
+      `📷 Processando ${images.length} imagens (mobile: ${isMobile})...`,
     );
+
+    if (isMobile) {
+      // For mobile, replace with styled placeholders that include description
+      Array.from(images).forEach((img, index) => {
+        const placeholder = document.createElement("div");
+        const alt = img.getAttribute("alt") || `Foto ${index + 1}`;
+
+        placeholder.style.cssText = `
+          width: 120px;
+          height: 90px;
+          background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+          border: 1px solid #d1d5db;
+          border-radius: 6px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          font-size: 10px;
+          color: #374151;
+          margin: 0 auto;
+          text-align: center;
+          padding: 4px;
+        `;
+
+        placeholder.innerHTML = `
+          <div style="font-size: 16px; margin-bottom: 4px;">📷</div>
+          <div style="font-weight: 500;">${alt}</div>
+        `;
+
+        if (img.parentNode) {
+          img.parentNode.replaceChild(placeholder, img);
+        }
+      });
+    } else {
+      // For desktop, try to load images normally with timeout
+      const imagePromises = Array.from(images).map((img, index) => {
+        return new Promise<void>((resolve) => {
+          if (img.complete && img.naturalWidth > 0) {
+            resolve();
+            return;
+          }
+
+          const timeout = setTimeout(() => {
+            console.warn(`⏰ Timeout na imagem ${index + 1}`);
+            resolve();
+          }, 3000);
+
+          img.onload = () => {
+            clearTimeout(timeout);
+            resolve();
+          };
+
+          img.onerror = () => {
+            clearTimeout(timeout);
+            resolve();
+          };
+        });
+      });
+
+      await Promise.all(imagePromises);
+    }
+
+    console.log("✅ Processamento de imagens concluído");
   }
 
   static async generatePDFFromHTML(
