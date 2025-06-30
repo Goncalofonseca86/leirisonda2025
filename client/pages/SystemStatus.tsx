@@ -96,10 +96,19 @@ export function SystemStatus() {
     diagInfo.currentURL = window.location.href;
     diagInfo.hasHistory = !!window.history;
 
-    // Check auth context
+    // Check auth context com verificações extras
     newChecks.contextAccess = !!authContext && !authError;
     newChecks.auth = !!authContext?.user;
     newChecks.authProvider = !!authContext;
+
+    // Verificações estruturais adicionais
+    diagInfo.authProviderStructure = {
+      hasAuthContext: !!authContext,
+      hasAuthError: !!authError,
+      authErrorMessage: authError,
+      contextType: typeof authContext,
+      contextKeys: authContext ? Object.keys(authContext) : [],
+    };
 
     if (authContext) {
       newChecks.userData = !!(
