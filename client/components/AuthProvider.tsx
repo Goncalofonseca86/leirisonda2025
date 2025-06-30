@@ -231,21 +231,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async (email: string, password: string): Promise<boolean> => {
       try {
         setIsLoading(true);
-
-        // Check if Firebase is available
-        if (auth && auth !== null) {
-          console.log("🔐 Attempting Firebase login for:", email);
-
-          try {
-            // Try Firebase Auth login
-            const userCredential = await signInWithEmailAndPassword(
-              auth,
-              email,
-              password,
-            );
-            const firebaseUser = userCredential.user;
-
-            console.log("✅ Firebase Auth successful");
+        console.log("🔐 Local login attempt for:", email);
 
             // Get user data from Firestore
             const userData = await getUserFromFirestore(firebaseUser);
