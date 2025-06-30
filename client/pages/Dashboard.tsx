@@ -254,8 +254,7 @@ export function Dashboard() {
       authContext: {
         hasUser: !!user,
         userType: typeof user,
-        isLoadingAuth:
-          typeof isLoading !== "undefined" ? isLoading : "undefined",
+        isLoadingAuth: "undefined",
       },
       firebaseContext: {
         worksCount: works.length,
