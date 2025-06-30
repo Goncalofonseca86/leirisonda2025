@@ -186,18 +186,37 @@ export class ErrorBoundary extends Component<Props, State> {
       }, 1000);
     }
 
-    // Handle common development errors
+    // Handle context errors - mais comum após login
     if (
       error.message?.includes("useAuth must be used within") ||
       error.message?.includes("AuthProvider") ||
-      error.message?.includes("useContext")
+      error.message?.includes("useContext") ||
+      error.message?.includes("context error") ||
+      error.message?.includes("must be used within") ||
+      error.message?.includes("Context") ||
+      error.message?.includes("Provider")
     ) {
-      console.warn("AuthProvider context error caught, will try to recover...");
-      // Try to reload the page to reinitialize context
-      setTimeout(() => {
-        console.log("🔄 Auto-reloading due to context error...");
-        window.location.reload();
-      }, 1000);
+      console.warn("🔄 Context error caught, will try to recover...");
+
+      // Verificar se acabou de fazer login
+      const justLoggedIn = sessionStorage.getItem("just_logged_in") === "true";
+      if (justLoggedIn) {
+        console.log("🔑 Context error após login detectado - limpeza e reload");
+        sessionStorage.removeItem("just_logged_in");
+
+        // Dar mais tempo para reload após login
+        setTimeout(() => {
+          console.log("🔄 Auto-reloading due to post-login context error...");
+          window.location.reload();
+        }, 500);
+      } else {
+        // Context error geral
+        setTimeout(() => {
+          console.log("🔄 Auto-reloading due to context error...");
+          window.location.reload();
+        }, 1000);
+      }
+
       return { hasError: true, error, retryCount: 0 };
     }
 
