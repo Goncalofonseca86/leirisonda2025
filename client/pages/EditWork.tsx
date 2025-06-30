@@ -264,6 +264,19 @@ export function EditWork() {
           await notifyWorkAssigned(updatedWork, novosUsuarios);
         }
 
+        // Se a obra foi concluída, marcar notificações como vistas para todos os usuários atribuídos
+        if (
+          formData.status === "concluida" &&
+          updatedWork.assignedUsers.length > 0
+        ) {
+          console.log(
+            "✅ Obra concluída, limpando notificações para todos os usuários atribuídos",
+          );
+          for (const userId of updatedWork.assignedUsers) {
+            notificationService.markWorkNotificationSeen(userId, work.id);
+          }
+        }
+
         console.log("✅ Notificações processadas com sucesso");
       } catch (notificationError) {
         console.warn(
