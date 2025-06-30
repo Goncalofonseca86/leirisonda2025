@@ -730,6 +730,67 @@ export class FirebaseService {
         : "Running in local-only mode",
     };
   }
+
+  // Emergency data recovery function
+  async emergencyDataRecovery(): Promise<void> {
+    console.log("🚨 INICIANDO RECUPERAÇÃO DE EMERGÊNCIA DE DADOS");
+
+    try {
+      // Check all possible localStorage keys
+      const allKeys = Object.keys(localStorage);
+      console.log("🔍 Chaves localStorage encontradas:", allKeys);
+
+      // Check for any backup data
+      const backupKeys = allKeys.filter(
+        (key) =>
+          key.includes("maintenance") ||
+          key.includes("pool") ||
+          key.includes("intervention") ||
+          key.includes("backup"),
+      );
+
+      console.log("💾 Possíveis backups encontrados:", backupKeys);
+
+      backupKeys.forEach((key) => {
+        const data = localStorage.getItem(key);
+        if (data) {
+          try {
+            const parsed = JSON.parse(data);
+            console.log(`📋 Dados em ${key}:`, {
+              type: typeof parsed,
+              length: Array.isArray(parsed) ? parsed.length : "N/A",
+              firstItem:
+                Array.isArray(parsed) && parsed.length > 0 ? parsed[0] : parsed,
+            });
+          } catch (e) {
+            console.log(`📋 Dados em ${key} (string):`, data.substring(0, 100));
+          }
+        }
+      });
+
+      // Try to recover from Firebase if available
+      if (this.isFirebaseAvailable) {
+        console.log("🔥 Tentando recuperar do Firebase...");
+        const firebaseMaintenances = await this.getMaintenances();
+        console.log("🔥 Manutenções do Firebase:", firebaseMaintenances.length);
+
+        if (firebaseMaintenances.length > 0) {
+          console.log(
+            "✅ Dados encontrados no Firebase! Restaurando localStorage...",
+          );
+          localStorage.setItem(
+            "pool_maintenances",
+            JSON.stringify(firebaseMaintenances),
+          );
+          return;
+        }
+      }
+
+      console.log("❌ Nenhum dado recuperável encontrado");
+    } catch (error) {
+      console.error("❌ Erro durante recuperação de emergência:", error);
+    }
+  }
 }
 
 // Global singleton instance
