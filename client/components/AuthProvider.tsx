@@ -428,7 +428,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         }, 1000);
 
+        console.log(
+          "⏳ Executando setIsLoading(false) para utilizador global...",
+        );
         setIsLoading(false);
+        console.log("✅ setIsLoading(false) executado para utilizador global");
+
+        console.log("📊 Estado final do AuthProvider (utilizador global):");
+        console.log("  • isLoading:", false);
+        console.log("  • isInitialized:", isInitialized);
+        console.log("  • user definido:", !!loginUser);
+
+        console.log("🎯 Retornando true da função login (utilizador global)");
         return true;
       }
 
