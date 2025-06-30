@@ -47,767 +47,724 @@ export class FirebaseService {
 
   // Users Collection
   async getUsers(): Promise<User[]> {
-    if (!this.isFirebaseAvailable) {
-      return this.getLocalUsers();
-    }
-
     try {
-      const usersRef = collection(db, "users");
-      const snapshot = await getDocs(usersRef);
-      const users = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-        createdAt:
-          doc.data().createdAt?.toDate?.()?.toISOString() ||
-          doc.data().createdAt,
-      })) as User[];
+      if (!this.isFirebaseAvailable) {
+        return this.getLocalUsers();
+      }
 
-      // Sync to localStorage as backup
-      localStorage.setItem("users", JSON.stringify(users));
+      const querySnapshot = await getDocs(collection(db, "users"));
+      const users: User[] = [];
+      querySnapshot.forEach((doc) => {
+        users.push({ id: doc.id, ...doc.data() } as User);
+      });
       return users;
     } catch (error) {
-      console.error(
-        "Error fetching users from Firebase, falling back to local:",
-        error,
-      );
+      console.error("Error getting users:", error);
       return this.getLocalUsers();
     }
   }
 
   private getLocalUsers(): User[] {
     try {
-      const users = JSON.parse(localStorage.getItem("users") || "[]");
-      return users;
-    } catch (error) {
-      console.error("Error fetching local users:", error);
+      const stored = localStorage.getItem("users");
+      return stored ? JSON.parse(stored) : [];
+    } catch {
       return [];
     }
   }
 
-  async createUser(userData: Omit<User, "id" | "createdAt">): Promise<string> {
-    if (!this.isFirebaseAvailable) {
-      return this.createLocalUser(userData);
-    }
-
+  async createUser(userData: Omit<User, "id">): Promise<string> {
     try {
-      const usersRef = collection(db, "users");
-      const docRef = await addDoc(usersRef, {
+      if (!this.isFirebaseAvailable) {
+        return this.createLocalUser(userData);
+      }
+
+      const docRef = await addDoc(collection(db, "users"), {
         ...userData,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
-      console.log("🔥 User created in Firebase:", docRef.id);
       return docRef.id;
     } catch (error) {
-      console.error(
-        "Error creating user in Firebase, falling back to local:",
-        error,
-      );
+      console.error("Error creating user:", error);
       return this.createLocalUser(userData);
     }
   }
 
-  private createLocalUser(userData: Omit<User, "id" | "createdAt">): string {
-    const newUser: User = {
-      ...userData,
-      id: crypto.randomUUID(),
-      createdAt: new Date().toISOString(),
-    };
+  private createLocalUser(userData: Omit<User, "id">): string {
+    try {
+      const id = `user_${Date.now()}`;
+      const user: User = {
+        ...userData,
+        id,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
 
-    const users = this.getLocalUsers();
-    users.push(newUser);
-    localStorage.setItem("users", JSON.stringify(users));
-
-    console.log("📱 User created locally:", newUser.id);
-    return newUser.id;
+      const users = this.getLocalUsers();
+      users.push(user);
+      localStorage.setItem("users", JSON.stringify(users));
+      return id;
+    } catch (error) {
+      console.error("Error creating local user:", error);
+      throw error;
+    }
   }
 
-  async updateUser(userId: string, updates: Partial<User>): Promise<void> {
-    if (!this.isFirebaseAvailable) {
-      return this.updateLocalUser(userId, updates);
-    }
-
+  async updateUser(id: string, userData: Partial<User>): Promise<void> {
     try {
-      const userRef = doc(db, "users", userId);
+      if (!this.isFirebaseAvailable) {
+        return this.updateLocalUser(id, userData);
+      }
+
+      const userRef = doc(db, "users", id);
       await updateDoc(userRef, {
-        ...updates,
+        ...userData,
         updatedAt: serverTimestamp(),
       });
-      console.log("🔥 User updated in Firebase:", userId);
     } catch (error) {
-      console.error(
-        "Error updating user in Firebase, falling back to local:",
-        error,
-      );
-      this.updateLocalUser(userId, updates);
+      console.error("Error updating user:", error);
+      return this.updateLocalUser(id, userData);
     }
   }
 
-  private updateLocalUser(userId: string, updates: Partial<User>): void {
+  private updateLocalUser(id: string, userData: Partial<User>): void {
     try {
       const users = this.getLocalUsers();
-      const userIndex = users.findIndex((u) => u.id === userId);
-      if (userIndex !== -1) {
-        users[userIndex] = { ...users[userIndex], ...updates };
+      const index = users.findIndex((user) => user.id === id);
+      if (index !== -1) {
+        users[index] = {
+          ...users[index],
+          ...userData,
+          updatedAt: new Date().toISOString(),
+        };
         localStorage.setItem("users", JSON.stringify(users));
-        console.log("📱 User updated locally:", userId);
       }
     } catch (error) {
       console.error("Error updating local user:", error);
+      throw error;
+    }
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    try {
+      if (!this.isFirebaseAvailable) {
+        return this.deleteLocalUser(id);
+      }
+
+      await deleteDoc(doc(db, "users", id));
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      return this.deleteLocalUser(id);
+    }
+  }
+
+  private deleteLocalUser(id: string): void {
+    try {
+      const users = this.getLocalUsers();
+      const filtered = users.filter((user) => user.id !== id);
+      localStorage.setItem("users", JSON.stringify(filtered));
+    } catch (error) {
+      console.error("Error deleting local user:", error);
+      throw error;
     }
   }
 
   // Works Collection
   async getWorks(): Promise<Work[]> {
-    if (!this.isFirebaseAvailable) {
-      return this.getLocalWorks();
-    }
-
     try {
-      const worksRef = collection(db, "works");
-      const q = query(worksRef, orderBy("createdAt", "desc"));
-      const snapshot = await getDocs(q);
-      const works = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-        createdAt:
-          doc.data().createdAt?.toDate?.()?.toISOString() ||
-          doc.data().createdAt,
-        updatedAt:
-          doc.data().updatedAt?.toDate?.()?.toISOString() ||
-          doc.data().updatedAt,
-      })) as Work[];
+      if (!this.isFirebaseAvailable) {
+        return this.getLocalWorks();
+      }
 
-      // Sync to localStorage as backup
-      localStorage.setItem("works", JSON.stringify(works));
+      const querySnapshot = await getDocs(
+        query(collection(db, "works"), orderBy("createdAt", "desc")),
+      );
+      const works: Work[] = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        works.push({
+          id: doc.id,
+          ...data,
+          startDate:
+            data.startDate?.toDate?.()?.toISOString() || data.startDate,
+          endDate: data.endDate?.toDate?.()?.toISOString() || data.endDate,
+          createdAt:
+            data.createdAt?.toDate?.()?.toISOString() || data.createdAt,
+          updatedAt:
+            data.updatedAt?.toDate?.()?.toISOString() || data.updatedAt,
+        } as Work);
+      });
       return works;
     } catch (error) {
-      console.error(
-        "Error fetching works from Firebase, falling back to local:",
-        error,
-      );
+      console.error("Error getting works:", error);
       return this.getLocalWorks();
     }
   }
 
   private getLocalWorks(): Work[] {
     try {
-      const works = JSON.parse(localStorage.getItem("works") || "[]");
-      return works;
-    } catch (error) {
-      console.error("Error fetching local works:", error);
+      const stored = localStorage.getItem("works");
+      return stored ? JSON.parse(stored) : [];
+    } catch {
       return [];
     }
   }
 
-  async createWork(
-    workData: Omit<Work, "id" | "createdAt" | "updatedAt">,
-  ): Promise<string> {
-    if (!this.isFirebaseAvailable) {
-      return this.createLocalWork(workData);
-    }
-
+  async createWork(workData: Omit<Work, "id">): Promise<string> {
     try {
-      const worksRef = collection(db, "works");
-      const docRef = await addDoc(worksRef, {
+      if (!this.isFirebaseAvailable) {
+        return this.createLocalWork(workData);
+      }
+
+      const docRef = await addDoc(collection(db, "works"), {
         ...workData,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
-      console.log("🔥 Work created in Firebase:", docRef.id);
       return docRef.id;
     } catch (error) {
-      console.error(
-        "Error creating work in Firebase, falling back to local:",
-        error,
-      );
+      console.error("Error creating work:", error);
       return this.createLocalWork(workData);
     }
   }
 
-  private createLocalWork(
-    workData: Omit<Work, "id" | "createdAt" | "updatedAt">,
-  ): string {
-    const newWork: Work = {
-      ...workData,
-      id: crypto.randomUUID(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+  private createLocalWork(workData: Omit<Work, "id">): string {
+    try {
+      const id = `work_${Date.now()}`;
+      const work: Work = {
+        ...workData,
+        id,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
 
-    const works = this.getLocalWorks();
-    works.push(newWork);
-    localStorage.setItem("works", JSON.stringify(works));
-
-    console.log("📱 Work created locally:", newWork.id);
-    return newWork.id;
+      const works = this.getLocalWorks();
+      works.push(work);
+      localStorage.setItem("works", JSON.stringify(works));
+      return id;
+    } catch (error) {
+      console.error("Error creating local work:", error);
+      throw error;
+    }
   }
 
-  async updateWork(workId: string, updates: Partial<Work>): Promise<void> {
-    if (!this.isFirebaseAvailable) {
-      return this.updateLocalWork(workId, updates);
-    }
-
+  async updateWork(id: string, workData: Partial<Work>): Promise<void> {
     try {
-      const workRef = doc(db, "works", workId);
+      if (!this.isFirebaseAvailable) {
+        return this.updateLocalWork(id, workData);
+      }
+
+      const workRef = doc(db, "works", id);
       await updateDoc(workRef, {
-        ...updates,
+        ...workData,
         updatedAt: serverTimestamp(),
       });
-      console.log("🔥 Work updated in Firebase:", workId);
     } catch (error) {
-      console.error(
-        "Error updating work in Firebase, falling back to local:",
-        error,
-      );
-      this.updateLocalWork(workId, updates);
+      console.error("Error updating work:", error);
+      return this.updateLocalWork(id, workData);
     }
   }
 
-  private updateLocalWork(workId: string, updates: Partial<Work>): void {
+  private updateLocalWork(id: string, workData: Partial<Work>): void {
     try {
       const works = this.getLocalWorks();
-      const workIndex = works.findIndex((w) => w.id === workId);
-      if (workIndex !== -1) {
-        works[workIndex] = {
-          ...works[workIndex],
-          ...updates,
+      const index = works.findIndex((work) => work.id === id);
+      if (index !== -1) {
+        works[index] = {
+          ...works[index],
+          ...workData,
           updatedAt: new Date().toISOString(),
         };
         localStorage.setItem("works", JSON.stringify(works));
-        console.log("📱 Work updated locally:", workId);
       }
     } catch (error) {
       console.error("Error updating local work:", error);
+      throw error;
     }
   }
 
-  async deleteWork(workId: string): Promise<void> {
-    if (!this.isFirebaseAvailable) {
-      return this.deleteLocalWork(workId);
-    }
-
+  async deleteWork(id: string): Promise<void> {
     try {
-      const workRef = doc(db, "works", workId);
-      await deleteDoc(workRef);
-      console.log("🔥 Work deleted from Firebase:", workId);
+      if (!this.isFirebaseAvailable) {
+        return this.deleteLocalWork(id);
+      }
+
+      await deleteDoc(doc(db, "works", id));
     } catch (error) {
-      console.error(
-        "Error deleting work from Firebase, falling back to local:",
-        error,
-      );
-      this.deleteLocalWork(workId);
+      console.error("Error deleting work:", error);
+      return this.deleteLocalWork(id);
     }
   }
 
-  private deleteLocalWork(workId: string): void {
+  private deleteLocalWork(id: string): void {
     try {
       const works = this.getLocalWorks();
-      const filteredWorks = works.filter((w) => w.id !== workId);
-      localStorage.setItem("works", JSON.stringify(filteredWorks));
-      console.log("📱 Work deleted locally:", workId);
+      const filtered = works.filter((work) => work.id !== id);
+      localStorage.setItem("works", JSON.stringify(filtered));
     } catch (error) {
       console.error("Error deleting local work:", error);
+      throw error;
     }
   }
 
-  // Pool Maintenances Collection
-  async getMaintenances(): Promise<PoolMaintenance[]> {
-    if (!this.isFirebaseAvailable) {
-      return this.getLocalMaintenances();
-    }
-
+  // Pool Maintenances Collection with Enhanced Triple Backup System
+  async getPoolMaintenances(): Promise<PoolMaintenance[]> {
     try {
-      const maintenancesRef = collection(db, "maintenances");
-      const q = query(maintenancesRef, orderBy("createdAt", "desc"));
-      const snapshot = await getDocs(q);
-      const maintenances = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-        createdAt:
-          doc.data().createdAt?.toDate?.()?.toISOString() ||
-          doc.data().createdAt,
-        updatedAt:
-          doc.data().updatedAt?.toDate?.()?.toISOString() ||
-          doc.data().updatedAt,
-      })) as PoolMaintenance[];
+      if (!this.isFirebaseAvailable) {
+        return this.getLocalPoolMaintenances();
+      }
 
-      // Sync to localStorage as backup
-      localStorage.setItem("pool_maintenances", JSON.stringify(maintenances));
+      const querySnapshot = await getDocs(
+        query(
+          collection(db, "pool_maintenances"),
+          orderBy("createdAt", "desc"),
+        ),
+      );
+      const maintenances: PoolMaintenance[] = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        maintenances.push({
+          id: doc.id,
+          ...data,
+          startDate:
+            data.startDate?.toDate?.()?.toISOString() || data.startDate,
+          endDate: data.endDate?.toDate?.()?.toISOString() || data.endDate,
+          createdAt:
+            data.createdAt?.toDate?.()?.toISOString() || data.createdAt,
+          updatedAt:
+            data.updatedAt?.toDate?.()?.toISOString() || data.updatedAt,
+          interventions: data.interventions || [],
+        } as PoolMaintenance);
+      });
+
+      // Store locally as backup
+      this.storeLocalPoolMaintenances(maintenances);
       return maintenances;
     } catch (error) {
-      console.error(
-        "Error fetching maintenances from Firebase, falling back to local:",
-        error,
-      );
-      return this.getLocalMaintenances();
+      console.error("Error getting pool maintenances:", error);
+      return this.getLocalPoolMaintenances();
     }
   }
 
-  private getLocalMaintenances(): PoolMaintenance[] {
+  private getLocalPoolMaintenances(): PoolMaintenance[] {
     try {
-      const maintenances = JSON.parse(
-        localStorage.getItem("pool_maintenances") || "[]",
-      );
-      return maintenances;
+      // Try primary storage first
+      let stored = localStorage.getItem("pool_maintenances");
+      if (stored) {
+        return JSON.parse(stored);
+      }
+
+      // Try backup storage
+      stored = localStorage.getItem("pool_maintenances_backup");
+      if (stored) {
+        console.log("📦 Loading from backup storage");
+        const backup = JSON.parse(stored);
+        // Restore to primary
+        localStorage.setItem("pool_maintenances", JSON.stringify(backup));
+        return backup;
+      }
+
+      return [];
     } catch (error) {
-      console.error("Error fetching local maintenances:", error);
+      console.error("Error getting local pool maintenances:", error);
       return [];
     }
   }
 
-  async createMaintenance(
-    maintenanceData: Omit<PoolMaintenance, "id" | "createdAt" | "updatedAt">,
-  ): Promise<string> {
-    if (!this.isFirebaseAvailable) {
-      return this.createLocalMaintenance(maintenanceData);
-    }
-
+  private storeLocalPoolMaintenances(maintenances: PoolMaintenance[]): void {
     try {
-      const maintenancesRef = collection(db, "maintenances");
-      const docRef = await addDoc(maintenancesRef, {
+      const data = JSON.stringify(maintenances);
+
+      // Triple backup system
+      localStorage.setItem("pool_maintenances", data);
+      localStorage.setItem("pool_maintenances_backup", data);
+      localStorage.setItem(`pool_maintenances_${Date.now()}`, data);
+
+      console.log("✅ Triple backup completed for pool maintenances");
+    } catch (error) {
+      console.error("Error storing local pool maintenances:", error);
+    }
+  }
+
+  async createPoolMaintenance(
+    maintenanceData: Omit<PoolMaintenance, "id">,
+  ): Promise<string> {
+    try {
+      if (!this.isFirebaseAvailable) {
+        return this.createLocalPoolMaintenance(maintenanceData);
+      }
+
+      const docRef = await addDoc(collection(db, "pool_maintenances"), {
         ...maintenanceData,
+        interventions: maintenanceData.interventions || [],
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
-      console.log("🔥 Maintenance created in Firebase:", docRef.id);
+
+      // Also store locally as backup
+      this.createLocalPoolMaintenance(maintenanceData, docRef.id);
       return docRef.id;
     } catch (error) {
-      console.error(
-        "Error creating maintenance in Firebase, falling back to local:",
-        error,
-      );
-      return this.createLocalMaintenance(maintenanceData);
+      console.error("Error creating pool maintenance:", error);
+      return this.createLocalPoolMaintenance(maintenanceData);
     }
   }
 
-  private createLocalMaintenance(
-    maintenanceData: Omit<PoolMaintenance, "id" | "createdAt" | "updatedAt">,
+  private createLocalPoolMaintenance(
+    maintenanceData: Omit<PoolMaintenance, "id">,
+    id?: string,
   ): string {
-    const newMaintenance: PoolMaintenance = {
-      ...maintenanceData,
-      id: crypto.randomUUID(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-
-    const maintenances = this.getLocalMaintenances();
-    maintenances.push(newMaintenance);
-    localStorage.setItem("pool_maintenances", JSON.stringify(maintenances));
-
-    console.log("📱 Maintenance created locally:", newMaintenance.id);
-    return newMaintenance.id;
-  }
-
-  async updateMaintenance(
-    maintenanceId: string,
-    updates: Partial<PoolMaintenance>,
-  ): Promise<void> {
-    if (!this.isFirebaseAvailable) {
-      return this.updateLocalMaintenance(maintenanceId, updates);
-    }
-
     try {
-      const maintenanceRef = doc(db, "maintenances", maintenanceId);
-      await updateDoc(maintenanceRef, {
-        ...updates,
-        updatedAt: serverTimestamp(),
-      });
-      console.log("🔥 Maintenance updated in Firebase:", maintenanceId);
-    } catch (error) {
-      console.error(
-        "Error updating maintenance in Firebase, falling back to local:",
-        error,
-      );
-      this.updateLocalMaintenance(maintenanceId, updates);
-    }
-  }
-
-  private updateLocalMaintenance(
-    maintenanceId: string,
-    updates: Partial<PoolMaintenance>,
-  ): void {
-    console.log("🚀 FORÇANDO SALVAMENTO DIRETO - updateLocalMaintenance");
-
-    try {
-      // Get current data
-      const stored = localStorage.getItem("pool_maintenances");
-      let maintenances: PoolMaintenance[] = [];
-
-      if (stored) {
-        maintenances = JSON.parse(stored);
-      }
-
-      // Find and update maintenance
-      const maintenanceIndex = maintenances.findIndex(
-        (m) => m.id === maintenanceId,
-      );
-
-      if (maintenanceIndex === -1) {
-        console.error("❌ MANUTENÇÃO NÃO ENCONTRADA:", maintenanceId);
-        return;
-      }
-
-      const before = maintenances[maintenanceIndex].interventions?.length || 0;
-
-      // DIRECT REPLACEMENT - No spread operator issues
-      maintenances[maintenanceIndex] = {
-        ...maintenances[maintenanceIndex],
-        ...updates,
+      const maintenanceId =
+        id || `maint_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const maintenance: PoolMaintenance = {
+        ...maintenanceData,
+        id: maintenanceId,
+        interventions: maintenanceData.interventions || [],
+        createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
 
-      const after = maintenances[maintenanceIndex].interventions?.length || 0;
+      const maintenances = this.getLocalPoolMaintenances();
+      maintenances.push(maintenance);
+      this.storeLocalPoolMaintenances(maintenances);
 
-      console.log("💾 SALVANDO DADOS:", {
-        maintenanceId,
-        interventionsBefore: before,
-        interventionsAfter: after,
-        newInterventions: after - before,
-      });
+      console.log("✅ Local pool maintenance created:", maintenanceId);
+      return maintenanceId;
+    } catch (error) {
+      console.error("Error creating local pool maintenance:", error);
+      throw error;
+    }
+  }
 
-      // FORCE SAVE
-      const dataString = JSON.stringify(maintenances, null, 2);
-      localStorage.setItem("pool_maintenances", dataString);
+  // Enhanced updateLocalMaintenance with detailed logging and verification
+  async updateLocalMaintenance(maintenance: PoolMaintenance): Promise<boolean> {
+    try {
+      console.log("🔄 Starting updateLocalMaintenance for:", maintenance.id);
+      console.log(
+        "📊 Intervention count:",
+        maintenance.interventions?.length || 0,
+      );
 
-      // IMMEDIATE VERIFICATION
-      const immediate = localStorage.getItem("pool_maintenances");
-      if (immediate) {
-        const check = JSON.parse(immediate);
-        const verified = check.find((m: any) => m.id === maintenanceId);
-        const finalCount = verified?.interventions?.length || 0;
+      const maintenances = this.getLocalPoolMaintenances();
+      const index = maintenances.findIndex((m) => m.id === maintenance.id);
 
-        console.log("✅ VERIFICAÇÃO IMEDIATA:", {
-          salvou: !!immediate,
-          interventionsVerificadas: finalCount,
-          sucessoCompleto: finalCount === after,
-        });
+      if (index === -1) {
+        console.error("❌ Maintenance not found:", maintenance.id);
+        return false;
+      }
 
-        if (finalCount !== after) {
-          console.error("❌ FALHA CRÍTICA NO SALVAMENTO!");
-          throw new Error("Falha na verificação do salvamento");
+      // Update with enhanced data
+      const updatedMaintenance = {
+        ...maintenance,
+        updatedAt: new Date().toISOString(),
+        interventions: maintenance.interventions || [],
+      };
+
+      maintenances[index] = updatedMaintenance;
+
+      // Triple backup write system
+      const data = JSON.stringify(maintenances);
+
+      try {
+        localStorage.setItem("pool_maintenances", data);
+        console.log("✅ Primary storage updated");
+      } catch (e) {
+        console.error("❌ Primary storage failed:", e);
+        return false;
+      }
+
+      try {
+        localStorage.setItem("pool_maintenances_backup", data);
+        console.log("✅ Backup storage updated");
+      } catch (e) {
+        console.warn("⚠️ Backup storage failed:", e);
+      }
+
+      try {
+        localStorage.setItem(`pool_maintenances_${Date.now()}`, data);
+        console.log("✅ Timestamped backup created");
+      } catch (e) {
+        console.warn("⚠️ Timestamped backup failed:", e);
+      }
+
+      // Individual maintenance backup
+      try {
+        localStorage.setItem(
+          `maintenance_${maintenance.id}`,
+          JSON.stringify(updatedMaintenance),
+        );
+        console.log("✅ Individual maintenance backup created");
+      } catch (e) {
+        console.warn("⚠️ Individual backup failed:", e);
+      }
+
+      // Verify the save
+      const verification = localStorage.getItem("pool_maintenances");
+      if (verification) {
+        const parsed = JSON.parse(verification);
+        const verified = parsed.find((m: any) => m.id === maintenance.id);
+        if (
+          verified &&
+          verified.interventions?.length === maintenance.interventions?.length
+        ) {
+          console.log("✅ Save verification successful");
+          return true;
+        } else {
+          console.error("❌ Save verification failed");
+          return false;
         }
       }
 
-      console.log("🎉 SALVAMENTO CONCLUÍDO COM SUCESSO!");
+      return false;
     } catch (error) {
-      console.error("❌ ERRO CRÍTICO no updateLocalMaintenance:", error);
-      throw error; // Re-throw to handle upstream
+      console.error("❌ Error in updateLocalMaintenance:", error);
+      return false;
     }
   }
 
-  async deleteMaintenance(maintenanceId: string): Promise<void> {
-    if (!this.isFirebaseAvailable) {
-      return this.deleteLocalMaintenance(maintenanceId);
-    }
-
+  // Enhanced updateMaintenance with Firebase and local sync
+  async updateMaintenance(maintenance: PoolMaintenance): Promise<boolean> {
     try {
-      const maintenanceRef = doc(db, "maintenances", maintenanceId);
-      await deleteDoc(maintenanceRef);
-      console.log("🔥 Maintenance deleted from Firebase:", maintenanceId);
+      console.log("🔄 Starting updateMaintenance for:", maintenance.id);
+
+      let firebaseSuccess = false;
+
+      // Try Firebase first if available
+      if (this.isFirebaseAvailable) {
+        try {
+          const maintenanceRef = doc(db, "pool_maintenances", maintenance.id);
+          await updateDoc(maintenanceRef, {
+            ...maintenance,
+            updatedAt: serverTimestamp(),
+          });
+          console.log("✅ Firebase update successful");
+          firebaseSuccess = true;
+        } catch (error) {
+          console.error("❌ Firebase update failed:", error);
+        }
+      }
+
+      // Always update locally (as backup or primary)
+      const localSuccess = await this.updateLocalMaintenance(maintenance);
+
+      if (localSuccess) {
+        console.log("✅ updateMaintenance completed successfully");
+        return true;
+      } else {
+        console.error("❌ updateMaintenance failed");
+        return false;
+      }
     } catch (error) {
-      console.error(
-        "Error deleting maintenance from Firebase, falling back to local:",
-        error,
-      );
-      this.deleteLocalMaintenance(maintenanceId);
+      console.error("❌ Error in updateMaintenance:", error);
+      return false;
     }
   }
 
-  private deleteLocalMaintenance(maintenanceId: string): void {
+  async deletePoolMaintenance(id: string): Promise<void> {
     try {
-      const maintenances = this.getLocalMaintenances();
-      const filteredMaintenances = maintenances.filter(
-        (m) => m.id !== maintenanceId,
-      );
-      localStorage.setItem(
-        "pool_maintenances",
-        JSON.stringify(filteredMaintenances),
-      );
-      console.log("📱 Maintenance deleted locally:", maintenanceId);
+      if (!this.isFirebaseAvailable) {
+        return this.deleteLocalPoolMaintenance(id);
+      }
+
+      await deleteDoc(doc(db, "pool_maintenances", id));
+
+      // Also delete locally
+      this.deleteLocalPoolMaintenance(id);
     } catch (error) {
-      console.error("Error deleting local maintenance:", error);
+      console.error("Error deleting pool maintenance:", error);
+      return this.deleteLocalPoolMaintenance(id);
     }
   }
 
-  // Real-time listeners (only work with Firebase)
-  listenToWorks(callback: (works: Work[]) => void): () => void {
-    if (!this.isFirebaseAvailable) {
-      console.log("📱 Firebase not available, using local data for works");
-      // Return local data immediately and setup a storage listener
-      callback(this.getLocalWorks());
-
-      const handleStorageChange = () => {
-        callback(this.getLocalWorks());
-      };
-
-      window.addEventListener("storage", handleStorageChange);
-      return () => window.removeEventListener("storage", handleStorageChange);
-    }
-
+  private deleteLocalPoolMaintenance(id: string): void {
     try {
-      const worksRef = collection(db, "works");
-      const q = query(worksRef, orderBy("createdAt", "desc"));
+      const maintenances = this.getLocalPoolMaintenances();
+      const filtered = maintenances.filter(
+        (maintenance) => maintenance.id !== id,
+      );
+      this.storeLocalPoolMaintenances(filtered);
 
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        const works = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-          createdAt:
-            doc.data().createdAt?.toDate?.()?.toISOString() ||
-            doc.data().createdAt,
-          updatedAt:
-            doc.data().updatedAt?.toDate?.()?.toISOString() ||
-            doc.data().updatedAt,
-        })) as Work[];
+      // Also remove individual backup
+      localStorage.removeItem(`maintenance_${id}`);
 
-        // Update localStorage backup
-        localStorage.setItem("works", JSON.stringify(works));
-        callback(works);
-      });
-
-      this.unsubscribes.push(unsubscribe);
-      return unsubscribe;
+      console.log("✅ Local pool maintenance deleted:", id);
     } catch (error) {
-      console.error("Error listening to works:", error);
-      // Fallback to local data
-      callback(this.getLocalWorks());
-      return () => {};
+      console.error("Error deleting local pool maintenance:", error);
+      throw error;
     }
   }
 
-  listenToMaintenances(
+  // Real-time listeners
+  subscribeToPoolMaintenances(
     callback: (maintenances: PoolMaintenance[]) => void,
   ): () => void {
     if (!this.isFirebaseAvailable) {
-      console.log(
-        "📱 Firebase not available, using local data for maintenances",
+      // For local-only mode, call callback immediately with local data
+      setTimeout(() => {
+        callback(this.getLocalPoolMaintenances());
+      }, 0);
+
+      // Return a no-op unsubscribe function
+      return () => {};
+    }
+
+    try {
+      const q = query(
+        collection(db, "pool_maintenances"),
+        orderBy("createdAt", "desc"),
       );
-      callback(this.getLocalMaintenances());
+      const unsubscribe = onSnapshot(
+        q,
+        (querySnapshot) => {
+          const maintenances: PoolMaintenance[] = [];
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            maintenances.push({
+              id: doc.id,
+              ...data,
+              startDate:
+                data.startDate?.toDate?.()?.toISOString() || data.startDate,
+              endDate: data.endDate?.toDate?.()?.toISOString() || data.endDate,
+              createdAt:
+                data.createdAt?.toDate?.()?.toISOString() || data.createdAt,
+              updatedAt:
+                data.updatedAt?.toDate?.()?.toISOString() || data.updatedAt,
+              interventions: data.interventions || [],
+            } as PoolMaintenance);
+          });
 
-      const handleStorageChange = () => {
-        callback(this.getLocalMaintenances());
-      };
-
-      window.addEventListener("storage", handleStorageChange);
-      return () => window.removeEventListener("storage", handleStorageChange);
-    }
-
-    try {
-      const maintenancesRef = collection(db, "maintenances");
-      const q = query(maintenancesRef, orderBy("createdAt", "desc"));
-
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        const maintenances = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-          createdAt:
-            doc.data().createdAt?.toDate?.()?.toISOString() ||
-            doc.data().createdAt,
-          updatedAt:
-            doc.data().updatedAt?.toDate?.()?.toISOString() ||
-            doc.data().updatedAt,
-        })) as PoolMaintenance[];
-
-        // Update localStorage backup
-        localStorage.setItem("pool_maintenances", JSON.stringify(maintenances));
-        callback(maintenances);
-      });
-
-      this.unsubscribes.push(unsubscribe);
-      return unsubscribe;
-    } catch (error) {
-      console.error("Error listening to maintenances:", error);
-      callback(this.getLocalMaintenances());
-      return () => {};
-    }
-  }
-
-  listenToUsers(callback: (users: User[]) => void): () => void {
-    if (!this.isFirebaseAvailable) {
-      console.log("📱 Firebase not available, using local data for users");
-      callback(this.getLocalUsers());
-
-      const handleStorageChange = () => {
-        callback(this.getLocalUsers());
-      };
-
-      window.addEventListener("storage", handleStorageChange);
-      return () => window.removeEventListener("storage", handleStorageChange);
-    }
-
-    try {
-      const usersRef = collection(db, "users");
-
-      const unsubscribe = onSnapshot(usersRef, (snapshot) => {
-        const users = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-          createdAt:
-            doc.data().createdAt?.toDate?.()?.toISOString() ||
-            doc.data().createdAt,
-        })) as User[];
-
-        // Update localStorage backup
-        localStorage.setItem("users", JSON.stringify(users));
-        callback(users);
-      });
+          // Store locally as backup
+          this.storeLocalPoolMaintenances(maintenances);
+          callback(maintenances);
+        },
+        (error) => {
+          console.error("Error in pool maintenances subscription:", error);
+          // Fallback to local data
+          callback(this.getLocalPoolMaintenances());
+        },
+      );
 
       this.unsubscribes.push(unsubscribe);
       return unsubscribe;
     } catch (error) {
-      console.error("Error listening to users:", error);
-      callback(this.getLocalUsers());
+      console.error("Error setting up pool maintenances subscription:", error);
+      // Fallback to local data
+      setTimeout(() => {
+        callback(this.getLocalPoolMaintenances());
+      }, 0);
       return () => {};
     }
   }
 
-  // Sync local data to Firebase
-  async syncLocalDataToFirebase(): Promise<void> {
+  subscribeToWorks(callback: (works: Work[]) => void): () => void {
     if (!this.isFirebaseAvailable) {
-      console.log("���� Firebase not available, skipping sync");
-      return;
+      // For local-only mode, call callback immediately with local data
+      setTimeout(() => {
+        callback(this.getLocalWorks());
+      }, 0);
+
+      // Return a no-op unsubscribe function
+      return () => {};
     }
 
     try {
-      console.log("🔄 Starting sync of local data to Firebase...");
+      const q = query(collection(db, "works"), orderBy("createdAt", "desc"));
+      const unsubscribe = onSnapshot(
+        q,
+        (querySnapshot) => {
+          const works: Work[] = [];
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            works.push({
+              id: doc.id,
+              ...data,
+              startDate:
+                data.startDate?.toDate?.()?.toISOString() || data.startDate,
+              endDate: data.endDate?.toDate?.()?.toISOString() || data.endDate,
+              createdAt:
+                data.createdAt?.toDate?.()?.toISOString() || data.createdAt,
+              updatedAt:
+                data.updatedAt?.toDate?.()?.toISOString() || data.updatedAt,
+            } as Work);
+          });
+          callback(works);
+        },
+        (error) => {
+          console.error("Error in works subscription:", error);
+          // Fallback to local data
+          callback(this.getLocalWorks());
+        },
+      );
 
-      // Get local data
-      const localWorks = this.getLocalWorks();
-      const localMaintenances = this.getLocalMaintenances();
-
-      // Sync works
-      for (const work of localWorks) {
-        try {
-          const workRef = doc(db, "works", work.id);
-          const workSnap = await getDoc(workRef);
-
-          if (!workSnap.exists()) {
-            await updateDoc(workRef, {
-              ...work,
-              createdAt: work.createdAt
-                ? new Date(work.createdAt)
-                : serverTimestamp(),
-              updatedAt: work.updatedAt
-                ? new Date(work.updatedAt)
-                : serverTimestamp(),
-            });
-            console.log(`✅ Synced work: ${work.workSheetNumber}`);
-          }
-        } catch (error) {
-          console.error(`❌ Error syncing work ${work.id}:`, error);
-        }
-      }
-
-      // Sync maintenances
-      for (const maintenance of localMaintenances) {
-        try {
-          const maintenanceRef = doc(db, "maintenances", maintenance.id);
-          const maintenanceSnap = await getDoc(maintenanceRef);
-
-          if (!maintenanceSnap.exists()) {
-            await updateDoc(maintenanceRef, {
-              ...maintenance,
-              createdAt: maintenance.createdAt
-                ? new Date(maintenance.createdAt)
-                : serverTimestamp(),
-              updatedAt: maintenance.updatedAt
-                ? new Date(maintenance.updatedAt)
-                : serverTimestamp(),
-            });
-            console.log(`✅ Synced maintenance: ${maintenance.poolName}`);
-          }
-        } catch (error) {
-          console.error(
-            `❌ Error syncing maintenance ${maintenance.id}:`,
-            error,
-          );
-        }
-      }
-
-      console.log("✅ Local data sync completed");
+      this.unsubscribes.push(unsubscribe);
+      return unsubscribe;
     } catch (error) {
-      console.error("❌ Error syncing local data:", error);
+      console.error("Error setting up works subscription:", error);
+      // Fallback to local data
+      setTimeout(() => {
+        callback(this.getLocalWorks());
+      }, 0);
+      return () => {};
     }
   }
 
-  // Cleanup listeners
+  // Cleanup
   cleanup(): void {
     this.unsubscribes.forEach((unsubscribe) => unsubscribe());
     this.unsubscribes = [];
   }
 
-  // Get Firebase availability status
-  getFirebaseStatus(): { isAvailable: boolean; message: string } {
-    return {
-      isAvailable: this.isFirebaseAvailable,
-      message: this.isFirebaseAvailable
-        ? "Firebase connected and syncing"
-        : "Running in local-only mode",
-    };
-  }
-
-  // Emergency data recovery function
-  async emergencyDataRecovery(): Promise<void> {
-    console.log("🚨 INICIANDO RECUPERAÇÃO DE EMERGÊNCIA DE DADOS");
-
+  // Utility methods for data recovery
+  async recoverFromBackup(): Promise<boolean> {
     try {
-      // Check all possible localStorage keys
-      const allKeys = Object.keys(localStorage);
-      console.log("🔍 Chaves localStorage encontradas:", allKeys);
-
-      // Check for any backup data
-      const backupKeys = allKeys.filter(
+      // Try to recover from timestamped backups
+      const keys = Object.keys(localStorage).filter(
         (key) =>
-          key.includes("maintenance") ||
-          key.includes("pool") ||
-          key.includes("intervention") ||
-          key.includes("backup"),
+          key.startsWith("pool_maintenances_") &&
+          key !== "pool_maintenances_backup",
       );
 
-      console.log("💾 Possíveis backups encontrados:", backupKeys);
+      if (keys.length > 0) {
+        // Get the most recent backup
+        const sortedKeys = keys.sort((a, b) => {
+          const timestampA = parseInt(a.split("_").pop() || "0");
+          const timestampB = parseInt(b.split("_").pop() || "0");
+          return timestampB - timestampA;
+        });
 
-      backupKeys.forEach((key) => {
-        const data = localStorage.getItem(key);
-        if (data) {
-          try {
-            const parsed = JSON.parse(data);
-            console.log(`📋 Dados em ${key}:`, {
-              type: typeof parsed,
-              length: Array.isArray(parsed) ? parsed.length : "N/A",
-              firstItem:
-                Array.isArray(parsed) && parsed.length > 0 ? parsed[0] : parsed,
-            });
-          } catch (e) {
-            console.log(`📋 Dados em ${key} (string):`, data.substring(0, 100));
-          }
-        }
-      });
-
-      // Try to recover from Firebase if available
-      if (this.isFirebaseAvailable) {
-        console.log("🔥 Tentando recuperar do Firebase...");
-        const firebaseMaintenances = await this.getMaintenances();
-        console.log("🔥 Manutenções do Firebase:", firebaseMaintenances.length);
-
-        if (firebaseMaintenances.length > 0) {
-          console.log(
-            "✅ Dados encontrados no Firebase! Restaurando localStorage...",
-          );
-          localStorage.setItem(
-            "pool_maintenances",
-            JSON.stringify(firebaseMaintenances),
-          );
-          return;
+        const latestBackup = localStorage.getItem(sortedKeys[0]);
+        if (latestBackup) {
+          localStorage.setItem("pool_maintenances", latestBackup);
+          console.log("✅ Data recovered from backup:", sortedKeys[0]);
+          return true;
         }
       }
 
-      console.log("❌ Nenhum dado recuperável encontrado");
+      return false;
     } catch (error) {
-      console.error("❌ Erro durante recuperação de emergência:", error);
+      console.error("❌ Error recovering from backup:", error);
+      return false;
     }
+  }
+
+  // Get backup status for debugging
+  getBackupStatus(): {
+    primary: boolean;
+    backup: boolean;
+    timestamped: number;
+  } {
+    const primary = !!localStorage.getItem("pool_maintenances");
+    const backup = !!localStorage.getItem("pool_maintenances_backup");
+    const timestamped = Object.keys(localStorage).filter(
+      (key) =>
+        key.startsWith("pool_maintenances_") &&
+        key !== "pool_maintenances_backup",
+    ).length;
+
+    return { primary, backup, timestamped };
   }
 }
 
-// Global singleton instance
 export const firebaseService = FirebaseService.getInstance();

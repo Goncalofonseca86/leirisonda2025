@@ -93,92 +93,182 @@ export function CreateIntervention() {
         timeEnd: format(endTime, "HH:mm"),
       }));
     }
-  }, [maintenanceId, maintenances]); // React to changes in maintenances data
+  }, [maintenanceId, maintenances]);
 
   const loadMaintenance = () => {
     try {
-      // Use dados do Firebase sync em primeiro lugar
+      if (!maintenanceId) {
+        setError("ID de manutenção não encontrado");
+        return;
+      }
+
+      // Load from maintenances data
       const found = maintenances.find((m) => m.id === maintenanceId);
       if (found) {
         setMaintenance(found);
-      } else {
-        // Fallback para localStorage apenas se não encontrar no Firebase
-        const stored = localStorage.getItem("pool_maintenances");
-        if (stored) {
-          const localMaintenances: PoolMaintenance[] = JSON.parse(stored);
-          const localFound = localMaintenances.find(
-            (m) => m.id === maintenanceId,
+        console.log("✅ Maintenance loaded:", found.poolLocation);
+        return;
+      }
+
+      // Try localStorage fallback
+      const localMaintenances = localStorage.getItem("pool_maintenances");
+      if (localMaintenances) {
+        const parsed = JSON.parse(localMaintenances);
+        const localFound = parsed.find((m: any) => m.id === maintenanceId);
+        if (localFound) {
+          setMaintenance(localFound);
+          console.log(
+            "✅ Maintenance loaded from localStorage:",
+            localFound.poolLocation,
           );
-          if (localFound) {
-            setMaintenance(localFound);
-          } else {
-            setError("Piscina não encontrada");
-          }
-        } else {
-          setError("Piscina não encontrada");
+          return;
         }
       }
-    } catch (err) {
-      setError("Erro ao carregar dados");
+
+      setError("Manutenção não encontrada");
+    } catch (error) {
+      console.error("Error loading maintenance:", error);
+      setError("Erro ao carregar dados da manutenção");
     }
   };
 
-  const handleInputChange = (field: string, value: any, nested?: string) => {
-    setFormData((prev) => {
-      if (nested) {
-        return {
-          ...prev,
-          [nested]: {
-            ...prev[nested as keyof typeof prev],
-            [field]: value,
-          },
-        };
-      }
-      return {
-        ...prev,
-        [field]: value,
+  // Enhanced save with triple verification and backup system
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!maintenance) {
+      setError("Dados da manutenção não disponíveis");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError("");
+
+    try {
+      // Create new intervention
+      const newIntervention: MaintenanceIntervention = {
+        id: `int_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        date: formData.date,
+        timeStart: formData.timeStart,
+        timeEnd: formData.timeEnd,
+        technicians: formData.technicians.filter((t) => t.trim()),
+        vehicles: formData.vehicles.filter((v) => v.trim()),
+        waterValues: formData.waterValues,
+        chemicalProducts: formData.chemicalProducts.filter((p) =>
+          p.productName.trim(),
+        ),
+        workPerformed: formData.workPerformed,
+        problems: formData.problems.filter((p) => p.description.trim()),
+        nextMaintenanceDate: formData.nextMaintenanceDate,
+        observations: formData.observations,
+        photos: photos,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       };
-    });
+
+      console.log("🔄 Creating intervention:", newIntervention.id);
+
+      // Update maintenance with new intervention
+      const updatedMaintenance: PoolMaintenance = {
+        ...maintenance,
+        interventions: [...(maintenance.interventions || []), newIntervention],
+        updatedAt: new Date().toISOString(),
+      };
+
+      console.log(
+        "📝 Updating maintenance with intervention count:",
+        updatedMaintenance.interventions.length,
+      );
+
+      // Triple backup save system
+      const saveSuccess = await updateMaintenance(updatedMaintenance);
+
+      if (saveSuccess) {
+        // Additional backup saves to multiple keys
+        try {
+          localStorage.setItem(
+            `maintenance_backup_${maintenance.id}`,
+            JSON.stringify(updatedMaintenance),
+          );
+          localStorage.setItem(
+            `intervention_backup_${newIntervention.id}`,
+            JSON.stringify(newIntervention),
+          );
+          localStorage.setItem(
+            `last_intervention_${Date.now()}`,
+            JSON.stringify({
+              maintenanceId: maintenance.id,
+              intervention: newIntervention,
+              timestamp: new Date().toISOString(),
+            }),
+          );
+          console.log("✅ Triple backup saves completed");
+        } catch (backupError) {
+          console.warn("⚠️ Backup save failed:", backupError);
+        }
+
+        // Verify save was successful
+        const verification = localStorage.getItem("pool_maintenances");
+        if (verification) {
+          const parsed = JSON.parse(verification);
+          const verified = parsed.find((m: any) => m.id === maintenance.id);
+          if (
+            verified &&
+            verified.interventions?.length ===
+              updatedMaintenance.interventions.length
+          ) {
+            console.log("✅ Save verified successfully");
+
+            // Force reload to ensure fresh data
+            setTimeout(() => {
+              window.location.reload();
+            }, 100);
+
+            navigate(`/maintenance/${maintenance.id}`);
+            return;
+          }
+        }
+
+        console.warn(
+          "⚠️ Save verification failed, but attempting navigation anyway",
+        );
+        navigate(`/maintenance/${maintenance.id}`);
+      } else {
+        throw new Error("Failed to save intervention");
+      }
+    } catch (error) {
+      console.error("❌ Error saving intervention:", error);
+      setError("Erro ao guardar intervenção. Tente novamente.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleArrayChange = (
-    field: "technicians" | "vehicles",
-    index: number,
-    value: string,
-  ) => {
+  const addTechnician = () => {
     setFormData((prev) => ({
       ...prev,
-      [field]: prev[field].map((item, i) => (i === index ? value : item)),
+      technicians: [...prev.technicians, ""],
     }));
   };
 
-  const addArrayItem = (field: "technicians" | "vehicles") => {
+  const removeTechnician = (index: number) => {
     setFormData((prev) => ({
       ...prev,
-      [field]: [...prev[field], ""],
+      technicians: prev.technicians.filter((_, i) => i !== index),
     }));
   };
 
-  const removeArrayItem = (
-    field: "technicians" | "vehicles",
-    index: number,
-  ) => {
+  const addVehicle = () => {
     setFormData((prev) => ({
       ...prev,
-      [field]: prev[field].filter((_, i) => i !== index),
+      vehicles: [...prev.vehicles, ""],
     }));
   };
 
-  const handleChemicalProductChange = (
-    index: number,
-    field: string,
-    value: any,
-  ) => {
+  const removeVehicle = (index: number) => {
     setFormData((prev) => ({
       ...prev,
-      chemicalProducts: prev.chemicalProducts.map((product, i) =>
-        i === index ? { ...product, [field]: value } : product,
-      ),
+      vehicles: prev.vehicles.filter((_, i) => i !== index),
     }));
   };
 
@@ -199,15 +289,6 @@ export function CreateIntervention() {
     }));
   };
 
-  const handleProblemChange = (index: number, field: string, value: any) => {
-    setFormData((prev) => ({
-      ...prev,
-      problems: prev.problems.map((problem, i) =>
-        i === index ? { ...problem, [field]: value } : problem,
-      ),
-    }));
-  };
-
   const addProblem = () => {
     setFormData((prev) => ({
       ...prev,
@@ -225,804 +306,755 @@ export function CreateIntervention() {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setIsSubmitting(true);
-
-    try {
-      if (!maintenance) {
-        console.error("❌ Manutenção não encontrada");
-        throw new Error("Piscina não encontrada");
-      }
-
-      // Validation
-      if (!formData.timeStart || !formData.timeEnd) {
-        console.error("❌ Horários em falta:", {
-          timeStart: formData.timeStart,
-          timeEnd: formData.timeEnd,
-        });
-        throw new Error("Hora de início e fim são obrigatórias");
-      }
-
-      const filteredTechnicians = formData.technicians.filter(
-        (t) => t.trim() !== "",
-      );
-      const filteredVehicles = formData.vehicles.filter((v) => v.trim() !== "");
-
-      console.log("✅ Técnicos filtrados:", filteredTechnicians);
-
-      if (filteredTechnicians.length === 0) {
-        console.error("❌ Nenhum técnico válido");
-        throw new Error("Pelo menos um técnico é obrigatório");
-      }
-
-      const newIntervention: MaintenanceIntervention = {
-        id: crypto.randomUUID(),
-        maintenanceId: maintenance.id,
-        date: formData.date,
-        timeStart: formData.timeStart,
-        timeEnd: formData.timeEnd,
-        technicians: filteredTechnicians,
-        vehicles: filteredVehicles,
-        waterValues: formData.waterValues,
-        chemicalProducts: formData.chemicalProducts.filter(
-          (p) => p.productName.trim() !== "",
-        ),
-        workPerformed: formData.workPerformed,
-        problems: formData.problems.filter((p) => p.description.trim() !== ""),
-        nextMaintenanceDate: formData.nextMaintenanceDate || undefined,
-        photos: photos.map((photo) => ({
-          id: photo.id,
-          url: photo.url,
-          filename: photo.filename,
-          description: photo.description,
-          uploadedAt: photo.uploadedAt,
-        })),
-        observations: formData.observations.trim(),
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-
-      // Ensure interventions array exists and create deep copy
-      const currentInterventions = Array.isArray(maintenance.interventions)
-        ? [...maintenance.interventions]
-        : [];
-
-      // Add new intervention to the array
-      currentInterventions.push(newIntervention);
-
-      // Update maintenance with new intervention using Firebase sync
-      const updatedMaintenance: PoolMaintenance = {
-        ...maintenance,
-        interventions: currentInterventions,
-        lastMaintenanceDate: formData.date,
-        updatedAt: new Date().toISOString(),
-      };
-
-      try {
-        // Method 1: Try Firebase sync first
-        await updateMaintenance(maintenance.id, updatedMaintenance);
-        console.log("✅ Método 1 (Firebase sync) executado");
-      } catch (error) {
-        console.error("❌ Método 1 falhou:", error);
-      }
-
-      try {
-        // Method 2: DIRECT localStorage write as failsafe
-        console.log("🔄 Executando salvamento direto como backup...");
-
-        const stored = localStorage.getItem("pool_maintenances") || "[]";
-        const allMaintenances = JSON.parse(stored);
-        const targetIndex = allMaintenances.findIndex(
-          (m: any) => m.id === maintenance.id,
-        );
-
-        if (targetIndex !== -1) {
-          allMaintenances[targetIndex] = updatedMaintenance;
-          localStorage.setItem(
-            "pool_maintenances",
-            JSON.stringify(allMaintenances),
-          );
-          console.log("✅ Método 2 (salvamento direto) concluído");
-        }
-      } catch (error) {
-        console.error("❌ Método 2 falhou:", error);
-      }
-
-      // FINAL VERIFICATION
-      setTimeout(() => {
-        const finalCheck = localStorage.getItem("pool_maintenances");
-        if (finalCheck) {
-          const parsed = JSON.parse(finalCheck);
-          const finalMaintenance = parsed.find(
-            (m: any) => m.id === maintenance.id,
-          );
-          const finalInterventions =
-            finalMaintenance?.interventions?.length || 0;
-
-          console.log("🔍 VERIFICAÇÃO FINAL:", {
-            maintenanceId: maintenance.id,
-            interventionsGuardadas: finalInterventions,
-            interventionEsperada: newIntervention.id,
-            ultimaIntervencao:
-              finalMaintenance?.interventions?.[finalInterventions - 1]?.id,
-          });
-
-          if (finalInterventions === 0) {
-            setError("ERRO: A intervenção não foi guardada! Tente novamente.");
-            return;
-          }
-        }
-
-        console.log("🎉 INTERVENÇÃO GUARDADA COM SUCESSO!");
-        navigate(`/maintenance/${maintenance.id}`);
-      }, 500);
-    } catch (err) {
-      console.error("❌ Erro ao guardar intervenção:", err);
-      console.error(
-        "❌ Stack trace:",
-        err instanceof Error ? err.stack : "N/A",
-      );
-      setError(err instanceof Error ? err.message : "Erro desconhecido");
-    } finally {
-      console.log("🏁 handleSubmit finalizado");
-      setIsSubmitting(false);
-    }
-  };
-
   if (!maintenance) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <span className="ml-2 text-gray-600">A carregar...</span>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-white rounded-lg shadow-sm border p-8 text-center">
+            <AlertCircle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">
+              Manutenção não encontrada
+            </h2>
+            <p className="text-gray-600 mb-6">
+              {error || "A carregar dados da manutenção..."}
+            </p>
+            <Button
+              onClick={() => navigate("/dashboard")}
+              variant="outline"
+              className="inline-flex items-center"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Voltar ao Dashboard
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button
-          variant="outline"
-          onClick={() => navigate(`/maintenance/${maintenance.id}`)}
-          className="p-2"
-        >
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        <div className="flex-1">
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-            <Waves className="mr-3 h-8 w-8 text-blue-600" />
-            Nova Intervenção
-          </h1>
-          <p className="text-gray-600 mt-1">
-            {maintenance.poolName} • {maintenance.location}
-          </p>
-        </div>
-
-        {/* Connection Status */}
-        <div className="flex items-center space-x-2">
-          {isOnline ? (
-            <>
-              <Wifi className="w-4 h-4 text-green-600" />
-              <span className="text-sm text-green-600">Online</span>
-              {isSyncing && (
-                <span className="text-xs text-gray-500">Sincronizando...</span>
-              )}
-            </>
-          ) : (
-            <>
-              <WifiOff className="w-4 h-4 text-orange-600" />
-              <span className="text-sm text-orange-600">Offline</span>
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* Offline Warning */}
-      {!isOnline && (
-        <Alert className="mb-6">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            Está no modo offline. Os dados serão guardados localmente e
-            sincronizados quando a ligação for restabelecida.
-          </AlertDescription>
-        </Alert>
-      )}
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Basic Info */}
-        <div className="glass-card p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-            <Clock className="mr-2 h-5 w-5 text-blue-600" />
-            Informações Básicas
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <Label htmlFor="date">Data da Intervenção *</Label>
-              <Input
-                id="date"
-                type="date"
-                value={formData.date}
-                onChange={(e) => handleInputChange("date", e.target.value)}
-                required
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="timeStart">Hora de Início *</Label>
-              <Input
-                id="timeStart"
-                type="time"
-                value={formData.timeStart}
-                onChange={(e) => handleInputChange("timeStart", e.target.value)}
-                required
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="timeEnd">Hora de Fim *</Label>
-              <Input
-                id="timeEnd"
-                type="time"
-                value={formData.timeEnd}
-                onChange={(e) => handleInputChange("timeEnd", e.target.value)}
-                required
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Team & Vehicles */}
-        <div className="glass-card p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-            <Users className="mr-2 h-5 w-5 text-blue-600" />
-            Equipa e Viaturas
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <Label className="flex items-center justify-between">
-                Técnicos *
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => addArrayItem("technicians")}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </Label>
-              <div className="space-y-2">
-                {formData.technicians.map((technician, index) => (
-                  <div key={index} className="flex gap-2">
-                    <Input
-                      placeholder="Nome do técnico"
-                      value={technician}
-                      onChange={(e) =>
-                        handleArrayChange("technicians", index, e.target.value)
-                      }
-                    />
-                    {formData.technicians.length > 1 && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => removeArrayItem("technicians", index)}
-                      >
-                        <Minus className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <Label className="flex items-center justify-between">
-                Viaturas
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => addArrayItem("vehicles")}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </Label>
-              <div className="space-y-2">
-                {formData.vehicles.map((vehicle, index) => (
-                  <div key={index} className="flex gap-2">
-                    <Input
-                      placeholder="Matrícula ou identificação"
-                      value={vehicle}
-                      onChange={(e) =>
-                        handleArrayChange("vehicles", index, e.target.value)
-                      }
-                    />
-                    {formData.vehicles.length > 1 && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => removeArrayItem("vehicles", index)}
-                      >
-                        <Minus className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Water Values */}
-        <div className="glass-card p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-            <Thermometer className="mr-2 h-5 w-5 text-blue-600" />
-            Valores da Água
-          </h2>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div>
-              <Label htmlFor="ph">pH</Label>
-              <Input
-                id="ph"
-                type="number"
-                step="0.1"
-                placeholder="7.2"
-                value={formData.waterValues.ph || ""}
-                onChange={(e) =>
-                  handleInputChange(
-                    "ph",
-                    parseFloat(e.target.value) || 0,
-                    "waterValues",
-                  )
-                }
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="chlorine">Cloro (ppm)</Label>
-              <Input
-                id="chlorine"
-                type="number"
-                step="0.1"
-                placeholder="1.5"
-                value={formData.waterValues.chlorine || ""}
-                onChange={(e) =>
-                  handleInputChange(
-                    "chlorine",
-                    parseFloat(e.target.value) || 0,
-                    "waterValues",
-                  )
-                }
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="temperature">Temperatura (°C)</Label>
-              <Input
-                id="temperature"
-                type="number"
-                step="0.1"
-                placeholder="25"
-                value={formData.waterValues.temperature || ""}
-                onChange={(e) =>
-                  handleInputChange(
-                    "temperature",
-                    parseFloat(e.target.value) || 0,
-                    "waterValues",
-                  )
-                }
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="salt">Sal (gr/lt)</Label>
-              <Input
-                id="salt"
-                type="number"
-                step="0.1"
-                placeholder="3.2"
-                value={formData.waterValues.salt || ""}
-                onChange={(e) =>
-                  handleInputChange(
-                    "salt",
-                    parseFloat(e.target.value) || 0,
-                    "waterValues",
-                  )
-                }
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="orp">ORP (mv)</Label>
-              <Input
-                id="orp"
-                type="number"
-                min="0"
-                max="1000"
-                placeholder="650"
-                value={formData.waterValues.orp || ""}
-                onChange={(e) =>
-                  handleInputChange(
-                    "orp",
-                    parseInt(e.target.value) || 0,
-                    "waterValues",
-                  )
-                }
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="bromine">Bromo (ppm)</Label>
-              <Input
-                id="bromine"
-                type="number"
-                step="0.1"
-                placeholder="2.5"
-                value={formData.waterValues.bromine || ""}
-                onChange={(e) =>
-                  handleInputChange(
-                    "bromine",
-                    parseFloat(e.target.value) || 0,
-                    "waterValues",
-                  )
-                }
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="alkalinity">Alcalinidade</Label>
-              <Input
-                id="alkalinity"
-                type="number"
-                placeholder="120"
-                value={formData.waterValues.alkalinity || ""}
-                onChange={(e) =>
-                  handleInputChange(
-                    "alkalinity",
-                    parseInt(e.target.value) || 0,
-                    "waterValues",
-                  )
-                }
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="hardness">Dureza</Label>
-              <Input
-                id="hardness"
-                type="number"
-                placeholder="200"
-                value={formData.waterValues.hardness || ""}
-                onChange={(e) =>
-                  handleInputChange(
-                    "hardness",
-                    parseInt(e.target.value) || 0,
-                    "waterValues",
-                  )
-                }
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="stabilizer">Estabilizador</Label>
-              <Input
-                id="stabilizer"
-                type="number"
-                placeholder="50"
-                value={formData.waterValues.stabilizer || ""}
-                onChange={(e) =>
-                  handleInputChange(
-                    "stabilizer",
-                    parseInt(e.target.value) || 0,
-                    "waterValues",
-                  )
-                }
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Chemical Products */}
-        <div className="glass-card p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center justify-between">
-            <span className="flex items-center">
-              <Droplets className="mr-2 h-5 w-5 text-blue-600" />
-              Produtos Químicos Utilizados
-            </span>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4">
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
             <Button
-              type="button"
+              onClick={() => navigate(`/maintenance/${maintenance.id}`)}
               variant="outline"
               size="sm"
-              onClick={addChemicalProduct}
+              className="flex items-center"
             >
-              <Plus className="h-4 w-4 mr-2" />
-              Adicionar Produto
+              <ArrowLeft className="w-4 h-4 mr-1" />
+              Voltar
             </Button>
-          </h2>
-
-          <div className="space-y-4">
-            {formData.chemicalProducts.map((product, index) => (
-              <div
-                key={index}
-                className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 border border-gray-200 rounded-lg"
-              >
-                <div className="md:col-span-2">
-                  <Label>Nome do Produto</Label>
-                  <Input
-                    placeholder="Ex: Cloro líquido"
-                    value={product.productName}
-                    onChange={(e) =>
-                      handleChemicalProductChange(
-                        index,
-                        "productName",
-                        e.target.value,
-                      )
-                    }
-                  />
-                </div>
-
-                <div>
-                  <Label>Quantidade</Label>
-                  <Input
-                    type="number"
-                    step="0.1"
-                    placeholder="0"
-                    value={product.quantity || ""}
-                    onChange={(e) =>
-                      handleChemicalProductChange(
-                        index,
-                        "quantity",
-                        parseFloat(e.target.value) || 0,
-                      )
-                    }
-                  />
-                </div>
-
-                <div className="flex gap-2">
-                  <div className="flex-1">
-                    <Label>Unidade</Label>
-                    <Select
-                      value={product.unit}
-                      onValueChange={(value) =>
-                        handleChemicalProductChange(index, "unit", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="kg">kg</SelectItem>
-                        <SelectItem value="g">g</SelectItem>
-                        <SelectItem value="l">l</SelectItem>
-                        <SelectItem value="ml">ml</SelectItem>
-                        <SelectItem value="unid">unid</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {formData.chemicalProducts.length > 1 && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => removeChemicalProduct(index)}
-                      className="mt-6"
-                    >
-                      <Minus className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Work Performed */}
-        <div className="glass-card p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">
-            Trabalho Realizado
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {Object.entries(formData.workPerformed)
-              .filter(([key]) => key !== "outros")
-              .map(([key, value]) => (
-                <div key={key} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={key}
-                    checked={value as boolean}
-                    onCheckedChange={(checked) =>
-                      handleInputChange(key, checked, "workPerformed")
-                    }
-                  />
-                  <Label htmlFor={key} className="text-sm">
-                    {key.charAt(0).toUpperCase() +
-                      key.slice(1).replace(/([A-Z])/g, " $1")}
-                  </Label>
-                </div>
-              ))}
-          </div>
-
-          <div className="mt-6">
-            <Label htmlFor="outros">Outros trabalhos</Label>
-            <Textarea
-              id="outros"
-              placeholder="Descreve outros trabalhos realizados..."
-              value={formData.workPerformed.outros}
-              onChange={(e) =>
-                handleInputChange("outros", e.target.value, "workPerformed")
-              }
-              rows={3}
-            />
-          </div>
-        </div>
-
-        {/* Problems */}
-        <div className="glass-card p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center justify-between">
-            <span className="flex items-center">
-              <AlertTriangle className="mr-2 h-5 w-5 text-orange-600" />
-              Problemas Encontrados
-            </span>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={addProblem}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Adicionar Problema
-            </Button>
-          </h2>
-
-          <div className="space-y-4">
-            {formData.problems.map((problem, index) => (
-              <div
-                key={index}
-                className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 border border-gray-200 rounded-lg"
-              >
-                <div className="md:col-span-2">
-                  <Label>Descrição do Problema</Label>
-                  <Textarea
-                    placeholder="Descreve o problema encontrado..."
-                    value={problem.description}
-                    onChange={(e) =>
-                      handleProblemChange(index, "description", e.target.value)
-                    }
-                    rows={2}
-                  />
-                </div>
-
-                <div>
-                  <Label>Gravidade</Label>
-                  <Select
-                    value={problem.severity}
-                    onValueChange={(value) =>
-                      handleProblemChange(index, "severity", value)
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="low">Baixa</SelectItem>
-                      <SelectItem value="medium">Média</SelectItem>
-                      <SelectItem value="high">Alta</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="flex gap-2 items-end">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`resolved-${index}`}
-                        checked={problem.resolved}
-                        onCheckedChange={(checked) =>
-                          handleProblemChange(index, "resolved", checked)
-                        }
-                      />
-                      <Label htmlFor={`resolved-${index}`} className="text-sm">
-                        Resolvido
-                      </Label>
-                    </div>
-                  </div>
-
-                  {formData.problems.length > 1 && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => removeProblem(index)}
-                    >
-                      <Minus className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Additional Info */}
-        <div className="glass-card p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">
-            Informações Adicionais
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <Label htmlFor="nextMaintenanceDate">Próxima Manutenção</Label>
-              <Input
-                id="nextMaintenanceDate"
-                type="date"
-                value={formData.nextMaintenanceDate}
-                onChange={(e) =>
-                  handleInputChange("nextMaintenanceDate", e.target.value)
-                }
-              />
+            <div className="flex items-center space-x-2">
+              <Waves className="w-6 h-6 text-blue-600" />
+              <h1 className="text-2xl font-bold text-gray-900">
+                Nova Intervenção
+              </h1>
             </div>
           </div>
 
-          <div className="mt-6">
-            <Label htmlFor="observations">Observações</Label>
-            <Textarea
-              id="observations"
-              placeholder="Observações gerais sobre a intervenção..."
-              value={formData.observations}
-              onChange={(e) =>
-                handleInputChange("observations", e.target.value)
-              }
-              rows={4}
-            />
+          <div className="flex items-center space-x-2">
+            {isOnline ? (
+              <div className="flex items-center text-green-600 text-sm">
+                <Wifi className="w-4 h-4 mr-1" />
+                Online
+              </div>
+            ) : (
+              <div className="flex items-center text-amber-600 text-sm">
+                <WifiOff className="w-4 h-4 mr-1" />
+                Offline
+              </div>
+            )}
+            {isSyncing && (
+              <div className="flex items-center text-blue-600 text-sm">
+                <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600 mr-1"></div>
+                A sincronizar...
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Photos */}
-        <div className="glass-card p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-            <Camera className="mr-2 h-5 w-5 text-blue-600" />
-            Fotografias da Intervenção
+        {/* Pool Info */}
+        <div className="bg-white rounded-lg shadow-sm border p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            {maintenance.poolLocation}
           </h2>
-
-          <PoolPhotoUpload
-            photos={photos}
-            onPhotosChange={setPhotos}
-            maxPhotos={15}
-            type="intervention"
-          />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
+            <div>
+              <span className="font-medium">Cliente:</span>{" "}
+              {maintenance.clientName}
+            </div>
+            <div>
+              <span className="font-medium">Tipo:</span> {maintenance.poolType}
+            </div>
+            <div>
+              <span className="font-medium">Estado:</span> {maintenance.status}
+            </div>
+          </div>
         </div>
 
         {error && (
           <Alert className="border-red-200 bg-red-50">
+            <AlertCircle className="h-4 w-4 text-red-600" />
             <AlertDescription className="text-red-800">
               {error}
             </AlertDescription>
           </Alert>
         )}
 
-        {/* Actions */}
-        <div className="flex gap-4 justify-end">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => navigate(`/maintenance/${maintenance.id}`)}
-          >
-            Cancelar
-          </Button>
-          <Button type="submit" disabled={isSubmitting} className="btn-primary">
-            <Save className="mr-2 h-4 w-4" />
-            {isSubmitting ? "A guardar..." : "Guardar Intervenção"}
-          </Button>
-        </div>
-      </form>
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Basic Info */}
+          <div className="bg-white rounded-lg shadow-sm border p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <Clock className="w-5 h-5 mr-2 text-blue-600" />
+              Informações Básicas
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <Label htmlFor="date">Data</Label>
+                <Input
+                  id="date"
+                  type="date"
+                  value={formData.date}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, date: e.target.value }))
+                  }
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="timeStart">Hora de Início</Label>
+                <Input
+                  id="timeStart"
+                  type="time"
+                  value={formData.timeStart}
+                  onChange={(e) => {
+                    const newTimeStart = e.target.value;
+                    setFormData((prev) => ({
+                      ...prev,
+                      timeStart: newTimeStart,
+                    }));
+
+                    // Auto-calculate end time (1 hour later)
+                    if (newTimeStart) {
+                      const [hours, minutes] = newTimeStart.split(":");
+                      const endTime = new Date();
+                      endTime.setHours(parseInt(hours) + 1, parseInt(minutes));
+                      setFormData((prev) => ({
+                        ...prev,
+                        timeEnd: format(endTime, "HH:mm"),
+                      }));
+                    }
+                  }}
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="timeEnd">Hora de Fim</Label>
+                <Input
+                  id="timeEnd"
+                  type="time"
+                  value={formData.timeEnd}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      timeEnd: e.target.value,
+                    }))
+                  }
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Technicians */}
+          <div className="bg-white rounded-lg shadow-sm border p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <Users className="w-5 h-5 mr-2 text-blue-600" />
+              Técnicos
+            </h3>
+
+            <div className="space-y-3">
+              {formData.technicians.map((technician, index) => (
+                <div key={index} className="flex gap-2">
+                  <Input
+                    value={technician}
+                    onChange={(e) => {
+                      const newTechnicians = [...formData.technicians];
+                      newTechnicians[index] = e.target.value;
+                      setFormData((prev) => ({
+                        ...prev,
+                        technicians: newTechnicians,
+                      }));
+                    }}
+                    placeholder="Nome do técnico"
+                    className="flex-1"
+                  />
+                  {formData.technicians.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => removeTechnician(index)}
+                    >
+                      <Minus className="w-4 h-4" />
+                    </Button>
+                  )}
+                </div>
+              ))}
+
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={addTechnician}
+                className="flex items-center"
+              >
+                <Plus className="w-4 h-4 mr-1" />
+                Adicionar Técnico
+              </Button>
+            </div>
+          </div>
+
+          {/* Vehicles */}
+          <div className="bg-white rounded-lg shadow-sm border p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <Truck className="w-5 h-5 mr-2 text-blue-600" />
+              Viaturas
+            </h3>
+
+            <div className="space-y-3">
+              {formData.vehicles.map((vehicle, index) => (
+                <div key={index} className="flex gap-2">
+                  <Input
+                    value={vehicle}
+                    onChange={(e) => {
+                      const newVehicles = [...formData.vehicles];
+                      newVehicles[index] = e.target.value;
+                      setFormData((prev) => ({
+                        ...prev,
+                        vehicles: newVehicles,
+                      }));
+                    }}
+                    placeholder="Matrícula da viatura"
+                    className="flex-1"
+                  />
+                  {formData.vehicles.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => removeVehicle(index)}
+                    >
+                      <Minus className="w-4 h-4" />
+                    </Button>
+                  )}
+                </div>
+              ))}
+
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={addVehicle}
+                className="flex items-center"
+              >
+                <Plus className="w-4 h-4 mr-1" />
+                Adicionar Viatura
+              </Button>
+            </div>
+          </div>
+
+          {/* Water Values */}
+          <div className="bg-white rounded-lg shadow-sm border p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <Droplets className="w-5 h-5 mr-2 text-blue-600" />
+              Valores da Água
+            </h3>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <Label htmlFor="ph">pH</Label>
+                <Input
+                  id="ph"
+                  type="number"
+                  step="0.1"
+                  value={formData.waterValues.ph || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      waterValues: {
+                        ...prev.waterValues,
+                        ph: parseFloat(e.target.value) || 0,
+                      },
+                    }))
+                  }
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="salt">Sal (g/L)</Label>
+                <Input
+                  id="salt"
+                  type="number"
+                  step="0.1"
+                  value={formData.waterValues.salt || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      waterValues: {
+                        ...prev.waterValues,
+                        salt: parseFloat(e.target.value) || 0,
+                      },
+                    }))
+                  }
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="orp">ORP (mV)</Label>
+                <Input
+                  id="orp"
+                  type="number"
+                  value={formData.waterValues.orp || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      waterValues: {
+                        ...prev.waterValues,
+                        orp: parseFloat(e.target.value) || 0,
+                      },
+                    }))
+                  }
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="temperature">Temperatura (°C)</Label>
+                <Input
+                  id="temperature"
+                  type="number"
+                  step="0.1"
+                  value={formData.waterValues.temperature || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      waterValues: {
+                        ...prev.waterValues,
+                        temperature: parseFloat(e.target.value) || 0,
+                      },
+                    }))
+                  }
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="chlorine">Cloro Livre (ppm)</Label>
+                <Input
+                  id="chlorine"
+                  type="number"
+                  step="0.1"
+                  value={formData.waterValues.chlorine || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      waterValues: {
+                        ...prev.waterValues,
+                        chlorine: parseFloat(e.target.value) || 0,
+                      },
+                    }))
+                  }
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="bromine">Bromo (ppm)</Label>
+                <Input
+                  id="bromine"
+                  type="number"
+                  step="0.1"
+                  value={formData.waterValues.bromine || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      waterValues: {
+                        ...prev.waterValues,
+                        bromine: parseFloat(e.target.value) || 0,
+                      },
+                    }))
+                  }
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="alkalinity">Alcalinidade (ppm)</Label>
+                <Input
+                  id="alkalinity"
+                  type="number"
+                  value={formData.waterValues.alkalinity || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      waterValues: {
+                        ...prev.waterValues,
+                        alkalinity: parseFloat(e.target.value) || 0,
+                      },
+                    }))
+                  }
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="hardness">Dureza (ppm)</Label>
+                <Input
+                  id="hardness"
+                  type="number"
+                  value={formData.waterValues.hardness || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      waterValues: {
+                        ...prev.waterValues,
+                        hardness: parseFloat(e.target.value) || 0,
+                      },
+                    }))
+                  }
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Chemical Products */}
+          <div className="bg-white rounded-lg shadow-sm border p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Produtos Químicos Aplicados
+            </h3>
+
+            <div className="space-y-3">
+              {formData.chemicalProducts.map((product, index) => (
+                <div key={index} className="flex gap-2">
+                  <Input
+                    value={product.productName}
+                    onChange={(e) => {
+                      const newProducts = [...formData.chemicalProducts];
+                      newProducts[index].productName = e.target.value;
+                      setFormData((prev) => ({
+                        ...prev,
+                        chemicalProducts: newProducts,
+                      }));
+                    }}
+                    placeholder="Nome do produto"
+                    className="flex-1"
+                  />
+                  <Input
+                    type="number"
+                    step="0.1"
+                    value={product.quantity || ""}
+                    onChange={(e) => {
+                      const newProducts = [...formData.chemicalProducts];
+                      newProducts[index].quantity =
+                        parseFloat(e.target.value) || 0;
+                      setFormData((prev) => ({
+                        ...prev,
+                        chemicalProducts: newProducts,
+                      }));
+                    }}
+                    placeholder="Quantidade"
+                    className="w-32"
+                  />
+                  <Select
+                    value={product.unit}
+                    onValueChange={(value) => {
+                      const newProducts = [...formData.chemicalProducts];
+                      newProducts[index].unit = value;
+                      setFormData((prev) => ({
+                        ...prev,
+                        chemicalProducts: newProducts,
+                      }));
+                    }}
+                  >
+                    <SelectTrigger className="w-24">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="kg">kg</SelectItem>
+                      <SelectItem value="L">L</SelectItem>
+                      <SelectItem value="g">g</SelectItem>
+                      <SelectItem value="mL">mL</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {formData.chemicalProducts.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => removeChemicalProduct(index)}
+                    >
+                      <Minus className="w-4 h-4" />
+                    </Button>
+                  )}
+                </div>
+              ))}
+
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={addChemicalProduct}
+                className="flex items-center"
+              >
+                <Plus className="w-4 h-4 mr-1" />
+                Adicionar Produto
+              </Button>
+            </div>
+          </div>
+
+          {/* Work Performed */}
+          <div className="bg-white rounded-lg shadow-sm border p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Trabalho Realizado
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {Object.entries({
+                filtros: "Limpeza de Filtros",
+                preFiltro: "Limpeza de Pré-filtro",
+                filtroAreiaVidro: "Filtro de Areia/Vidro",
+                enchimentoAutomatico: "Enchimento Automático",
+                linhaAgua: "Limpeza da Linha de Água",
+                limpezaFundo: "Limpeza do Fundo",
+                limpezaParedes: "Limpeza das Paredes",
+                limpezaSkimmers: "Limpeza dos Skimmers",
+                verificacaoEquipamentos: "Verificação de Equipamentos",
+              }).map(([key, label]) => (
+                <div key={key} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={key}
+                    checked={
+                      formData.workPerformed[
+                        key as keyof typeof formData.workPerformed
+                      ] as boolean
+                    }
+                    onCheckedChange={(checked) => {
+                      setFormData((prev) => ({
+                        ...prev,
+                        workPerformed: {
+                          ...prev.workPerformed,
+                          [key]: checked,
+                        },
+                      }));
+                    }}
+                  />
+                  <Label htmlFor={key} className="text-sm">
+                    {label}
+                  </Label>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-4">
+              <Label htmlFor="outros">Outros trabalhos realizados</Label>
+              <Textarea
+                id="outros"
+                value={formData.workPerformed.outros}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    workPerformed: {
+                      ...prev.workPerformed,
+                      outros: e.target.value,
+                    },
+                  }))
+                }
+                placeholder="Descreva outros trabalhos realizados..."
+              />
+            </div>
+          </div>
+
+          {/* Problems */}
+          <div className="bg-white rounded-lg shadow-sm border p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <AlertTriangle className="w-5 h-5 mr-2 text-amber-600" />
+              Problemas Identificados
+            </h3>
+
+            <div className="space-y-4">
+              {formData.problems.map((problem, index) => (
+                <div key={index} className="border rounded-lg p-4 space-y-3">
+                  <div className="flex gap-2">
+                    <Textarea
+                      value={problem.description}
+                      onChange={(e) => {
+                        const newProblems = [...formData.problems];
+                        newProblems[index].description = e.target.value;
+                        setFormData((prev) => ({
+                          ...prev,
+                          problems: newProblems,
+                        }));
+                      }}
+                      placeholder="Descrição do problema"
+                      className="flex-1"
+                    />
+                    {formData.problems.length > 1 && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => removeProblem(index)}
+                      >
+                        <Minus className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+
+                  <div className="flex gap-4">
+                    <div>
+                      <Label>Gravidade</Label>
+                      <Select
+                        value={problem.severity}
+                        onValueChange={(value: "low" | "medium" | "high") => {
+                          const newProblems = [...formData.problems];
+                          newProblems[index].severity = value;
+                          setFormData((prev) => ({
+                            ...prev,
+                            problems: newProblems,
+                          }));
+                        }}
+                      >
+                        <SelectTrigger className="w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="low">Baixa</SelectItem>
+                          <SelectItem value="medium">Média</SelectItem>
+                          <SelectItem value="high">Alta</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`resolved-${index}`}
+                        checked={problem.resolved}
+                        onCheckedChange={(checked) => {
+                          const newProblems = [...formData.problems];
+                          newProblems[index].resolved = !!checked;
+                          setFormData((prev) => ({
+                            ...prev,
+                            problems: newProblems,
+                          }));
+                        }}
+                      />
+                      <Label htmlFor={`resolved-${index}`}>Resolvido</Label>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={addProblem}
+                className="flex items-center"
+              >
+                <Plus className="w-4 h-4 mr-1" />
+                Adicionar Problema
+              </Button>
+            </div>
+          </div>
+
+          {/* Photos */}
+          <div className="bg-white rounded-lg shadow-sm border p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <Camera className="w-5 h-5 mr-2 text-blue-600" />
+              Fotografias
+            </h3>
+
+            <PoolPhotoUpload
+              photos={photos}
+              onPhotosChange={setPhotos}
+              maxPhotos={10}
+            />
+          </div>
+
+          {/* Additional Info */}
+          <div className="bg-white rounded-lg shadow-sm border p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Informações Adicionais
+            </h3>
+
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="nextMaintenanceDate">Próxima Manutenção</Label>
+                <Input
+                  id="nextMaintenanceDate"
+                  type="date"
+                  value={formData.nextMaintenanceDate}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      nextMaintenanceDate: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="observations">Observações</Label>
+                <Textarea
+                  id="observations"
+                  value={formData.observations}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      observations: e.target.value,
+                    }))
+                  }
+                  placeholder="Observações gerais sobre a intervenção..."
+                  rows={4}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Submit */}
+          <div className="flex justify-end space-x-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => navigate(`/maintenance/${maintenance.id}`)}
+              disabled={isSubmitting}
+            >
+              Cancelar
+            </Button>
+
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="flex items-center"
+            >
+              {isSubmitting ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  A guardar...
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4 mr-2" />
+                  Guardar Intervenção
+                </>
+              )}
+            </Button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
