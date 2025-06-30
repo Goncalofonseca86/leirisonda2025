@@ -175,7 +175,7 @@ export function MaintenanceReport({
       algicida: "Prevenç��o de algas",
       floculante: "Clarificação da água",
       cal: "Ajuste de alcalinidade",
-      sal: "Eletr��lise salina",
+      sal: "Eletrólise salina",
       estabilizador: "Proteção do cloro",
       clarificante: "Limpeza da água",
       choque: "Tratamento choque",
@@ -292,7 +292,7 @@ export function MaintenanceReport({
           </tr>
           <tr>
             <td>pH</td>
-            <td>${intervention.waterValues.ph ? (intervention.waterValues.ph >= 7.0 && intervention.waterValues.ph <= 7.4 ? "Conforme" : "N��o conforme") : "N/A"}</td>
+            <td>${intervention.waterValues.ph ? (intervention.waterValues.ph >= 7.0 && intervention.waterValues.ph <= 7.4 ? "Conforme" : "Não conforme") : "N/A"}</td>
             <td>${intervention.waterValues.ph ? (intervention.waterValues.ph >= 7.0 && intervention.waterValues.ph <= 7.4 ? "" : `pH acima de 7.6`) : ""}</td>
           </tr>
           <tr>
@@ -691,23 +691,9 @@ export function MaintenanceReport({
     setIsGenerating(true);
 
     try {
-      // Check if we're on mobile
-      const isMobile =
-        window.innerWidth < 768 ||
-        /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-      if (isMobile) {
-        console.log(
-          "📱 Dispositivo mobile detectado - usando geração simplificada",
-        );
-        // For mobile, use a simpler approach
-        await generateSimpleMobilePDF();
-        return;
-      }
-
       // Force fresh content generation with current timestamp
       const currentTimestamp = new Date().toISOString();
-      console.log(`📋 Gerando relatório desktop em: ${currentTimestamp}`);
+      console.log(`📋 Gerando relatório COMPLETO em: ${currentTimestamp}`);
 
       const content = intervention
         ? createInterventionContent()
