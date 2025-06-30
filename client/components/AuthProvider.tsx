@@ -635,32 +635,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function useAuth() {
+export function useAuth(): AuthContextType {
   try {
     const context = useContext(AuthContext);
+
+    if (context === undefined) {
+      console.error("❌ useAuth must be used within an AuthProvider");
+      // Instead of returning fallback, throw error so ErrorBoundary can catch
+      throw new Error(
+        "useAuth must be used within an AuthProvider. Check that your component is wrapped with AuthProvider.",
+      );
+    }
+
     if (!context) {
-      console.warn("⚠️ useAuth called outside AuthProvider - using fallback");
+      console.warn("⚠️ useAuth context is null - using fallback");
       // Return fallback context to prevent crashes
       return {
         user: null,
         login: async () => false,
         logout: () => {},
         isLoading: false,
-        isInitialized: false,
+        isInitialized: true, // Mark as initialized to prevent infinite loading
         getAllUsers: () => [],
       };
     }
+
     return context;
   } catch (error) {
-    console.error("❌ Error in useAuth:", error);
-    // Return safe fallback
-    return {
-      user: null,
-      login: async () => false,
-      logout: () => {},
-      isLoading: false,
-      isInitialized: false,
-      getAllUsers: () => [],
-    };
+    console.error("❌ Critical error in useAuth:", error);
+
+    // If we're in SystemStatus, return a safe fallback instead of throwing
+    if (window.location.pathname === "/system-status") {
+      return {
+        user: null,
+        login: async () => false,
+        logout: () => {},
+        isLoading: false,
+        isInitialized: true,
+        getAllUsers: () => [],
+      };
+    }
+
+    // For other pages, re-throw so ErrorBoundary can handle
+    throw error;
   }
 }
