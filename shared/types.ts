@@ -169,7 +169,12 @@ export interface DashboardStats {
   workSheetsPending: number; // Folhas de obra por fazer
 }
 
-export type WorkStatus = "pendente" | "em_progresso" | "concluida";
+export type WorkStatus =
+  | "pendente"
+  | "em_progresso"
+  | "concluida"
+  | "in-progress"
+  | "completed";
 
 export interface AuthContextType {
   user: User | null;
