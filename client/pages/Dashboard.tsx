@@ -19,6 +19,8 @@ import {
   MapPin,
   RefreshCw,
   Bell,
+  Bug,
+  Trash2,
 } from "lucide-react";
 import { Work, DashboardStats } from "@shared/types";
 import { useAuthFixed as useAuth } from "@/components/AuthProviderFixed";
@@ -626,18 +628,33 @@ export function Dashboard() {
         </Link>
       </div>
 
-      {/* DEBUG BUTTON - TEMPORÁRIO */}
+      {/* DEBUG SECTION - ADMIN ONLY */}
       {user?.email === "gongonsilva@gmail.com" && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-          <div className="flex items-center justify-between">
-            <span className="text-red-800 text-sm font-medium">
-              🔍 Debug Dashboard
-            </span>
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <h3 className="text-red-800 text-sm font-bold mb-3">
+            🔧 Ferramentas de Debug
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <button
+              onClick={debugWorks}
+              className="px-3 py-2 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 flex items-center"
+            >
+              <Bug className="w-3 h-3 mr-1" />
+              Debug Obras
+            </button>
+            <button
+              onClick={cleanupDuplicateData}
+              className="px-3 py-2 bg-red-600 text-white text-xs rounded hover:bg-red-700 flex items-center"
+            >
+              <Trash2 className="w-3 h-3 mr-1" />
+              Limpar Duplicados
+            </button>
             <button
               onClick={runDebugCheck}
-              className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
+              className="px-3 py-2 bg-green-600 text-white text-xs rounded hover:bg-green-700 flex items-center"
             >
-              Executar Debug
+              <RefreshCw className="w-3 h-3 mr-1" />
+              Debug Sistema
             </button>
           </div>
           {debugInfo.timestamp && (
