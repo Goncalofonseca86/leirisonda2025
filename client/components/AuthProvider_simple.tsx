@@ -1,3 +1,4 @@
+// Clean AuthProvider with local-only authentication
 import React, {
   createContext,
   useContext,
