@@ -102,10 +102,20 @@ export function Login() {
     try {
       const success = await login(email, password);
 
-      if (!success) {
+      if (success) {
+        // Marcar login bem-sucedido para detectar possíveis problemas de contexto
+        sessionStorage.setItem("just_logged_in", "true");
+        console.log("✅ Login bem-sucedido, marcação criada");
+
+        // Remover marcação após 5 segundos (tempo suficiente para navegação)
+        setTimeout(() => {
+          sessionStorage.removeItem("just_logged_in");
+        }, 5000);
+      } else {
         setError("Email ou palavra-passe incorretos.");
       }
     } catch (err) {
+      console.error("❌ Erro durante login:", err);
       setError("Erro ao iniciar sessão. Tente novamente.");
     } finally {
       setIsSubmitting(false);
