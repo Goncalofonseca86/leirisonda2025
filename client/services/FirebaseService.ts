@@ -455,6 +455,11 @@ export class FirebaseService {
         const previousInterventions =
           maintenances[maintenanceIndex].interventions?.length || 0;
 
+        // Create backup before updating
+        const timestamp = new Date().toISOString();
+        const backupKey = `pool_maintenances_backup_${timestamp.split("T")[0]}`;
+        localStorage.setItem(backupKey, JSON.stringify(maintenances));
+
         maintenances[maintenanceIndex] = {
           ...maintenances[maintenanceIndex],
           ...updates,
@@ -464,9 +469,51 @@ export class FirebaseService {
         const newInterventions =
           maintenances[maintenanceIndex].interventions?.length || 0;
 
+        // Primary save
         localStorage.setItem("pool_maintenances", JSON.stringify(maintenances));
 
-        console.log("📱 Maintenance updated locally:", {
+        // Secondary backup save
+        localStorage.setItem(
+          "pool_maintenances_backup",
+          JSON.stringify(maintenances),
+        );
+
+        // Tertiary save with timestamp
+        localStorage.setItem(
+          `pool_maintenances_${timestamp}`,
+          JSON.stringify(maintenances),
+        );
+
+        // Verify the save worked
+        setTimeout(() => {
+          const verification = localStorage.getItem("pool_maintenances");
+          if (verification) {
+            const parsed = JSON.parse(verification);
+            const verifiedMaintenance = parsed.find(
+              (m: any) => m.id === maintenanceId,
+            );
+            const verifiedInterventions =
+              verifiedMaintenance?.interventions?.length || 0;
+
+            console.log("✅ Verificação de salvamento:", {
+              maintenanceId,
+              interventionsGuardadas: verifiedInterventions,
+              salvamentoCorreto: verifiedInterventions === newInterventions,
+            });
+
+            if (verifiedInterventions !== newInterventions) {
+              console.error("❌ FALHA NA VERIFICAÇÃO! Tentando recuperar...");
+              // Try to restore from backup
+              const backup = localStorage.getItem("pool_maintenances_backup");
+              if (backup) {
+                localStorage.setItem("pool_maintenances", backup);
+                console.log("🔄 Dados restaurados do backup");
+              }
+            }
+          }
+        }, 100);
+
+        console.log("📱 Maintenance updated locally with triple backup:", {
           maintenanceId,
           previousInterventions,
           newInterventions,
@@ -477,6 +524,17 @@ export class FirebaseService {
       }
     } catch (error) {
       console.error("Error updating local maintenance:", error);
+
+      // Try to restore from backup on error
+      try {
+        const backup = localStorage.getItem("pool_maintenances_backup");
+        if (backup) {
+          localStorage.setItem("pool_maintenances", backup);
+          console.log("🔄 Dados restaurados do backup após erro");
+        }
+      } catch (backupError) {
+        console.error("❌ Erro ao restaurar backup:", backupError);
+      }
     }
   }
 
