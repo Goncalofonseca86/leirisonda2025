@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/use-auth";
 
 export function Login() {
-  const [email, setEmail] = useState("gongonsilva@gmail.com");
-  const [password, setPassword] = useState("19867gsf");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
