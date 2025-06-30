@@ -432,14 +432,39 @@ export class FirebaseService {
       const maintenanceIndex = maintenances.findIndex(
         (m) => m.id === maintenanceId,
       );
+
+      console.log("🔄 updateLocalMaintenance:", {
+        maintenanceId,
+        foundIndex: maintenanceIndex,
+        totalMaintenances: maintenances.length,
+        interventionsInUpdate: updates.interventions?.length || 0,
+        existingInterventions:
+          maintenances[maintenanceIndex]?.interventions?.length || 0,
+      });
+
       if (maintenanceIndex !== -1) {
+        const previousInterventions =
+          maintenances[maintenanceIndex].interventions?.length || 0;
+
         maintenances[maintenanceIndex] = {
           ...maintenances[maintenanceIndex],
           ...updates,
           updatedAt: new Date().toISOString(),
         };
+
+        const newInterventions =
+          maintenances[maintenanceIndex].interventions?.length || 0;
+
         localStorage.setItem("pool_maintenances", JSON.stringify(maintenances));
-        console.log("📱 Maintenance updated locally:", maintenanceId);
+
+        console.log("📱 Maintenance updated locally:", {
+          maintenanceId,
+          previousInterventions,
+          newInterventions,
+          interventionsSaved: newInterventions > previousInterventions,
+        });
+      } else {
+        console.error("❌ Maintenance not found for update:", maintenanceId);
       }
     } catch (error) {
       console.error("Error updating local maintenance:", error);
