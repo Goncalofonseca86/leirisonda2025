@@ -364,9 +364,9 @@ export function WorkDetail() {
         </div>
 
         <div className="flex flex-wrap gap-4">
-          <WorkReport work={work} />
+          <WorkReport work={safeWork} />
 
-          <Link to={`/edit-work/${work.id}`}>
+          <Link to={`/edit-work/${safeWork.id}`}>
             <Button className="btn-primary">
               <Edit className="mr-2 h-4 w-4" />
               Editar Obra
