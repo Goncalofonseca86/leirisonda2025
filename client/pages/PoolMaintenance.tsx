@@ -74,7 +74,21 @@ export function PoolMaintenancePage() {
   }, []);
 
   const loadMaintenances = () => {
-    // Force demo data for debugging
+    // First try to load existing data
+    const existingData = localStorage.getItem("leirisonda_pool_maintenances");
+
+    if (existingData) {
+      try {
+        const parsedData = JSON.parse(existingData);
+        console.log("Loaded existing maintenances:", parsedData.length);
+        setMaintenances(parsedData);
+        return;
+      } catch (error) {
+        console.error("Error parsing existing maintenances:", error);
+      }
+    }
+
+    // Only create demo data if no existing data
     const demoData = createDemoMaintenances();
     console.log("Created demo data:", demoData);
     setMaintenances(demoData);
