@@ -13,34 +13,13 @@ const firebaseConfig = {
   measurementId: "G-R9W43EHH2C",
 };
 
-// Initialize Firebase with error handling
-let app;
-let db;
-let auth;
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
-try {
-  app = initializeApp(firebaseConfig);
+// Initialize Firebase services
+export const db = getFirestore(app);
+export const auth = getAuth(app);
 
-  // Initialize Firebase services
-  db = getFirestore(app);
-  auth = getAuth(app);
+console.log("🔥 Firebase Leirisonda initialized successfully");
 
-  // Clear any stale auth state on initialization
-  auth.onAuthStateChanged((user) => {
-    if (!user) {
-      // Clear any stale localStorage data when user is not authenticated
-      console.log("🔄 Clearing stale auth data");
-    }
-  });
-
-  console.log("🔥 Firebase Leirisonda initialized successfully");
-} catch (error) {
-  console.error("❌ Firebase initialization error:", error);
-
-  // Fallback to local-only mode if Firebase fails
-  db = null;
-  auth = null;
-}
-
-export { db, auth };
 export default app;
