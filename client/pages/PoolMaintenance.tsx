@@ -74,23 +74,12 @@ export function PoolMaintenancePage() {
   }, []);
 
   const loadMaintenances = () => {
-    // First try to load existing data
-    const existingData = localStorage.getItem("leirisonda_pool_maintenances");
+    // CLEAR DUPLICATES: Remove old data first
+    localStorage.removeItem("leirisonda_pool_maintenances");
 
-    if (existingData) {
-      try {
-        const parsedData = JSON.parse(existingData);
-        console.log("Loaded existing maintenances:", parsedData.length);
-        setMaintenances(parsedData);
-        return;
-      } catch (error) {
-        console.error("Error parsing existing maintenances:", error);
-      }
-    }
-
-    // Only create demo data if no existing data
+    // Create fresh demo data
     const demoData = createDemoMaintenances();
-    console.log("Created demo data:", demoData);
+    console.log("Created fresh demo data:", demoData.length, "maintenances");
     setMaintenances(demoData);
     localStorage.setItem(
       "leirisonda_pool_maintenances",
@@ -350,7 +339,7 @@ export function PoolMaintenancePage() {
           </DialogTrigger>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Registrar Nova Manutenção</DialogTitle>
+              <DialogTitle>Registrar Nova Manuten��ão</DialogTitle>
             </DialogHeader>
 
             <form onSubmit={handleSubmit} className="space-y-6">
