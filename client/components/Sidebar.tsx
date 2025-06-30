@@ -15,6 +15,7 @@ import {
   Building,
   Wrench,
   ArrowLeft,
+  Bell,
 } from "lucide-react";
 import { useAuthFixed as useAuth } from "./AuthProviderFixed";
 import { Button } from "./ui/button";
