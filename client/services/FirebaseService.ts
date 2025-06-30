@@ -464,14 +464,6 @@ export class FirebaseService {
         maintenances = JSON.parse(stored);
       }
 
-      console.log("📊 Estado atual:", {
-        maintenanceId,
-        totalMaintenances: maintenances.length,
-        targetMaintenance:
-          maintenances.find((m) => m.id === maintenanceId)?.poolName ||
-          "NÃO ENCONTRADA",
-      });
-
       // Find and update maintenance
       const maintenanceIndex = maintenances.findIndex(
         (m) => m.id === maintenanceId,
