@@ -2,9 +2,6 @@ import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
 import { Eye, EyeOff, AlertCircle } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export function Login() {
   const { user, login, isLoading } = useAuth();
