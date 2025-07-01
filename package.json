@@ -1,6 +1,6 @@
 {
   "name": "leirisonda-static-server",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Static file server for Leirisonda PWA",
   "main": "index.js",
   "scripts": {
@@ -10,5 +10,15 @@
   },
   "dependencies": {
     "serve": "^14.2.1"
-  }
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "keywords": [
+    "pwa",
+    "leirisonda",
+    "static-server",
+    "obras",
+    "piscinas"
+  ]
 }
