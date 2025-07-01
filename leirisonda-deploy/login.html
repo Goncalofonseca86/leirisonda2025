@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Leirisonda - Login</title>
+    <style>
+      body {
+        font-family:
+          "Open Sans",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        background-color: #fcfcfc;
+        color: #454545;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+      .login-container {
+        background: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+      }
+      .logo {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 30px;
+        background: #b30229;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+      }
+      h1 {
+        color: #b30229;
+        margin-bottom: 30px;
+        font-size: 28px;
+      }
+      .form-group {
+        margin-bottom: 20px;
+        text-align: left;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+      }
+      input {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 16px;
+        box-sizing: border-box;
+      }
+      input:focus {
+        outline: none;
+        border-color: #b30229;
+      }
+      .login-btn {
+        width: 100%;
+        padding: 14px;
+        background: #b30229;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+      .login-btn:hover {
+        background: #950020;
+      }
+      .skip-btn {
+        width: 100%;
+        padding: 14px;
+        background: transparent;
+        color: #666;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        cursor: pointer;
+        margin-top: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <div class="logo">L</div>
+      <h1>Leirisonda</h1>
+      <p>Gestão de Obras e Manutenção</p>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required />
+        </div>
+
+        <button type="submit" class="login-btn">Entrar</button>
+      </form>
+
+      <button class="skip-btn" onclick="skipLogin()">
+        Continuar sem login (Demo)
+      </button>
+    </div>
+
+    <script>
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          // Simular login - redirecionar para aplicação principal
+          window.location.href = "/index.html";
+        });
+
+      function skipLogin() {
+        // Bypass login - ir diretamente para app
+        window.location.href = "/index.html";
+      }
+
+      // Auto-redirect após 10 segundos se estiver na app principal
+      if (window.location.pathname === "/") {
+        setTimeout(() => {
+          window.location.href = "/login.html";
+        }, 10000);
+      }
+    </script>
+  </body>
+</html>
