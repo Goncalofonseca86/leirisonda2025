@@ -41,6 +41,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
               A carregar...
             </h2>
             <p className="text-gray-600">A verificar as suas credenciais</p>
+            <p className="text-sm text-gray-500 mt-2">
+              Se demorar muito, será redirecionado automaticamente...
+            </p>
             <div className="mt-6">
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
