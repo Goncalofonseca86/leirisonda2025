@@ -1,1 +1,12 @@
+# SPA fallback
 /*    /index.html   200
+
+# API redirects (if any future API endpoints are needed)
+/api/*  https://api.leirisonda.com/:splat  200
+
+# Force HTTPS
+http://leirisonda2025.netlify.app/*    https://leirisonda2025.netlify.app/:splat    301!
+
+# Redirect old paths (if any)
+/dashboard/*  /?source=pwa  301
+/create-work/*  /?source=pwa  301
