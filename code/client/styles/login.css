@@ -1,0 +1,70 @@
+/* Login Page Styles with Baby Blue Background */
+
+.login-hero {
+  background: linear-gradient(135deg, #87cefa, #add8e6);
+  min-height: 100vh;
+  padding: 60px 20px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-card {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  width: 100%;
+  max-width: 400px;
+}
+
+.input-leirisonda {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-family: "Open Sans", sans-serif;
+  transition: all 0.2s ease-in-out;
+  background-color: #fff;
+  height: 48px;
+  line-height: 24px;
+}
+
+.input-leirisonda:focus {
+  border-color: #87cefa;
+  box-shadow: 0 0 0 3px rgba(135, 206, 250, 0.1);
+  outline: none;
+}
+
+.btn-leirisonda {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Roboto", sans-serif;
+  font-size: 17px;
+  font-weight: 500;
+  background-color: #007784;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  text-decoration: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-height: 44px;
+}
+
+.btn-leirisonda:hover {
+  background-color: rgba(0, 119, 132, 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-leirisonda:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
