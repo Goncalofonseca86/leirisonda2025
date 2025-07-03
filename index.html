@@ -6,7 +6,6 @@
     <title>Leirisonda - Gestão de Obras</title>
     <link rel="icon" type="image/svg+xml" href="/leirisonda-logo.svg" />
 
-    <!-- PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta
       name="apple-mobile-web-app-status-bar-style"
@@ -20,14 +19,12 @@
       content="Sistema de gestão de obras e manutenção de piscinas da Leirisonda"
     />
 
-    <!-- PWA Manifest -->
     <link
       rel="manifest"
       href="/leirisonda-deploy/manifest.json"
       crossorigin="use-credentials"
     />
 
-    <!-- Main App Styles and Scripts -->
     <script
       type="module"
       crossorigin
@@ -41,15 +38,8 @@
   </head>
   <body>
     <div id="root"></div>
-
-    <!-- Menu Styles -->
     <link rel="stylesheet" href="/leirisonda-deploy/menu-modifications.css" />
-
-    <!-- Minimal initialization -->
     <script>
-      console.log("Leirisonda system initialized");
-
-      // Service worker
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("/leirisonda-deploy/sw.js");
       }
