@@ -35,8 +35,40 @@
 
     <title>Leirisonda - Gestão de Obras</title>
 
-    <!-- Script CSS para modificar menu lateral -->
-    <script src="/css-menu-modifier.js"></script>
+    <!-- CSS para modificar menu lateral -->
+    <link rel="stylesheet" href="/menu-modifications.css" />
+
+    <!-- CSS inline como backup -->
+    <style>
+      /* Esconde DIAGNÓSTICO */
+      div:contains("DIAGNÓSTICO"),
+      button:contains("DIAGNÓSTICO"),
+      a:contains("DIAGNÓSTICO") {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        height: 0 !important;
+        overflow: hidden !important;
+      }
+
+      /* Destaca ADMINISTRAÇÃO */
+      div:contains("ADMINISTRAÇÃO"),
+      button:contains("ADMINISTRAÇÃO"),
+      a:contains("ADMINISTRAÇÃO") {
+        background: linear-gradient(
+          135deg,
+          #fbbf24 0%,
+          #f59e0b 100%
+        ) !important;
+        border-radius: 12px !important;
+        padding: 16px !important;
+        margin: 8px 16px !important;
+        box-shadow: 0 4px 20px rgba(251, 191, 36, 0.3) !important;
+        color: #1f2937 !important;
+        font-weight: bold !important;
+        border: 2px solid #f59e0b !important;
+      }
+    </style>
 
     <script type="module" crossorigin src="/assets/index-DnEsHg1H.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-DFdR-byQ.css" />
