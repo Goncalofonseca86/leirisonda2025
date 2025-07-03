@@ -56,44 +56,25 @@ function createSettingsIcon() {
       "linear-gradient(135deg, #007784 0%, #005f6a 100%) !important";
   });
 
-  // Click handler direto para admin.html
+  // Click handler para abrir modal dentro da app
   iconContainer.addEventListener("click", function (e) {
     e.preventDefault();
     e.stopPropagation();
 
-    console.log(
-      "🔧 Ícone de definições clicado - redirecionando para administração",
-    );
+    console.log("🔧 Ícone de definições clicado - abrindo modal dentro da app");
 
     // Feedback visual imediato
     this.style.transform = "scale(0.9) !important";
     this.style.background =
       "linear-gradient(135deg, #00ff00 0%, #00cc00 100%) !important";
 
-    // Redirecionar para admin após feedback
+    // Criar e mostrar modal após feedback
     setTimeout(() => {
-      const adminUrl = `${window.location.origin}/admin`;
-      console.log("🚀 Redirecionando para:", adminUrl);
+      this.style.transform = "scale(1) !important";
+      this.style.background =
+        "linear-gradient(135deg, #007784 0%, #005f6a 100%) !important";
 
-      // Tentar abrir em nova aba primeiro
-      try {
-        const newWindow = window.open(
-          adminUrl,
-          "_blank",
-          "noopener,noreferrer",
-        );
-        if (newWindow) {
-          console.log("✅ Nova aba aberta com sucesso");
-        } else {
-          // Se popup foi bloqueado, navegar na mesma aba
-          console.log("⚠️ Popup bloqueado, navegando na mesma aba");
-          window.location.href = adminUrl;
-        }
-      } catch (error) {
-        console.error("❌ Erro ao abrir:", error);
-        // Fallback: navegação direta
-        window.location.href = adminUrl;
-      }
+      createSettingsModal();
     }, 200);
   });
 
