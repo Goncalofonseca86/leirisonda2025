@@ -102,23 +102,23 @@ function requestPassword() {
       <p style="color: #666; margin-bottom: 20px; font-size: 14px;">
         Introduza a palavra-passe para aceder às definições:
       </p>
-      <input 
-        type="password" 
-        id="admin-password" 
-        placeholder="Palavra-passe de administração" 
+      <input
+        type="password"
+        id="admin-password"
+        placeholder="Palavra-passe de administração"
         style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; margin-bottom: 15px; box-sizing: border-box; font-size: 16px; text-align: center;"
         autocomplete="off"
       >
       <div id="password-error" style="color: #dc3545; font-size: 13px; margin-bottom: 15px; display: none;"></div>
       <div style="display: flex; gap: 10px;">
-        <button 
-          onclick="cancelPassword()" 
+        <button
+          onclick="cancelPassword()"
           style="flex: 1; padding: 12px; background: #6c757d; color: white; border: none; border-radius: 6px; cursor: pointer;"
         >
           Cancelar
         </button>
-        <button 
-          onclick="checkPassword()" 
+        <button
+          onclick="checkPassword()"
           style="flex: 1; padding: 12px; background: #007784; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;"
         >
           Entrar
@@ -250,7 +250,7 @@ function showModal() {
 
     content.innerHTML = `
       <h2 style="color: #007784; margin-bottom: 20px;">⚙️ Definições Administrativas</h2>
-      
+
       <div style="margin-bottom: 20px; text-align: left;">
         <h3 style="color: #333; margin-bottom: 10px;">📱 Notificações</h3>
         <div id="browser-info" style="font-size: 12px; padding: 8px; background: #f8f9fa; border-radius: 4px; margin-bottom: 8px; color: #666;">
@@ -269,7 +269,7 @@ function showModal() {
       <div style="background: #fff3cd; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
         <h3 style="color: #856404; margin-bottom: 8px;">🗑️ Eliminar Dados</h3>
         <p style="color: #856404; margin-bottom: 12px; font-size: 13px;">⚠️ Remove TODOS os dados!</p>
-        
+
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 15px;">
           <div style="text-align: center; padding: 8px; background: white; border-radius: 6px; font-size: 12px;">
             <div style="font-size: 18px;">🏗️</div>
@@ -287,7 +287,7 @@ function showModal() {
             <div id="pools-count" style="color: #007784; font-weight: bold;">-</div>
           </div>
         </div>
-        
+
         <button onclick="deleteAllData()" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
           💣 ELIMINAR TUDO
         </button>
@@ -413,6 +413,8 @@ window.testNotification = function () {
 
 window.deleteAllData = function () {
   try {
+    console.log("🗑️ Iniciando eliminação de dados...");
+
     if (
       !confirm(
         "⚠️ ELIMINAR TODOS OS DADOS?\n\nObras, Manutenções e Piscinas!\n\nNÃO pode ser desfeito!",
@@ -425,7 +427,13 @@ window.deleteAllData = function () {
       return;
     }
 
-    const keys = [
+    // Verificar TODAS as chaves no localStorage
+    console.log("📋 Verificando localStorage...");
+    const allKeys = Object.keys(localStorage);
+    console.log("Todas as chaves encontradas:", allKeys);
+
+    // Lista de possíveis chaves de dados
+    const possibleKeys = [
       "leirisonda_works",
       "leirisonda_maintenances",
       "leirisonda_pools",
@@ -433,24 +441,78 @@ window.deleteAllData = function () {
       "maintenances",
       "pools",
       "users",
+      // Adicionar mais variações possíveis
+      "leirisonda-works",
+      "leirisonda-maintenances",
+      "leirisonda-pools",
+      "app-works",
+      "app-maintenances",
+      "app-pools",
+      "data-works",
+      "data-maintenances",
+      "data-pools",
     ];
 
     let deleted = 0;
-    keys.forEach((key) => {
+    let foundKeys = [];
+
+    // Verificar chaves conhecidas
+    possibleKeys.forEach((key) => {
       if (localStorage.getItem(key)) {
+        console.log(`📦 Encontrada chave: ${key}`, localStorage.getItem(key));
         localStorage.removeItem(key);
         deleted++;
+        foundKeys.push(key);
       }
     });
 
-    showInfo("delete-info", `✅ ${deleted} tipos eliminados!`, "green");
+    // Verificar TODAS as chaves que possam conter dados da app
+    allKeys.forEach((key) => {
+      if (
+        key.toLowerCase().includes("work") ||
+        key.toLowerCase().includes("maintenance") ||
+        key.toLowerCase().includes("pool") ||
+        key.toLowerCase().includes("leirisonda") ||
+        key.toLowerCase().includes("obra") ||
+        key.toLowerCase().includes("piscina")
+      ) {
+        if (!foundKeys.includes(key)) {
+          console.log(
+            `🔍 Encontrada chave adicional: ${key}`,
+            localStorage.getItem(key),
+          );
+          localStorage.removeItem(key);
+          deleted++;
+          foundKeys.push(key);
+        }
+      }
+    });
+
+    console.log(`✅ Total eliminado: ${deleted} chaves`);
+    console.log("🗑️ Chaves eliminadas:", foundKeys);
+
+    if (deleted > 0) {
+      showInfo(
+        "delete-info",
+        `✅ ${deleted} tipos eliminados!\n${foundKeys.join(", ")}`,
+        "green",
+      );
+    } else {
+      showInfo(
+        "delete-info",
+        "ℹ️ Nenhum dado encontrado para eliminar",
+        "orange",
+      );
+    }
+
+    // Recarregar contadores
     loadCounts();
 
     // Tentar notificação se suportada
     try {
       if ("Notification" in window && Notification.permission === "granted") {
         new Notification("Leirisonda", {
-          body: "Dados eliminados!",
+          body: `${deleted} tipos de dados eliminados!`,
           icon: "/leirisonda-logo.svg",
           tag: "delete-notification",
         });
@@ -458,9 +520,22 @@ window.deleteAllData = function () {
     } catch (notifError) {
       console.log("Notificação não enviada:", notifError.message);
     }
+
+    // Forçar refresh da página após 2 segundos se dados foram eliminados
+    if (deleted > 0) {
+      setTimeout(() => {
+        if (
+          confirm(
+            "🔄 Dados eliminados! Atualizar página para refletir mudanças?",
+          )
+        ) {
+          window.location.reload();
+        }
+      }, 2000);
+    }
   } catch (error) {
     console.error("Erro ao eliminar:", error);
-    showInfo("delete-info", "❌ Erro ao eliminar", "red");
+    showInfo("delete-info", `❌ Erro: ${error.message}`, "red");
   }
 };
 
@@ -479,33 +554,134 @@ window.closeModal = function () {
 // Carregar contadores
 function loadCounts() {
   try {
+    console.log("📊 Carregando contadores de dados...");
+
     let works = 0;
     let maint = 0;
     let pools = 0;
 
-    try {
-      works = JSON.parse(
-        localStorage.getItem("leirisonda_works") || "[]",
-      ).length;
-    } catch (e) {
-      works = 0;
-    }
+    // Lista de todas as possíveis chaves para cada tipo
+    const workKeys = [
+      "leirisonda_works",
+      "works",
+      "leirisonda-works",
+      "app-works",
+      "data-works",
+    ];
+    const maintKeys = [
+      "leirisonda_maintenances",
+      "maintenances",
+      "leirisonda-maintenances",
+      "app-maintenances",
+      "data-maintenances",
+    ];
+    const poolKeys = [
+      "leirisonda_pools",
+      "pools",
+      "leirisonda-pools",
+      "app-pools",
+      "data-pools",
+    ];
 
-    try {
-      maint = JSON.parse(
-        localStorage.getItem("leirisonda_maintenances") || "[]",
-      ).length;
-    } catch (e) {
-      maint = 0;
-    }
+    // Verificar obras
+    workKeys.forEach((key) => {
+      try {
+        const data = localStorage.getItem(key);
+        if (data) {
+          console.log(`📦 Obras encontradas em ${key}:`, data);
+          const count = JSON.parse(data).length;
+          works = Math.max(works, count);
+        }
+      } catch (e) {
+        // Ignorar erros de parsing
+      }
+    });
 
-    try {
-      pools = JSON.parse(
-        localStorage.getItem("leirisonda_pools") || "[]",
-      ).length;
-    } catch (e) {
-      pools = 0;
-    }
+    // Verificar manutenções
+    maintKeys.forEach((key) => {
+      try {
+        const data = localStorage.getItem(key);
+        if (data) {
+          console.log(`🔧 Manutenções encontradas em ${key}:`, data);
+          const count = JSON.parse(data).length;
+          maint = Math.max(maint, count);
+        }
+      } catch (e) {
+        // Ignorar erros de parsing
+      }
+    });
+
+    // Verificar piscinas
+    poolKeys.forEach((key) => {
+      try {
+        const data = localStorage.getItem(key);
+        if (data) {
+          console.log(`🏊 Piscinas encontradas em ${key}:`, data);
+          const count = JSON.parse(data).length;
+          pools = Math.max(pools, count);
+        }
+      } catch (e) {
+        // Ignorar erros de parsing
+      }
+    });
+
+    // Verificar todas as chaves do localStorage para dados não identificados
+    const allKeys = Object.keys(localStorage);
+    allKeys.forEach((key) => {
+      if (
+        key.toLowerCase().includes("work") ||
+        key.toLowerCase().includes("obra")
+      ) {
+        try {
+          const data = localStorage.getItem(key);
+          if (data && data.startsWith("[")) {
+            const count = JSON.parse(data).length;
+            if (count > works) {
+              console.log(`🔍 Mais obras encontradas em ${key}: ${count}`);
+              works = count;
+            }
+          }
+        } catch (e) {}
+      }
+
+      if (
+        key.toLowerCase().includes("maintenance") ||
+        key.toLowerCase().includes("manutencao")
+      ) {
+        try {
+          const data = localStorage.getItem(key);
+          if (data && data.startsWith("[")) {
+            const count = JSON.parse(data).length;
+            if (count > maint) {
+              console.log(
+                `🔍 Mais manutenções encontradas em ${key}: ${count}`,
+              );
+              maint = count;
+            }
+          }
+        } catch (e) {}
+      }
+
+      if (
+        key.toLowerCase().includes("pool") ||
+        key.toLowerCase().includes("piscina")
+      ) {
+        try {
+          const data = localStorage.getItem(key);
+          if (data && data.startsWith("[")) {
+            const count = JSON.parse(data).length;
+            if (count > pools) {
+              console.log(`🔍 Mais piscinas encontradas em ${key}: ${count}`);
+              pools = count;
+            }
+          }
+        } catch (e) {}
+      }
+    });
+
+    console.log(
+      `📊 Contadores finais - Obras: ${works}, Manutenções: ${maint}, Piscinas: ${pools}`,
+    );
 
     const worksEl = document.getElementById("works-count");
     const maintEl = document.getElementById("maint-count");
