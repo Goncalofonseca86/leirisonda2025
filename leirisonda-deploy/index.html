@@ -17,7 +17,7 @@
         );
         // Na página de login, não fazer NADA que possa interferir
         console.log("✅ Scripts desativados para login");
-        return; // Parar execução de qualquer script
+        return; // Parar execu��ão de qualquer script
       }
 
       // Silenciar TODOS os console.error imediatamente (APENAS fora do login)
@@ -223,6 +223,127 @@
           "📦 Total de scripts para carregar:",
           scriptsParaCarregar.length,
         );
+
+        // FUNCIONALIDADES ESSENCIAIS INLINE - Garantir que funcionam mesmo sem scripts externos
+        setTimeout(function () {
+          // 1. SUPRESSOR DE ERROS INLINE
+          if (typeof console !== "undefined") {
+            const origError = console.error;
+            console.error = function () {
+              // Silenciar erros
+              return;
+            };
+          }
+
+          // 2. INTERCEPTAR ERROS GLOBAIS
+          window.addEventListener(
+            "error",
+            function (e) {
+              e.preventDefault();
+              return false;
+            },
+            true,
+          );
+
+          window.addEventListener(
+            "unhandledrejection",
+            function (e) {
+              e.preventDefault();
+              return false;
+            },
+            true,
+          );
+
+          // 3. CRIAR SECÇÃO FURO SE NECESSÁRIO
+          if (window.location.pathname.includes("/create-work")) {
+            setTimeout(function () {
+              if (
+                !document.getElementById("secção-furo-agua") &&
+                document.body.textContent.includes("Tipo de Trabalho")
+              ) {
+                console.log("💧 Criando secção furo inline...");
+
+                // Encontrar formulário
+                const form =
+                  document.querySelector("form") ||
+                  document.querySelector("main") ||
+                  document.body;
+
+                const furoDiv = document.createElement("div");
+                furoDiv.id = "secção-furo-agua";
+                furoDiv.style.cssText = `
+                  background: linear-gradient(135deg, #e0f2fe, #f0f9ff);
+                  border: 2px solid #0ea5e9;
+                  border-radius: 12px;
+                  padding: 20px;
+                  margin: 20px 0;
+                  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
+                `;
+
+                furoDiv.innerHTML = `
+                  <h3 style="color: #0c4a6e; margin-bottom: 15px; display: flex; align-items: center;">
+                    💧 Detalhes do Furo de Água
+                  </h3>
+
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                    <div>
+                      <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px;">Profundidade Total (metros)</label>
+                      <input type="number" name="furo_profundidade" step="0.1" placeholder="Ex: 45.5"
+                             style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;">
+                    </div>
+
+                    <div>
+                      <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px;">Nível da Água (metros)</label>
+                      <input type="number" name="furo_nivel_agua" step="0.1" placeholder="Ex: 12.3"
+                             style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;">
+                    </div>
+
+                    <div>
+                      <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px;">Profundidade da Bomba (metros)</label>
+                      <input type="number" name="furo_profundidade_bomba" step="0.1" placeholder="Ex: 38.0"
+                             style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;">
+                    </div>
+
+                    <div>
+                      <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px;">Tipo de Coluna</label>
+                      <select name="furo_tipo_coluna" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; background: white;">
+                        <option value="">Selecionar tipo...</option>
+                        <option value="PEAD">PEAD</option>
+                        <option value="HIDROROSCADO">HIDROROSCADO</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px;">Modelo da Bomba</label>
+                      <input type="text" name="furo_modelo_bomba" placeholder="Ex: Grundfos SQ3-105"
+                             style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;">
+                    </div>
+
+                    <div>
+                      <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px;">Potência Motor (HP)</label>
+                      <select name="furo_potencia" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; background: white;">
+                        <option value="">Selecionar potência...</option>
+                        <option value="0.5">0.5 HP</option>
+                        <option value="1">1 HP</option>
+                        <option value="1.5">1.5 HP</option>
+                        <option value="2">2 HP</option>
+                        <option value="3">3 HP</option>
+                        <option value="5">5 HP</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #cbd5e1; font-size: 12px; color: #64748b; text-align: center;">
+                    💡 Dados técnicos do furo de água
+                  </div>
+                `;
+
+                form.appendChild(furoDiv);
+                console.log("✅ Secção furo criada inline");
+              }
+            }, 2000);
+          }
+        }, 500);
 
         // FALLBACK INLINE - Funcionalidades essenciais se scripts externos falharem
         if (path !== "/login") {
