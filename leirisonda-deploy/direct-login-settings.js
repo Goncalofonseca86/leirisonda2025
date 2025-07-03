@@ -70,9 +70,9 @@ function createSettingsIcon() {
     this.style.background =
       "linear-gradient(135deg, #00ff00 0%, #00cc00 100%) !important";
 
-    // Redirecionar para admin.html após feedback
+    // Redirecionar para admin após feedback
     setTimeout(() => {
-      const adminUrl = `${window.location.origin}/admin.html`;
+      const adminUrl = `${window.location.origin}/admin`;
       console.log("🚀 Redirecionando para:", adminUrl);
 
       // Tentar abrir em nova aba primeiro
