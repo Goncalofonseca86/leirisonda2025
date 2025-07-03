@@ -319,12 +319,63 @@ function executeAllModifications() {
   addHidingCSS();
   const success = modifyMenuItems();
 
+  // Fallback: procurar diretamente por "Administração" e tornar clicável
+  addDirectAdminClickHandler();
+
   if (success) {
     console.log("✅ Modificações aplicadas com sucesso!");
     showSuccessMessage();
   }
 
   return success;
+}
+
+// Fallback direto para administração
+function addDirectAdminClickHandler() {
+  console.log("🔍 Fallback: Procurando texto 'Administração' diretamente...");
+
+  const allElements = document.querySelectorAll("*");
+
+  allElements.forEach((element) => {
+    if (element.textContent && element.textContent.includes("Administração")) {
+      // Verificar se não é um script ou style
+      if (element.tagName !== "SCRIPT" && element.tagName !== "STYLE") {
+        console.log("📋 Encontrado elemento com 'Administração':", element);
+
+        // Aplicar estilo clicável
+        element.style.cursor = "pointer";
+        element.style.userSelect = "none";
+        element.style.position = "relative";
+        element.style.zIndex = "1000";
+
+        // Função de clique
+        const clickHandler = function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log("🚀 CLIQUE DIRETO EM ADMINISTRAÇÃO!");
+
+          const adminUrl = window.location.origin + "/admin.html";
+          window.open(adminUrl, "_blank");
+
+          // Mostrar feedback visual
+          element.style.background = "#fbbf24";
+          setTimeout(() => {
+            element.style.background = "";
+          }, 200);
+        };
+
+        // Remover handlers anteriores e adicionar novo
+        element.onclick = null;
+        element.onclick = clickHandler;
+        element.addEventListener("click", clickHandler, true);
+
+        // Adicionar indicador visual
+        element.title = "🔧 Clique para administração";
+
+        console.log("✅ Click handler aplicado a elemento de administração");
+      }
+    }
+  });
 }
 
 // Mostra mensagem de sucesso
