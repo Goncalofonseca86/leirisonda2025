@@ -164,28 +164,40 @@ console.log("🚀 LEIRISONDA: Integração SPA React iniciada");
     console.log("URL:", currentPath);
     console.log("Conteúdo relevante:", pageContent.substring(0, 200));
 
-    // Detectar página de criação de obra
+    // Detectar página de criação de obra - melhorada
     const isWorkCreationPage =
       currentPath.includes("create") ||
       currentPath.includes("work") ||
+      currentPath.includes("obra") ||
       currentPath.includes("nova") ||
       pageContent.includes("Tipo de Trabalho") ||
       pageContent.includes("Criar Obra") ||
       pageContent.includes("Nova Obra") ||
       pageContent.includes("Work Type") ||
+      pageContent.includes("Tipo de Serviço") ||
+      pageContent.includes("Descrição") ||
       document.querySelector('select[name*="type"]') ||
       document.querySelector('select[name*="trabalho"]') ||
-      document.querySelector('input[name*="name"]');
+      document.querySelector('select[name*="servico"]') ||
+      document.querySelector('input[name*="name"]') ||
+      document.querySelector('textarea[name*="description"]') ||
+      (document.querySelector("form") && pageContent.includes("Guardar"));
 
-    if (isWorkCreationPage) {
+    // Detectar qualquer página de login
+    const isLoginPage =
+      currentPath.includes("login") ||
+      document.querySelector('[data-loc*="Login.tsx"]') ||
+      (pageContent.includes("Email") &&
+        pageContent.includes("Password") &&
+        !pageContent.includes("Criar"));
+
+    if (isWorkCreationPage && !isLoginPage) {
       console.log("📝 Página de criação de obra detectada!");
       setupWaterDrillingOnPage();
     }
 
-    // Sempre garantir que o botão de configurações existe
-    if (!document.getElementById("leirisonda-settings-btn")) {
-      setupSettingsButton();
-    }
+    // Configurar botão de configurações baseado na página
+    setupSettingsButton();
   }
 
   // ==================== SISTEMA DE FUROS DE ÁGUA ====================
