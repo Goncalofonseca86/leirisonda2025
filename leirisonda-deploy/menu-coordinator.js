@@ -208,7 +208,17 @@ function modifyMenuItems() {
           e.preventDefault();
           e.stopPropagation();
           console.log("🔄 Redirecionando para página de administração...");
-          window.location.href = "/admin.html";
+
+          // Tenta múltiplas opções de navegação
+          const adminUrl = window.location.origin + "/admin.html";
+          console.log("🔗 Tentando aceder a:", adminUrl);
+
+          try {
+            window.open(adminUrl, "_blank");
+          } catch (error) {
+            console.error("Erro ao abrir admin:", error);
+            alert("Por favor, aceda manualmente a: " + adminUrl);
+          }
         };
 
         // Adicionar indicador visual de que é clicável
