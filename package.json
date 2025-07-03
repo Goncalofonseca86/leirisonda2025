@@ -1,15 +1,28 @@
 {
-  "name": "leirisonda-static-server",
+  "name": "leirisonda-app",
   "version": "1.0.0",
-  "description": "Static file server for Leirisonda PWA",
-  "main": "index.js",
+  "type": "module",
   "scripts": {
-    "build": "mkdir -p dist/spa && cp -r leirisonda-deploy/* dist/spa/",
-    "dev": "npx serve leirisonda-deploy -p 5173 -s",
-    "start": "npx serve leirisonda-deploy -p 5173 -s",
-    "preview": "npx serve leirisonda-deploy -p 5173 -s"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "serve": "^14.2.1"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.8.1",
+    "lucide-react": "^0.340.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.56",
+    "@types/react-dom": "^18.2.19",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "eslint": "^8.56.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "typescript": "^5.2.2",
+    "vite": "^5.1.4"
   }
 }
