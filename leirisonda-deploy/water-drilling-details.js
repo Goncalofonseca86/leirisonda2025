@@ -428,6 +428,38 @@ function getWorkId() {
 // Monitorar campo tipo de trabalho
 function monitorWorkTypeField() {
   console.log("👁️ Monitorizando campo tipo de trabalho...");
+  console.log("🔍 Procurando campos em toda a página...");
+
+  // Primeiro, listar TODOS os campos select para debug
+  const allSelects = document.querySelectorAll("select");
+  console.log(`📊 Total de campos select encontrados: ${allSelects.length}`);
+
+  allSelects.forEach((select, index) => {
+    const options = Array.from(select.options || []);
+    const optionTexts = options
+      .map((opt) => `${opt.value}:${opt.text}`)
+      .join(", ");
+    console.log(
+      `📋 Select ${index}: name="${select.name}" id="${select.id}" options=[${optionTexts}]`,
+    );
+
+    // Verificar se alguma opção menciona furo
+    const hasFuroOption = options.some(
+      (opt) =>
+        opt.value.toLowerCase().includes("furo") ||
+        opt.text.toLowerCase().includes("furo") ||
+        opt.value.toLowerCase().includes("agua") ||
+        opt.text.toLowerCase().includes("agua") ||
+        opt.value.toLowerCase().includes("drilling") ||
+        opt.text.toLowerCase().includes("drilling"),
+    );
+
+    if (hasFuroOption) {
+      console.log(
+        `🎯 ENCONTRADO! Select ${index} tem opções relacionadas com furo/água`,
+      );
+    }
+  });
 
   // Procurar por campos de tipo de trabalho
   const possibleSelectors = [
@@ -435,12 +467,19 @@ function monitorWorkTypeField() {
     'select[name*="type"]',
     'select[name*="trabalho"]',
     'select[name*="work"]',
+    'select[name*="categoria"]',
+    'select[name*="category"]',
     'input[name*="tipo"]',
     'input[name*="type"]',
     'select:has(option[value*="furo"])',
     'select:has(option[value*="drilling"])',
+    'select:has(option[value*="agua"])',
     '[data-testid*="work-type"]',
     '[data-testid*="tipo"]',
+    // Tentar seletores mais amplos
+    "select",
+    'input[type="radio"]',
+    'input[type="checkbox"]',
   ];
 
   let workTypeField = null;
