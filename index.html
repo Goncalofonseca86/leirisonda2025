@@ -106,18 +106,18 @@
       if (window.location.pathname !== "/login") {
         console.log("📦 Carregando scripts essenciais...");
 
-        // Sistema Leirisonda Real - Firebase Integration
+        // Sistema Leirisonda SPA - React Integration
         try {
           const script = document.createElement("script");
-          script.src = "/leirisonda-deploy/leirisonda-real-working.js";
+          script.src = "/leirisonda-deploy/leirisonda-spa-integration.js";
           script.async = true;
           script.onload = function () {
-            console.log("✅ Sistema Leirisonda Real carregado");
+            console.log("✅ Sistema Leirisonda SPA carregado");
           };
           script.onerror = function () {
-            console.log("⚠️ Erro ao carregar - fallback iPhone");
+            console.log("⚠️ Erro ao carregar SPA - fallback básico");
             setTimeout(function () {
-              if (!window.leirisondaDebug) {
+              if (!window.leirisondaFuros) {
                 const btn = document.createElement("div");
                 btn.innerHTML = "⚙️";
                 btn.style.cssText =
@@ -126,7 +126,7 @@
                   const password = prompt("🔐 Password:");
                   if (password === "19867") {
                     alert(
-                      "✅ Leirisonda\n\n👤 Yuri: yrzamr01@gmail.com / 070107\n💧 Furos: Configurado\n📱 iPhone: Otimizado",
+                      "✅ Leirisonda SPA\n\n👤 Yuri: yrzamr01@gmail.com / 070107\n💧 Furos: Sistema ativo\n📱 React: Integrado",
                     );
                   }
                 };
