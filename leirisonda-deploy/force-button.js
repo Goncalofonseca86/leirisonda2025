@@ -333,8 +333,8 @@ function showModal() {
         <button onclick="deleteLocalData()" style="width: 100%; padding: 10px; background: #fd7e14; color: white; border: none; border-radius: 6px; cursor: pointer; margin-bottom: 8px; font-weight: bold;">
           🗑️ ELIMINAR LOCAIS
         </button>
-        <button onclick="reactStateNuke()" style="width: 100%; padding: 12px; background: #ff0000; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
-          ⚛️ NUCLEAR REACT + RESTART
+        <button onclick="deleteWorkDataOnly()" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+          🗑️ ELIMINAR OBRAS/PISCINAS/MANUTENÇÕES
         </button>
         <div id="delete-info" style="margin-top: 8px; font-size: 13px; display: none;"></div>
       </div>
@@ -384,7 +384,7 @@ window.activateNotifications = function () {
     }
 
     if (Notification.permission === "granted") {
-      showInfo("notif-info", "✅ Já estão ativadas!", "green");
+      showInfo("notif-info", "✅ Já est��o ativadas!", "green");
       return;
     }
 
@@ -1359,7 +1359,7 @@ window.comprehensiveDelete = function () {
 
     if (
       !confirm(
-        "💥 ELIMINAÇÃO TOTAL DE TUDO!\n\nVou atacar TODAS as formas de armazenamento:\n✅ localStorage\n✅ sessionStorage\n✅ IndexedDB\n✅ Firebase\n✅ Cookies\n✅ Cache\n\n❌ IRREVERSÍVEL!",
+        "💥 ELIMINAÇÃO TOTAL DE TUDO!\n\nVou atacar TODAS as formas de armazenamento:\n✅ localStorage\n✅ sessionStorage\n✅ IndexedDB\n✅ Firebase\n✅ Cookies\n✅ Cache\n\n��� IRREVERSÍVEL!",
       )
     ) {
       return;
@@ -2967,7 +2967,7 @@ window.reactStateNuke = function () {
 
     if (
       !confirm(
-        "⚛️ OPÇÃO NUCLEAR REACT!\n\nVou:\n💥 Limpar TODO o estado React\n💥 Eliminar TODO o armazenamento\n💥 REINICIAR a aplicação completamente\n💥 FORÇAR refresh total\n\n�� EXTREMAMENTE AGRESSIVO!\n\nContinuar?",
+        "⚛️ OPÇÃO NUCLEAR REACT!\n\nVou:\n💥 Limpar TODO o estado React\n💥 Eliminar TODO o armazenamento\n💥 REINICIAR a aplicação completamente\n💥 FORÇAR refresh total\n\n❌ EXTREMAMENTE AGRESSIVO!\n\nContinuar?",
       )
     ) {
       return;
