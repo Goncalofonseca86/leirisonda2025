@@ -35,8 +35,55 @@
 
     <title>Leirisonda - Gestão de Obras</title>
 
-    <!-- Script simples que roda constantemente -->
-    <script src="/simple-interval-modifier.js"></script>
+    <script>
+      // JavaScript inline para modificar menu
+      console.log("🔄 Script inline iniciado");
+
+      function modificarMenu() {
+        try {
+          const elementos = document.querySelectorAll("*");
+
+          for (let i = 0; i < elementos.length; i++) {
+            const elemento = elementos[i];
+            const texto = elemento.textContent || "";
+
+            // Esconde DIAGNÓSTICO
+            if (texto.trim() === "DIAGNÓSTICO") {
+              elemento.style.display = "none";
+              elemento.style.visibility = "hidden";
+              elemento.style.opacity = "0";
+              console.log("🗑️ DIAGNÓSTICO escondido");
+            }
+
+            // Destaca ADMINISTRAÇÃO
+            if (texto.trim() === "ADMINISTRAÇÃO") {
+              elemento.style.background =
+                "linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)";
+              elemento.style.borderRadius = "12px";
+              elemento.style.padding = "16px";
+              elemento.style.margin = "8px";
+              elemento.style.color = "#1f2937";
+              elemento.style.fontWeight = "bold";
+              elemento.style.boxShadow = "0 4px 20px rgba(251, 191, 36, 0.3)";
+              console.log("⭐ ADMINISTRAÇÃO destacada");
+            }
+          }
+        } catch (e) {
+          console.log("Erro:", e);
+        }
+      }
+
+      // Executa constantemente
+      setInterval(modificarMenu, 2000);
+
+      // Executa quando página carrega
+      document.addEventListener("DOMContentLoaded", modificarMenu);
+
+      // Executa imediatamente
+      setTimeout(modificarMenu, 1000);
+      setTimeout(modificarMenu, 3000);
+      setTimeout(modificarMenu, 5000);
+    </script>
 
     <script type="module" crossorigin src="/assets/index-DnEsHg1H.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-DFdR-byQ.css" />
