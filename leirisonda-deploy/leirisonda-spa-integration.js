@@ -362,11 +362,17 @@ console.log("🚀 LEIRISONDA: Integração SPA React iniciada");
         const hasFuro = options.some(
           (opt) =>
             opt.text.toLowerCase().includes("furo") ||
-            opt.value.toLowerCase().includes("furo"),
+            opt.value.toLowerCase().includes("furo") ||
+            opt.text.toLowerCase().includes("água") ||
+            opt.text.toLowerCase().includes("water") ||
+            opt.text.toLowerCase().includes("poço"),
         );
 
         if (!hasFuro) {
-          console.log("✅ Adicionando opção 'Furo de Água' ao dropdown");
+          console.log(
+            "✅ Adicionando opção 'Furo de Água' ao dropdown:",
+            select.name || select.id,
+          );
 
           const furoOption = document.createElement("option");
           furoOption.value = "furo_agua";
@@ -374,9 +380,15 @@ console.log("🚀 LEIRISONDA: Integração SPA React iniciada");
           furoOption.setAttribute("data-leirisonda-furo", "true");
           select.appendChild(furoOption);
 
-          console.log("🎯 Opção furo adicionada com sucesso");
+          console.log(
+            "🎯 Opção furo adicionada com sucesso ao select:",
+            select.name || select.id,
+          );
         } else {
-          console.log("ℹ️ Opção furo já existe neste select");
+          console.log(
+            "ℹ️ Opção furo já existe neste select:",
+            select.name || select.id,
+          );
         }
 
         // Marcar como processado
