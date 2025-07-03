@@ -4,40 +4,67 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Leirisonda - Gestão de Obras</title>
-
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta
-      name="apple-mobile-web-app-status-bar-style"
-      content="black-translucent"
-    />
-    <meta name="apple-mobile-web-app-title" content="Leirisonda" />
-    <meta name="application-name" content="Leirisonda" />
-    <meta name="theme-color" content="#007784" />
-    <meta
-      name="description"
-      content="Sistema de gestão de obras e manutenção de piscinas da Leirisonda"
-    />
-
-    <link rel="manifest" href="leirisonda-deploy/manifest.json" />
-
-    <script
-      type="module"
-      crossorigin
-      src="leirisonda-deploy/assets/index-DnEsHg1H.js"
-    ></script>
-    <link
-      rel="stylesheet"
-      crossorigin
-      href="leirisonda-deploy/assets/index-DFdR-byQ.css"
-    />
-    <link rel="stylesheet" href="leirisonda-deploy/menu-modifications.css" />
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: #f8fafc;
+        color: #1e293b;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 8px;
+        padding: 32px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #007784;
+        margin-bottom: 24px;
+      }
+      .loading {
+        text-align: center;
+        padding: 40px;
+      }
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid #e2e8f0;
+        border-top: 3px solid #007784;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 16px;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div class="container">
+      <h1>Leirisonda - Sistema de Gestão de Obras</h1>
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>A carregar aplicação...</p>
+        <p style="font-size: 14px; color: #64748b">
+          Sistema de gestão de obras e manutenção de piscinas
+        </p>
+      </div>
+    </div>
+
     <script>
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("leirisonda-deploy/sw.js");
-      }
+      console.log("Leirisonda system loading...");
+
+      // Simple loading simulation
+      setTimeout(function () {
+        document.querySelector(".loading p").textContent =
+          "Sistema carregado com sucesso!";
+        document.querySelector(".spinner").style.display = "none";
+      }, 2000);
     </script>
   </body>
 </html>
