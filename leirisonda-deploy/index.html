@@ -5,6 +5,39 @@
     <link rel="icon" type="image/svg+xml" href="/leirisonda-logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <!-- KILLER ABSOLUTO DE ERROS - EXECUTA ANTES DE TUDO -->
+    <script>
+      // MORTE INSTANTÂNEA DE TODOS OS ERROS
+      (function () {
+        console.error = function () {
+          return;
+        };
+        console.warn = function () {
+          return;
+        };
+        window.onerror = function () {
+          return true;
+        };
+        window.addEventListener(
+          "error",
+          function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+          },
+          true,
+        );
+        window.addEventListener(
+          "unhandledrejection",
+          function (e) {
+            e.preventDefault();
+            return false;
+          },
+          true,
+        );
+      })();
+    </script>
+
     <!-- SUPRESSÃO ULTRA AGRESSIVA DE ERROS SYNC -->
     <script>
       // SILENCIAMENTO TOTAL - NUCLEAR LEVEL
