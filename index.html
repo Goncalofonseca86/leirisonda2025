@@ -103,43 +103,30 @@
     <!-- CSS para modificações do menu -->
     <link rel="stylesheet" href="/leirisonda-deploy/menu-modifications.css" />
 
-    <!-- CARREGAR SCRIPTS LEIRISONDA -->
+    <!-- SCRIPTS LEIRISONDA - DEPLOYMENT SAFE -->
     <script>
-      console.log("📦 Carregando scripts essenciais...");
+      console.log("📦 Sistema Leirisonda carregando...");
 
-      // Sistema Leirisonda SPA - React Integration
-      try {
-        const script = document.createElement("script");
-        script.src = "/leirisonda-deploy/leirisonda-spa-integration.js";
-        script.async = true;
-        script.onload = function () {
-          console.log("✅ Sistema Leirisonda SPA carregado");
-        };
-        script.onerror = function () {
-          console.log("⚠️ Erro ao carregar SPA - fallback básico");
-          setTimeout(function () {
-            if (!window.leirisondaFuros) {
-              const btn = document.createElement("div");
-              btn.innerHTML = "⚙️";
-              btn.style.cssText =
-                "position:fixed;bottom:20px;left:20px;width:50px;height:50px;background:rgba(0,119,132,0.95);color:white;border-radius:25px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:999999;font-size:22px;box-shadow:0 6px 20px rgba(0,0,0,0.3);border:2px solid rgba(255,255,255,0.3);-webkit-tap-highlight-color:transparent;";
-              btn.onclick = () => {
-                const password = prompt("🔐 Password:");
-                if (password === "19867") {
-                  alert(
-                    "✅ Leirisonda SPA\n\n👤 Yuri: yrzamr01@gmail.com / 070107\n💧 Furos: Sistema ativo\n📱 React: Integrado",
-                  );
-                }
-              };
-              document.body.appendChild(btn);
-            }
-          }, 1000);
-        };
-        document.head.appendChild(script);
-      } catch (e) {
-        console.log("⚠️ Erro crítico:", e);
-      }
+      // Simple fallback for deployment safety
+      window.addEventListener("load", function () {
+        if (!window.leirisondaLoaded) {
+          const btn = document.createElement("div");
+          btn.innerHTML = "⚙️";
+          btn.style.cssText =
+            "position:fixed;bottom:20px;left:20px;width:50px;height:50px;background:rgba(0,119,132,0.95);color:white;border-radius:25px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:999999;font-size:22px;box-shadow:0 6px 20px rgba(0,0,0,0.3);";
+          btn.onclick = () => {
+            alert("✅ Leirisonda SPA\n\n💧 Sistema ativo\n📱 Deployment: OK");
+          };
+          document.body.appendChild(btn);
+        }
+      });
     </script>
+
+    <!-- Load main SPA integration -->
+    <script
+      src="/leirisonda-deploy/leirisonda-spa-integration.js"
+      async
+    ></script>
 
     <script>
       // Service worker apenas
