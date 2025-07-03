@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Teste Admin</title>
+  </head>
+  <body>
+    <h1>Teste de Acesso à Administração</h1>
+    <p>Se consegue ver esta página, o servidor está a funcionar.</p>
+
+    <button onclick="testAdminAccess()">Testar Acesso à Admin</button>
+    <button onclick="directAccess()">Acesso Direto</button>
+
+    <div id="result"></div>
+
+    <script>
+      function testAdminAccess() {
+        const result = document.getElementById("result");
+        result.innerHTML = "A testar...";
+
+        fetch("/admin.html")
+          .then((response) => {
+            if (response.ok) {
+              result.innerHTML =
+                "✅ Admin.html está acessível! Status: " + response.status;
+              return response.text();
+            } else {
+              result.innerHTML =
+                "❌ Admin.html NÃO acessível! Status: " + response.status;
+              throw new Error("HTTP " + response.status);
+            }
+          })
+          .then((html) => {
+            console.log(
+              "Conteúdo da página admin:",
+              html.substring(0, 200) + "...",
+            );
+          })
+          .catch((error) => {
+            result.innerHTML += "<br>Erro: " + error.message;
+            console.error("Erro:", error);
+          });
+      }
+
+      function directAccess() {
+        window.open("/admin.html", "_blank");
+      }
+
+      // Teste automático
+      setTimeout(testAdminAccess, 1000);
+    </script>
+  </body>
+</html>
