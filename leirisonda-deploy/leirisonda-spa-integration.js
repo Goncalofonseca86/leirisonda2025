@@ -551,7 +551,72 @@ console.log("🚀 LEIRISONDA: Integração SPA React iniciada");
       section.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 100);
 
+    // Interceptar submit do formulário para processar dados de furo
+    setupFormInterception();
+
     console.log("✅ Secção de furo criada com sucesso");
+  }
+
+  function setupFormInterception() {
+    console.log("📝 Configurando interceptação de formulário...");
+
+    // Procurar formulário
+    const form = document.querySelector("form");
+    if (!form) return;
+
+    // Remover listener existente se houver
+    form.removeEventListener("submit", handleFormSubmit);
+
+    // Adicionar novo listener
+    form.addEventListener("submit", handleFormSubmit);
+
+    console.log("✅ Interceptação de formulário configurada");
+  }
+
+  function handleFormSubmit(event) {
+    console.log("📤 Formulário sendo submetido...");
+
+    // Verificar se há campos de furo preenchidos
+    const furoFields = document.querySelectorAll(
+      '[data-leirisonda-field="true"]',
+    );
+    const furoData = {};
+    let hasFuroData = false;
+
+    furoFields.forEach((field) => {
+      if (field.value && field.value.trim() !== "") {
+        hasFuroData = true;
+        furoData[field.name] = field.value;
+      }
+    });
+
+    if (hasFuroData) {
+      console.log("💧 Dados de furo detectados:", furoData);
+
+      // Criar campo oculto para armazenar dados de furo como JSON
+      let furoDataField = document.querySelector(
+        'input[name="leirisonda_furo_data"]',
+      );
+      if (!furoDataField) {
+        furoDataField = document.createElement("input");
+        furoDataField.type = "hidden";
+        furoDataField.name = "leirisonda_furo_data";
+        event.target.appendChild(furoDataField);
+      }
+
+      furoDataField.value = JSON.stringify(furoData);
+
+      // Remover campos individuais do form para evitar conflitos
+      furoFields.forEach((field) => {
+        field.removeAttribute("name");
+        field.setAttribute("data-leirisonda-removed", "true");
+      });
+
+      console.log("✅ Dados de furo processados para envio");
+    }
+
+    // Permitir que o formulário prossiga normalmente
+    return true;
   }
 
   // ==================== UTILIZADOR YURI ====================
