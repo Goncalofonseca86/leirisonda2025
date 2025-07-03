@@ -333,8 +333,8 @@ function showModal() {
         <button onclick="deleteLocalData()" style="width: 100%; padding: 10px; background: #fd7e14; color: white; border: none; border-radius: 6px; cursor: pointer; margin-bottom: 8px; font-weight: bold;">
           🗑️ ELIMINAR LOCAIS
         </button>
-        <button onclick="comprehensiveDelete()" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
-          💥 ELIMINAÇÃO TOTAL (TUDO)
+        <button onclick="deleteWorkData()" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+          🎯 ELIMINAR SÓ OBRAS/MANUTENÇÕES/PISCINAS
         </button>
         <div id="delete-info" style="margin-top: 8px; font-size: 13px; display: none;"></div>
       </div>
@@ -856,7 +856,7 @@ window.deleteLocalData = function () {
 
         if (
           confirm(
-            `⚠��� Ainda restam ${finalKeys.length} chaves:\n${finalKeys.join("\n")}\n\nTentar eliminar novamente?`,
+            `⚠️ Ainda restam ${finalKeys.length} chaves:\n${finalKeys.join("\n")}\n\nTentar eliminar novamente?`,
           )
         ) {
           // Tentar eliminar as restantes uma vez mais
@@ -983,7 +983,7 @@ function deleteFirebaseDataThroughAPI() {
         window.hr
           .deleteAllWorks()
           .then(() => {
-            console.log("��� Obras do Firebase eliminadas");
+            console.log("✅ Obras do Firebase eliminadas");
           })
           .catch((e) => {
             console.error("❌ Erro ao eliminar obras:", e);
@@ -1796,7 +1796,7 @@ function loadCounts() {
           if (data && data.startsWith("[")) {
             const count = JSON.parse(data).length;
             if (count > pools) {
-              console.log(`🔍 Mais piscinas encontradas em ${key}: ${count}`);
+              console.log(`���� Mais piscinas encontradas em ${key}: ${count}`);
               pools = count;
             }
           }
