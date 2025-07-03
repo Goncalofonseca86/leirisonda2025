@@ -410,29 +410,32 @@ console.log("🚀 LEIRISONDA: Integração SPA React iniciada");
         <div style="background: rgba(255, 255, 255, 0.8); padding: 15px; border-radius: 10px;">
           <h4 style="color: #0c4a6e; margin: 0 0 12px 0; font-size: 16px;">📏 Medições</h4>
 
-          <div style="margin-bottom: 12px;">
-            <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 6px; font-size: 14px;">
-              Profundidade Total (metros)
-            </label>
-            <input type="number" name="furo_profundidade" step="0.1" placeholder="Ex: 45.5"
-                   style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
-          </div>
+            <div style="margin-bottom: 12px;">
+              <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 6px; font-size: 14px;">
+                Profundidade Total (metros)
+              </label>
+              <input type="number" name="leirisonda_furo_profundidade" step="0.1" placeholder="Ex: 45.5"
+                     data-leirisonda-field="true"
+                     style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+            </div>
 
-          <div style="margin-bottom: 12px;">
-            <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 6px; font-size: 14px;">
-              Nível da Água (metros)
-            </label>
-            <input type="number" name="furo_nivel_agua" step="0.1" placeholder="Ex: 12.3"
-                   style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
-          </div>
+            <div style="margin-bottom: 12px;">
+              <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 6px; font-size: 14px;">
+                Nível da Água (metros)
+              </label>
+              <input type="number" name="leirisonda_furo_nivel_agua" step="0.1" placeholder="Ex: 12.3"
+                     data-leirisonda-field="true"
+                     style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+            </div>
 
-          <div>
-            <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 6px; font-size: 14px;">
-              Caudal (m³/h)
-            </label>
-            <input type="number" name="furo_caudal" step="0.1" placeholder="Ex: 2.5"
-                   style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
-          </div>
+            <div>
+              <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 6px; font-size: 14px;">
+                Caudal (m³/h)
+              </label>
+              <input type="number" name="leirisonda_furo_caudal" step="0.1" placeholder="Ex: 2.5"
+                     data-leirisonda-field="true"
+                     style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+            </div>
         </div>
 
         <!-- Coluna -->
