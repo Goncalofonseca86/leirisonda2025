@@ -770,39 +770,49 @@ function createWaterDrillingInlineSection() {
 }
 
 function findInsertionPoint() {
-  // Procurar por pontos de inserção lógicos
+  console.log("🔍 Procurando ponto de inserção...");
+
+  // Lista prioritária de pontos de inserção
   const targets = [
     // Após campo tipo de trabalho
-    document.querySelector('select[name*="tipo"] + *'),
-    document.querySelector('select[name*="type"] + *'),
+    document.querySelector('select[name*="tipo"]')?.parentElement,
+    document.querySelector('select[name*="type"]')?.parentElement,
 
     // Dentro de containers de formulário
     document.querySelector("form .grid"),
     document.querySelector("form .form-grid"),
-    document.querySelector('[class*="grid"]'),
+    document.querySelector('form [class*="grid"]'),
+    document.querySelector("form div:last-child"),
 
-    // Containers genéricos
-    document.querySelector("form > div:last-child"),
+    // Formulários
     document.querySelector("main form"),
+    document.querySelector("form"),
     document.querySelector(".container form"),
 
-    // Fallback
+    // Containers principais
+    document.querySelector("main > div"),
     document.querySelector("main"),
     document.querySelector(".container"),
+    document.querySelector("#root > div"),
+    document.querySelector("#root"),
+
+    // Fallback absoluto
     document.body,
   ];
 
-  for (const target of targets) {
-    if (target) {
+  for (let i = 0; i < targets.length; i++) {
+    const target = targets[i];
+    if (target && target.offsetHeight > 0) {
       console.log(
-        "🎯 Ponto de inserção encontrado:",
+        `🎯 Ponto ${i} selecionado:`,
         target.tagName,
-        target.className,
+        target.className || "sem classe",
       );
       return target;
     }
   }
 
+  console.log("❌ Nenhum ponto de inserção encontrado");
   return null;
 }
 
@@ -819,17 +829,24 @@ function removeWaterDrillingSection() {
 
 // Auto-inicializar quando a página carrega
 function initWaterDrilling() {
+  console.log("💧 Inicializando sistema Furo de Água...");
+  console.log("📍 URL atual:", window.location.pathname);
+  console.log("📄 Título da página:", document.title);
+
   // Verificar se estamos numa página de criação ou edição de obra
   const isCreateWorkPage =
     window.location.pathname.includes("/create-work") ||
     window.location.pathname.includes("/obra") ||
     window.location.pathname.includes("/new") ||
+    window.location.pathname.includes("/work") ||
     document.querySelector("form") ||
     document.body.textContent.includes("Nova Obra") ||
-    document.body.textContent.includes("Criar Obra");
+    document.body.textContent.includes("Criar Obra") ||
+    document.body.textContent.includes("Create Work") ||
+    document.body.textContent.includes("Edit Work");
 
   if (isCreateWorkPage) {
-    console.log("💧 Página de criação de obra detectada");
+    console.log("💧 Página de criação/edição de obra detectada");
 
     // Esperar um pouco para a página carregar
     setTimeout(() => {
@@ -839,17 +856,23 @@ function initWaterDrilling() {
     // Verificar periodicamente
     setInterval(() => {
       if (
-        !document.querySelector('select[name*="tipo"], select[name*="type"]')
+        !document.querySelector('select[name*="tipo"], select[name*="type"]') &&
+        isCreateWorkPage
       ) {
         monitorWorkTypeField();
       }
     }, 5000);
+  } else {
+    console.log(
+      "ℹ️ Não é uma página de obra. Para testar, use: testWaterDrilling()",
+    );
   }
 
-  // Também verificar páginas de obra existente
+  // Verificar páginas de obra existente
   const isWorkDetailPage =
     window.location.pathname.includes("/work") &&
-    !window.location.pathname.includes("/create");
+    !window.location.pathname.includes("/create") &&
+    !window.location.pathname.includes("/login");
 
   if (isWorkDetailPage) {
     console.log("💧 Página de detalhes de obra detectada");
@@ -858,6 +881,89 @@ function initWaterDrilling() {
     }, 2000);
   }
 }
+
+// Função de teste para verificar o sistema
+window.testWaterDrilling = function () {
+  console.log("🧪 TESTE: Forçando criação da secção Furo de Água");
+
+  // Tentar criar na página atual
+  createWaterDrillingInlineSection();
+
+  if (!document.getElementById("inline-water-drilling")) {
+    console.log("⚠️ Falha na criação inline, tentando versão standalone");
+    createWaterDrillingSection();
+  }
+
+  if (
+    document.getElementById("inline-water-drilling") ||
+    document.getElementById("water-drilling-section")
+  ) {
+    console.log("✅ Secção de teste criada com sucesso!");
+    alert("✅ Secção Furo de Água criada para teste!");
+  } else {
+    console.log("❌ Falha na criação da secção de teste");
+    alert("❌ Não foi possível criar a secção de teste");
+  }
+};
+
+// Função para verificar o estado atual
+window.checkWaterDrillingStatus = function () {
+  console.log("📊 DIAGNÓSTICO FURO DE ÁGUA:");
+  console.log("📍 URL:", window.location.pathname);
+  console.log("📄 Título:", document.title);
+  console.log(
+    "🔧 Inline section exists:",
+    !!document.getElementById("inline-water-drilling"),
+  );
+  console.log(
+    "🔧 Standalone section exists:",
+    !!document.getElementById("water-drilling-section"),
+  );
+
+  // Verificar se há campos de tipo de trabalho
+  const typeFields = document.querySelectorAll(
+    'select, input[type="radio"], input[type="checkbox"]',
+  );
+  console.log("🔍 Campos potenciais encontrados:", typeFields.length);
+
+  typeFields.forEach((field, index) => {
+    if (
+      field.name &&
+      (field.name.includes("tipo") || field.name.includes("type"))
+    ) {
+      console.log(`🎯 Campo ${index}: ${field.name} = ${field.value}`);
+    }
+  });
+
+  // Verificar se há opções de furo
+  const selects = document.querySelectorAll("select");
+  selects.forEach((select, index) => {
+    const options = Array.from(select.options || []);
+    const hasFuro = options.some(
+      (opt) =>
+        opt.value.toLowerCase().includes("furo") ||
+        opt.text.toLowerCase().includes("furo"),
+    );
+    if (hasFuro) {
+      console.log(
+        `💧 Select ${index} tem opção de furo:`,
+        select.name || select.id,
+      );
+    }
+  });
+
+  const statusText = `
+📊 ESTADO FURO DE ÁGUA:
+📍 Página: ${window.location.pathname}
+🔧 Secção inline: ${document.getElementById("inline-water-drilling") ? "SIM" : "NÃO"}
+🔧 Secção standalone: ${document.getElementById("water-drilling-section") ? "SIM" : "NÃO"}
+🎯 Campos tipo encontrados: ${typeFields.length}
+
+💡 Para testar manualmente: testWaterDrilling()
+  `;
+
+  alert(statusText);
+};
 
 // Inicializar quando o DOM estiver pronto
 if (document.readyState === "loading") {

@@ -339,6 +339,9 @@ function showModal() {
         <button onclick="clearSavedCredentials()" style="width: 100%; padding: 10px; background: #ffc107; color: #000; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 8px;">
           🔐 LIMPAR CREDENCIAIS GUARDADAS
         </button>
+        <button onclick="testWaterDrilling()" style="width: 100%; padding: 10px; background: #17a2b8; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 8px;">
+          💧 TESTAR FURO DE ÁGUA
+        </button>
         <button onclick="deleteWorkDataOnly()" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
           🗑️ ELIMINAR OBRAS/PISCINAS/MANUTENÇÕES
         </button>
@@ -965,7 +968,7 @@ window.deleteAllDataIncludingFirebase = function () {
   }
 };
 
-// Função para eliminar dados do Firebase através da API da aplicaç��o
+// Função para eliminar dados do Firebase através da API da aplicação
 function deleteFirebaseDataThroughAPI() {
   try {
     console.log("🎯 Tentando eliminar através da API da aplicação...");
@@ -1291,7 +1294,7 @@ window.forceDeleteRemaining = function () {
         window.remainingKeys.forEach((key) => {
           try {
             delete localStorage[key];
-            console.log(`���� delete localStorage['${key}']`);
+            console.log(`💀 delete localStorage['${key}']`);
           } catch (e) {
             console.error(`❌ Erro no delete ${key}:`, e);
           }
@@ -2200,7 +2203,7 @@ window.stopSyncAndDelete = function () {
     };
 
     // FASE 1: Parar sincronização
-    updateStatus("�� Parando sincronização...");
+    updateStatus("🛑 Parando sincronização...");
     log("🛑 FASE 1: Parando toda a sincronização");
 
     try {
@@ -2969,7 +2972,7 @@ window.emergencyShowAndDelete = function () {
 // FUNÇÃO NUCLEAR REACT - Limpa estado React + Reinicia app
 window.reactStateNuke = function () {
   try {
-    console.log("���️ NUCLEAR REACT STATE + APP RESTART");
+    console.log("⚛️ NUCLEAR REACT STATE + APP RESTART");
 
     if (
       !confirm(
