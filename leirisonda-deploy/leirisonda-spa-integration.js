@@ -625,9 +625,26 @@ console.log("🚀 LEIRISONDA: Integração SPA React iniciada");
 
   // ==================== BOTÃO CONFIGURAÇÕES ====================
   function setupSettingsButton() {
+    // Só mostrar na página de login
+    const isLoginPage =
+      window.location.pathname.includes("login") ||
+      document.querySelector('[data-loc*="Login.tsx"]') ||
+      (document.body.textContent.includes("Email") &&
+        document.body.textContent.includes("Password"));
+
+    if (!isLoginPage) {
+      // Remover botão se não estiver no login
+      const existing = document.getElementById("leirisonda-settings-btn");
+      if (existing) {
+        existing.remove();
+        console.log("🗑️ Botão removido (não é página de login)");
+      }
+      return;
+    }
+
     if (document.getElementById("leirisonda-settings-btn")) return;
 
-    console.log("⚙️ Criando botão de configurações...");
+    console.log("⚙️ Criando botão de configurações (só no login)...");
 
     const button = document.createElement("div");
     button.id = "leirisonda-settings-btn";
@@ -667,7 +684,7 @@ console.log("🚀 LEIRISONDA: Integração SPA React iniciada");
     );
 
     document.body.appendChild(button);
-    console.log("✅ Botão de configurações criado");
+    console.log("✅ Botão de configurações criado (login only)");
   }
 
   function openSettingsModal() {
