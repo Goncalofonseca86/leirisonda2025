@@ -443,7 +443,7 @@ function monitorWorkTypeField() {
       `📋 Select ${index}: name="${select.name}" id="${select.id}" options=[${optionTexts}]`,
     );
 
-    // Verificar se alguma opção menciona furo
+    // Verificar se alguma opç��o menciona furo
     const hasFuroOption = options.some(
       (opt) =>
         opt.value.toLowerCase().includes("furo") ||
@@ -1357,14 +1357,43 @@ function detecaoAgressiva() {
 
 // Verificar página periodicamente e mostrar botão se necessário
 setInterval(() => {
+  // Detecção mais robusta para SPAs
+  const textoCorpo = document.body.textContent.toLowerCase();
+  const titulo = document.title.toLowerCase();
+
   const esPaginaObra =
+    // URL inclui termos relevantes
     window.location.pathname.includes("/work") ||
     window.location.pathname.includes("/obra") ||
     window.location.pathname.includes("/create") ||
-    document.querySelector("form") ||
-    document.body.textContent.toLowerCase().includes("nova obra");
+    // OU a página tem formulários E não é a página de login
+    (document.querySelector("form") &&
+      !textoCorpo.includes("entrar") &&
+      !textoCorpo.includes("login")) ||
+    // OU contém texto específico de criação de obra
+    textoCorpo.includes("nova obra") ||
+    textoCorpo.includes("criar obra") ||
+    textoCorpo.includes("tipo de trabalho") ||
+    textoCorpo.includes("categoria de obra") ||
+    // OU título sugere página de obra
+    titulo.includes("obra") ||
+    titulo.includes("work");
 
-  if (esPaginaObra) {
+  // Se detectar que está numa página de login, forçar ocultação
+  const esPaginaLogin =
+    textoCorpo.includes("entrar") &&
+    textoCorpo.includes("email") &&
+    textoCorpo.includes("palavra-passe");
+
+  console.log("🔍 Verificação página:", {
+    url: window.location.pathname,
+    esPaginaObra,
+    esPaginaLogin,
+    temFormulario: !!document.querySelector("form"),
+    titulo: document.title,
+  });
+
+  if (esPaginaObra && !esPaginaLogin) {
     // Mostrar botão de teste em páginas de obra
     criarBotaoTesteFuro();
 
@@ -1377,7 +1406,7 @@ setInterval(() => {
     const botao = document.getElementById("botao-teste-furo");
     if (botao) botao.style.display = "none";
   }
-}, 3000);
+}, 2000);
 
 console.log("✅ Sistema Furo de Água carregado com botão de teste");
 console.log(
