@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Administração - Leirisonda</title>
-    <link rel="icon" type="image/svg+xml" href="/leirisonda-logo.svg" />
+
     <style>
       * {
         margin: 0;
@@ -531,7 +531,7 @@
                     <div class="device-info">
                         <div class="device-name">${device.name}</div>
                         <div class="device-status ${device.notificationsEnabled ? "status-active" : "status-inactive"}">
-                            ${device.notificationsEnabled ? "🟢 Ativo" : "🔴 Inativo"} • 
+                            ${device.notificationsEnabled ? "🟢 Ativo" : "🔴 Inativo"} •
                             ${new Date(device.timestamp).toLocaleDateString("pt-PT")}
                         </div>
                     </div>
