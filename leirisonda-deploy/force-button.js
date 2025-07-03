@@ -333,8 +333,8 @@ function showModal() {
         <button onclick="deleteLocalData()" style="width: 100%; padding: 10px; background: #fd7e14; color: white; border: none; border-radius: 6px; cursor: pointer; margin-bottom: 8px; font-weight: bold;">
           🗑️ ELIMINAR LOCAIS
         </button>
-        <button onclick="stopSyncAndDelete()" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
-          🛑 PARAR SYNC + ELIMINAR DADOS
+        <button onclick="cleanDataKeepSync()" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+          🧹 LIMPAR DADOS (MANTER SYNC)
         </button>
         <div id="delete-info" style="margin-top: 8px; font-size: 13px; display: none;"></div>
       </div>
@@ -994,7 +994,7 @@ function deleteFirebaseDataThroughAPI() {
         window.hr
           .deleteAllMaintenances()
           .then(() => {
-            console.log("✅ Manutenções do Firebase eliminadas");
+            console.log("✅ Manuten��ões do Firebase eliminadas");
           })
           .catch((e) => {
             console.error("❌ Erro ao eliminar manutenções:", e);
@@ -2438,6 +2438,250 @@ window.stopSyncAndDelete = function () {
     }, 1000);
   } catch (error) {
     console.error("💥 ERRO na eliminação com parar sync:", error);
+    showInfo("delete-info", `❌ ERRO: ${error.message}`, "red");
+  }
+};
+
+// Função para limpar dados mas manter sincronização funcionando
+window.cleanDataKeepSync = function () {
+  try {
+    console.log("🧹 LIMPEZA DE DADOS MANTENDO SINCRONIZAÇÃO");
+
+    if (
+      !confirm(
+        "🧹 LIMPAR DADOS EXISTENTES?\n\nEsta função vai:\n✅ Eliminar todas as obras existentes\n✅ Eliminar todas as manutenções existentes\n✅ Eliminar todas as piscinas existentes\n✅ Manter utilizadores e configurações\n✅ MANTER sincronização funcionando\n\n➡️ Depois podes criar novos dados normalmente!\n\nContinuar?",
+      )
+    ) {
+      return;
+    }
+
+    // Interface de limpeza
+    const cleanDiv = document.createElement("div");
+    cleanDiv.id = "data-cleaning";
+    cleanDiv.style.cssText = `
+      position: fixed; top: 40px; left: 50%; transform: translateX(-50%);
+      background: white; padding: 25px; border-radius: 15px;
+      border: 3px solid #28a745; z-index: 10000000;
+      font-family: monospace; text-align: center; min-width: 450px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-height: 70vh; overflow: auto;
+    `;
+    cleanDiv.innerHTML = `
+      <h3 style="color: #28a745; margin-bottom: 20px;">🧹 Limpeza de Dados</h3>
+      <div id="clean-log" style="text-align: left; font-size: 11px; max-height: 250px; overflow: auto; background: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 15px;"></div>
+      <div id="clean-progress" style="font-weight: bold; color: #28a745;">Iniciando limpeza...</div>
+    `;
+    document.body.appendChild(cleanDiv);
+
+    const log = (message, color = "#000") => {
+      console.log(message);
+      const logDiv = document.getElementById("clean-log");
+      if (logDiv) {
+        logDiv.innerHTML += `<div style="color: ${color}; margin: 1px 0;">${message}</div>`;
+        logDiv.scrollTop = logDiv.scrollHeight;
+      }
+    };
+
+    const updateStatus = (text) => {
+      const statusDiv = document.getElementById("clean-progress");
+      if (statusDiv) statusDiv.textContent = text;
+    };
+
+    // FASE 1: Pausar sincronização temporariamente
+    updateStatus("⏸️ Pausando sincronização temporariamente...");
+    log("⏸️ FASE 1: Pausa temporária da sincronização");
+
+    let originalSyncState = null;
+    try {
+      if (window.hr && typeof window.hr.isFirebaseAvailable !== "undefined") {
+        originalSyncState = window.hr.isFirebaseAvailable;
+        window.hr.isFirebaseAvailable = false;
+        log("  ⏸️ Sincronização pausada temporariamente", "#ffc107");
+      }
+    } catch (e) {
+      log(`  ⚠️ Não foi possível pausar sync: ${e.message}`, "#ffc107");
+    }
+
+    setTimeout(() => {
+      // FASE 2: Eliminar dados específicos do localStorage
+      updateStatus("🗑️ Eliminando dados locais específicos...");
+      log("🗑️ FASE 2: Eliminação seletiva de dados locais");
+
+      const allKeys = Object.keys(localStorage);
+      const dataKeys = [];
+      const preserveKeys = [];
+
+      // Identificar chaves de dados vs configurações
+      allKeys.forEach((key) => {
+        const value = localStorage.getItem(key);
+        const isWorkData =
+          // Palavras-chave específicas de dados de trabalho
+          key.toLowerCase().includes("work") ||
+          key.toLowerCase().includes("maintenance") ||
+          key.toLowerCase().includes("pool") ||
+          key.toLowerCase().includes("obra") ||
+          key.toLowerCase().includes("piscina") ||
+          key.toLowerCase().includes("manutenc");
+
+        const isUserConfig =
+          // Preservar configurações e autenticação
+          key.toLowerCase().includes("auth") ||
+          key.toLowerCase().includes("user") ||
+          key.toLowerCase().includes("login") ||
+          key.toLowerCase().includes("config") ||
+          key.toLowerCase().includes("settings") ||
+          key.toLowerCase().includes("token") ||
+          key.length < 20; // Chaves pequenas geralmente são configurações
+
+        if (isWorkData) {
+          dataKeys.push(key);
+          log(`  🎯 Dados identificados: ${key}`, "#dc3545");
+        } else if (isUserConfig) {
+          preserveKeys.push(key);
+          log(`  💾 Preservando: ${key}`, "#28a745");
+        } else {
+          // Verificar conteúdo para decidir
+          if (
+            value &&
+            value.startsWith("[") &&
+            value.includes("{") &&
+            value.length > 50
+          ) {
+            dataKeys.push(key);
+            log(`  🎯 Array de dados: ${key}`, "#dc3545");
+          } else {
+            preserveKeys.push(key);
+            log(`  💾 Preservando (pequeno): ${key}`, "#28a745");
+          }
+        }
+      });
+
+      // Eliminar apenas dados identificados
+      let deletedCount = 0;
+      dataKeys.forEach((key) => {
+        try {
+          localStorage.removeItem(key);
+          if (localStorage.getItem(key) === null) {
+            log(`    ✅ ${key} eliminado`, "#28a745");
+            deletedCount++;
+          } else {
+            log(`    ❌ ${key} resistiu`, "#dc3545");
+          }
+        } catch (e) {
+          log(`    ❌ Erro ${key}: ${e.message}`, "#dc3545");
+        }
+      });
+
+      log(
+        `📊 Eliminados: ${deletedCount}/${dataKeys.length} | Preservados: ${preserveKeys.length}`,
+        "#007784",
+      );
+
+      setTimeout(() => {
+        // FASE 3: Limpar Firebase (mantendo estrutura)
+        updateStatus("🔥 Limpando dados Firebase...");
+        log("🔥 FASE 3: Limpeza Firebase (preservando estrutura)");
+
+        const workCollections = ["works", "maintenances", "pools"];
+        let firebaseDeleted = 0;
+
+        workCollections.forEach((collection) => {
+          try {
+            if (window.hr && window.hr.firestore) {
+              log(`🔥 Limpando coleção: ${collection}`, "#ffc107");
+
+              window.hr.firestore
+                .collection(collection)
+                .get()
+                .then((snapshot) => {
+                  const docs = snapshot.docs;
+                  log(
+                    `  📦 Encontrados ${docs.length} documentos em ${collection}`,
+                    "#ffc107",
+                  );
+
+                  docs.forEach((doc) => {
+                    doc.ref
+                      .delete()
+                      .then(() => {
+                        log(
+                          `    ✅ ${doc.id} eliminado de ${collection}`,
+                          "#28a745",
+                        );
+                        firebaseDeleted++;
+                      })
+                      .catch((e) => {
+                        log(`    ❌ Erro ${doc.id}: ${e.message}`, "#dc3545");
+                      });
+                  });
+                })
+                .catch((e) => {
+                  log(
+                    `  ❌ Erro na coleção ${collection}: ${e.message}`,
+                    "#dc3545",
+                  );
+                });
+            }
+          } catch (e) {
+            log(`❌ Erro Firebase ${collection}: ${e.message}`, "#dc3545");
+          }
+        });
+
+        setTimeout(() => {
+          // FASE 4: Restaurar sincronização
+          updateStatus("🔄 Restaurando sincronização...");
+          log("🔄 FASE 4: Restaurando sincronização");
+
+          try {
+            if (window.hr && originalSyncState !== null) {
+              window.hr.isFirebaseAvailable = originalSyncState;
+              log("  ✅ Sincronização restaurada", "#28a745");
+              log("  🔄 Sistema pronto para novos dados", "#28a745");
+            }
+          } catch (e) {
+            log(`  ⚠️ Erro ao restaurar sync: ${e.message}`, "#ffc107");
+          }
+
+          setTimeout(() => {
+            updateStatus("✅ Limpeza concluída - Sistema pronto!");
+            log("🎉 LIMPEZA CONCLUÍDA!", "#28a745");
+            log("✅ Sistema limpo e funcional para novos dados", "#28a745");
+
+            const cleanDiv = document.getElementById("data-cleaning");
+            if (cleanDiv) {
+              cleanDiv.innerHTML = `
+                <h3 style="color: #28a745;">🎉 Limpeza Concluída!</h3>
+                <div style="text-align: left; margin: 15px 0; font-size: 12px;">
+                  ✅ ${deletedCount} tipos de dados eliminados<br>
+                  ✅ Configurações e utilizadores preservados<br>
+                  ✅ Sincronização mantida e funcional<br>
+                  ✅ Pronto para criar novos dados!
+                </div>
+                <div style="background: #e7f5e7; padding: 10px; border-radius: 5px; margin: 10px 0; font-size: 11px;">
+                  🆕 Agora podes criar novas obras, manutenções e piscinas.<br>
+                  🔄 Tudo vai sincronizar normalmente entre dispositivos!
+                </div>
+                <button onclick="window.location.reload()"
+                        style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 10px;">
+                  🔄 Recarregar App
+                </button>
+                <button onclick="this.parentElement.remove()"
+                        style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                  Fechar
+                </button>
+              `;
+            }
+
+            showInfo(
+              "delete-info",
+              "🎉 Dados limpos! Sistema funcional!",
+              "green",
+            );
+          }, 2000);
+        }, 3000);
+      }, 1000);
+    }, 1000);
+  } catch (error) {
+    console.error("💥 ERRO na limpeza de dados:", error);
     showInfo("delete-info", `❌ ERRO: ${error.message}`, "red");
   }
 };
