@@ -124,11 +124,11 @@ function addHidingCSS() {
       height: 0 !important;
       overflow: hidden !important;
     }
-    
+
     .menu-item-hidden {
       display: none !important;
     }
-    
+
     /* Procura por elementos que contenham texto específico */
     *:has-text("DIAGNÓSTICO"),
     *:has-text("ADMINISTRAÇÃO"),
@@ -154,7 +154,7 @@ function executeAllModifications() {
   const success = hideMenuItems();
 
   if (success) {
-    console.log("✅ Modificações aplicadas com sucesso!");
+    console.log("�� Modificações aplicadas com sucesso!");
     showSuccessMessage();
   }
 
@@ -193,32 +193,66 @@ function showSuccessMessage() {
   }, 3000);
 }
 
-// Sistema de execução inteligente
+// Sistema de execução mais conservador
 let executionAttempts = 0;
-const maxAttempts = 50;
+const maxAttempts = 10;
+let isApplicationReady = false;
+
+// Detecta se a aplicação está carregada
+function checkApplicationReady() {
+  // Aguarda pelo React e componentes principais
+  if (
+    document.querySelector("#root") &&
+    document.querySelector("#root").children.length > 0
+  ) {
+    isApplicationReady = true;
+    console.log("✅ Aplicação detectada como carregada");
+    return true;
+  }
+  return false;
+}
 
 function smartExecution() {
   executionAttempts++;
-  console.log(`🔄 Tentativa ${executionAttempts}/${maxAttempts}`);
+  console.log(
+    `🔄 Menu modification attempt ${executionAttempts}/${maxAttempts}`,
+  );
+
+  // Só executa se a aplicação estiver carregada
+  if (!isApplicationReady && !checkApplicationReady()) {
+    console.log("⏳ Aguardando aplicação carregar...");
+    if (executionAttempts < maxAttempts) {
+      setTimeout(smartExecution, 2000);
+    }
+    return;
+  }
 
   if (executeAllModifications()) {
-    console.log("�� Sucesso! Parando execução.");
+    console.log("🎉 Menu modifications applied successfully!");
     return;
   }
 
   if (executionAttempts < maxAttempts) {
-    setTimeout(smartExecution, 1000);
+    setTimeout(smartExecution, 3000);
   } else {
-    console.log("⚠️ Máximo de tentativas atingido");
+    console.log("⚠️ Menu modification attempts exhausted");
   }
 }
 
-// Observer para mudanças no DOM
+// Observer mais conservador
 const observer = new MutationObserver((mutations) => {
+  // Evita execução durante operações críticas
+  if (
+    document.title.includes("Sincroniz") ||
+    document.body.textContent.includes("SYNC")
+  ) {
+    return;
+  }
+
   let shouldExecute = false;
 
   mutations.forEach((mutation) => {
-    if (mutation.type === "childList") {
+    if (mutation.type === "childList" && mutation.addedNodes.length > 0) {
       mutation.addedNodes.forEach((node) => {
         if (node.nodeType === Node.ELEMENT_NODE) {
           const text = node.textContent || "";
@@ -230,31 +264,42 @@ const observer = new MutationObserver((mutations) => {
     }
   });
 
-  if (shouldExecute) {
+  if (shouldExecute && isApplicationReady) {
     setTimeout(() => {
       executeAllModifications();
-    }, 100);
+    }, 1000);
   }
 });
 
-// Inicia execução
-console.log("🎯 Iniciando sistema de modificações do menu...");
+// Inicia execução de forma mais conservadora
+console.log("🎯 Starting conservative menu modification system...");
 
-// Execução imediata
-setTimeout(smartExecution, 100);
+// Aguarda carregamento da aplicação
+setTimeout(() => {
+  checkApplicationReady();
+  smartExecution();
+}, 3000);
 
-// Execuções adicionais para garantir
-setTimeout(smartExecution, 2000);
-setTimeout(smartExecution, 5000);
+// Execução adicional após carregamento completo
+setTimeout(() => {
+  if (isApplicationReady) {
+    smartExecution();
+  }
+}, 8000);
 
-// Inicia observer
-observer.observe(document.body, {
-  childList: true,
-  subtree: true,
-});
+// Inicia observer apenas após algum tempo
+setTimeout(() => {
+  if (isApplicationReady) {
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+    console.log("🔍 DOM observer started");
+  }
+}, 5000);
 
-// Para o observer após 2 minutos
+// Para o observer após 1 minuto
 setTimeout(() => {
   observer.disconnect();
-  console.log("🛑 Observer desconectado");
-}, 120000);
+  console.log("🛑 DOM observer disconnected");
+}, 60000);
