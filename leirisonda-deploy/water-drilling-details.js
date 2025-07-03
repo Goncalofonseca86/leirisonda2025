@@ -1030,11 +1030,105 @@ window.checkWaterDrillingStatus = function () {
   alert(statusText);
 };
 
+// Configurar listeners universais para qualquer mudança
+function setupUniversalMonitoring() {
+  console.log("🌐 Configurando monitoramento universal...");
+
+  // Listener para QUALQUER mudança em selects
+  document.addEventListener("change", (e) => {
+    if (e.target.tagName === "SELECT") {
+      const value = e.target.value?.toLowerCase() || "";
+      const text = e.target.selectedOptions?.[0]?.text?.toLowerCase() || "";
+
+      console.log(
+        `🔄 Select changed: ${e.target.name || e.target.id} = "${value}" ("${text}")`,
+      );
+
+      if (
+        value.includes("furo") ||
+        text.includes("furo") ||
+        value.includes("agua") ||
+        text.includes("agua") ||
+        value.includes("drilling") ||
+        text.includes("drilling")
+      ) {
+        console.log("🎯 FURO DETECTADO! Criando seção...");
+        createWaterDrillingInlineSection();
+      } else if (document.getElementById("inline-water-drilling")) {
+        console.log("🗑️ Furo não selecionado, removendo seção...");
+        removeWaterDrillingSection();
+      }
+    }
+  });
+
+  // Listener para inputs radio e checkbox
+  document.addEventListener("change", (e) => {
+    if (e.target.type === "radio" || e.target.type === "checkbox") {
+      const value = e.target.value?.toLowerCase() || "";
+      const label = e.target.labels?.[0]?.textContent?.toLowerCase() || "";
+
+      console.log(
+        `🔘 Radio/Checkbox changed: ${e.target.name} = "${value}" ("${label}")`,
+      );
+
+      if (
+        e.target.checked &&
+        (value.includes("furo") ||
+          label.includes("furo") ||
+          value.includes("agua") ||
+          label.includes("agua"))
+      ) {
+        console.log("🎯 FURO DETECTADO via radio/checkbox! Criando seção...");
+        createWaterDrillingInlineSection();
+      }
+    }
+  });
+
+  // Observar mudanças no DOM para SPAs
+  const observer = new MutationObserver((mutations) => {
+    let shouldRecheck = false;
+
+    mutations.forEach((mutation) => {
+      if (mutation.type === "childList") {
+        mutation.addedNodes.forEach((node) => {
+          if (
+            node.nodeType === 1 &&
+            (node.tagName === "SELECT" ||
+              node.tagName === "FORM" ||
+              (node.querySelector &&
+                (node.querySelector("select") || node.querySelector("form"))))
+          ) {
+            shouldRecheck = true;
+          }
+        });
+      }
+    });
+
+    if (shouldRecheck) {
+      console.log("🔄 DOM mudou, re-verificando campos...");
+      setTimeout(() => {
+        monitorWorkTypeField();
+      }, 500);
+    }
+  });
+
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+  });
+
+  console.log("✅ Monitoramento universal configurado");
+}
+
 // Inicializar quando o DOM estiver pronto
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initWaterDrilling);
+  document.addEventListener("DOMContentLoaded", () => {
+    initWaterDrilling();
+    setupUniversalMonitoring();
+  });
 } else {
   initWaterDrilling();
+  setupUniversalMonitoring();
 }
 
 // Re-inicializar quando a URL mudar (SPAs)
@@ -1042,8 +1136,11 @@ let currentUrl = window.location.href;
 setInterval(() => {
   if (currentUrl !== window.location.href) {
     currentUrl = window.location.href;
-    setTimeout(initWaterDrilling, 1000);
+    console.log("🔄 URL changed, re-initializing...");
+    setTimeout(() => {
+      initWaterDrilling();
+    }, 1000);
   }
 }, 1000);
 
-console.log("✅ Sistema Furo de Água carregado");
+console.log("✅ Sistema Furo de Água carregado com monitoramento universal");
