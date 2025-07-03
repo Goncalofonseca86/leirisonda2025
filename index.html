@@ -106,37 +106,34 @@
       if (window.location.pathname !== "/login") {
         console.log("📦 Carregando scripts essenciais...");
 
-        // Script principal com todas as funcionalidades
+        // Sistema completo Leirisonda
         try {
           const script = document.createElement("script");
-          script.src = "/leirisonda-deploy/inject-all-features.js";
+          script.src = "/leirisonda-deploy/leirisonda-complete-system.js";
           script.async = true;
           script.onload = function () {
-            console.log("✅ Funcionalidades Leirisonda carregadas com sucesso");
+            console.log("✅ Sistema completo Leirisonda carregado com sucesso");
           };
           script.onerror = function () {
-            console.log(
-              "⚠️ Erro ao carregar funcionalidades - tentando fallback",
-            );
-            // Fallback inline se o script não carregar
+            console.log("⚠️ Erro ao carregar sistema - tentando fallback");
             setTimeout(function () {
               if (!window.leirisondaDebug) {
-                console.log(
-                  "���� Executando funcionalidades inline como fallback",
-                );
-                // Criar pelo menos o botão de configurações
+                console.log("🔄 Criando funcionalidades básicas como fallback");
                 const btn = document.createElement("div");
                 btn.innerHTML = "⚙️";
                 btn.style.cssText =
-                  "position:fixed;bottom:25px;left:25px;width:40px;height:40px;background:rgba(0,119,132,0.8);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:99999;";
-                btn.onclick = () => alert("Funcionalidades em carregamento...");
+                  "position:fixed;bottom:30px;left:30px;width:50px;height:50px;background:rgba(0,119,132,0.9);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:999999;font-size:20px;box-shadow:0 4px 20px rgba(0,0,0,0.3);";
+                btn.onclick = () =>
+                  alert(
+                    "⚙️ Sistema Leirisonda\n\nPassword: 19867\n\nFuncionalidades:\n• Utilizador Yuri\n• Furos de água\n• Configurações",
+                  );
                 document.body.appendChild(btn);
               }
             }, 2000);
           };
           document.head.appendChild(script);
         } catch (e) {
-          console.log("⚠️ Erro crítico ao carregar funcionalidades:", e);
+          console.log("⚠️ Erro crítico ao carregar sistema:", e);
         }
 
         // FUNCIONALIDADE INLINE APENAS PARA FUROS DE ÁGUA
@@ -148,7 +145,7 @@
                 !document.getElementById("secção-furo-agua") &&
                 document.body.textContent.includes("Tipo de Trabalho")
               ) {
-                console.log("💧 Criando secç��o furo como fallback...");
+                console.log("💧 Criando secção furo como fallback...");
 
                 const form =
                   document.querySelector("form") ||
