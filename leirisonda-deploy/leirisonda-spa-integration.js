@@ -393,16 +393,16 @@ console.log("🚀 LEIRISONDA: Integração SPA React iniciada");
       </div>
 
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
-        
+
         <!-- Medições -->
         <div style="background: rgba(255, 255, 255, 0.8); padding: 15px; border-radius: 10px;">
           <h4 style="color: #0c4a6e; margin: 0 0 12px 0; font-size: 16px;">📏 Medições</h4>
-          
+
           <div style="margin-bottom: 12px;">
             <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 6px; font-size: 14px;">
               Profundidade Total (metros)
             </label>
-            <input type="number" name="furo_profundidade" step="0.1" placeholder="Ex: 45.5" 
+            <input type="number" name="furo_profundidade" step="0.1" placeholder="Ex: 45.5"
                    style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
           </div>
 
@@ -426,7 +426,7 @@ console.log("🚀 LEIRISONDA: Integração SPA React iniciada");
         <!-- Coluna -->
         <div style="background: rgba(255, 255, 255, 0.8); padding: 15px; border-radius: 10px;">
           <h4 style="color: #0c4a6e; margin: 0 0 12px 0; font-size: 16px;">🔧 Coluna</h4>
-          
+
           <div style="margin-bottom: 12px;">
             <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 6px; font-size: 14px;">
               Tipo de Coluna
@@ -456,7 +456,7 @@ console.log("🚀 LEIRISONDA: Integração SPA React iniciada");
         <!-- Bomba -->
         <div style="background: rgba(255, 255, 255, 0.8); padding: 15px; border-radius: 10px;">
           <h4 style="color: #0c4a6e; margin: 0 0 12px 0; font-size: 16px;">⚡ Bomba</h4>
-          
+
           <div style="margin-bottom: 12px;">
             <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 6px; font-size: 14px;">
               Modelo da Bomba
@@ -710,9 +710,9 @@ console.log("🚀 LEIRISONDA: Integração SPA React iniciada");
       </div>
 
       <div id="password-section">
-        <input type="password" id="settings-password" placeholder="Password de acesso" 
+        <input type="password" id="settings-password" placeholder="Password de acesso"
                style="width: 100%; padding: 12px; border: 2px solid #e1e5e9; border-radius: 10px; font-size: 16px; box-sizing: border-box; margin-bottom: 15px;">
-        <button onclick="checkPassword()" style="width: 100%; padding: 14px; background: #007784; color: white; border: none; border-radius: 10px; font-size: 16px; cursor: pointer;">
+        <button id="leirisonda-password-btn" style="width: 100%; padding: 14px; background: #007784; color: white; border: none; border-radius: 10px; font-size: 16px; cursor: pointer;">
           Aceder
         </button>
       </div>
@@ -729,10 +729,10 @@ console.log("🚀 LEIRISONDA: Integração SPA React iniciada");
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px;">
-          <button onclick="testYuri()" style="padding: 10px; background: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 12px;">
+          <button id="leirisonda-test-yuri-btn" style="padding: 10px; background: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 12px;">
             🧪 Testar Yuri
           </button>
-          <button onclick="testFuros()" style="padding: 10px; background: #0ea5e9; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 12px;">
+          <button id="leirisonda-test-furos-btn" style="padding: 10px; background: #0ea5e9; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 12px;">
             💧 Testar Furos
           </button>
         </div>
@@ -743,7 +743,7 @@ console.log("🚀 LEIRISONDA: Integração SPA React iniciada");
         </div>
       </div>
 
-      <button onclick="closeModal()" style="position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 24px; cursor: pointer; color: #999;">
+      <button id="leirisonda-close-btn" style="position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 24px; cursor: pointer; color: #999;">
         ✕
       </button>
     `;
