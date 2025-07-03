@@ -1,5 +1,5 @@
-// BOTÃO DEFINIÇÕES ULTRA ROBUSTO
-console.log("🚀 INICIANDO BOTÃO ULTRA ROBUSTO");
+// BOTÃO DEFINIÇÕES COM PROTEÇÃO POR SENHA
+console.log("🚀 INICIANDO BOTÃO COM PROTEÇÃO");
 
 // Criar botão
 function createButton() {
@@ -8,7 +8,7 @@ function createButton() {
   }
 
   try {
-    console.log("➕ Criando botão");
+    console.log("➕ Criando botão protegido");
 
     const btn = document.createElement("div");
     btn.id = "SETTINGS-BTN";
@@ -39,10 +39,10 @@ function createButton() {
         e.preventDefault();
         e.stopPropagation();
 
-        console.log("✅ BOTÃO CLICADO!");
+        console.log("✅ BOTÃO CLICADO - SOLICITANDO SENHA");
 
         // Feedback visual
-        this.style.background = "#00ff00";
+        this.style.background = "#ffc107";
 
         setTimeout(() => {
           this.style.background = "#007784";
@@ -53,8 +53,11 @@ function createButton() {
       }
     });
 
-  document.body.appendChild(btn);
-  console.log("✅ Botão criado com sucesso");
+    document.body.appendChild(btn);
+    console.log("✅ Botão protegido criado");
+  } catch (error) {
+    console.error("Erro ao criar botão:", error);
+  }
 }
 
 // Solicitar palavra-passe
@@ -76,7 +79,7 @@ function requestPassword() {
       left: 0 !important;
       width: 100% !important;
       height: 100% !important;
-      background: rgba(0,0,0,0.85) !important;
+      background: rgba(0,0,0,0.9) !important;
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
@@ -91,7 +94,7 @@ function requestPassword() {
       max-width: 350px !important;
       width: 90% !important;
       text-align: center !important;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3) !important;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4) !important;
     `;
 
     content.innerHTML = `
@@ -99,23 +102,23 @@ function requestPassword() {
       <p style="color: #666; margin-bottom: 20px; font-size: 14px;">
         Introduza a palavra-passe para aceder às definições:
       </p>
-      <input
-        type="password"
-        id="admin-password"
-        placeholder="Palavra-passe de administração"
+      <input 
+        type="password" 
+        id="admin-password" 
+        placeholder="Palavra-passe de administração" 
         style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; margin-bottom: 15px; box-sizing: border-box; font-size: 16px; text-align: center;"
         autocomplete="off"
       >
       <div id="password-error" style="color: #dc3545; font-size: 13px; margin-bottom: 15px; display: none;"></div>
       <div style="display: flex; gap: 10px;">
-        <button
-          onclick="cancelPassword()"
+        <button 
+          onclick="cancelPassword()" 
           style="flex: 1; padding: 12px; background: #6c757d; color: white; border: none; border-radius: 6px; cursor: pointer;"
         >
           Cancelar
         </button>
-        <button
-          onclick="checkPassword()"
+        <button 
+          onclick="checkPassword()" 
           style="flex: 1; padding: 12px; background: #007784; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;"
         >
           Entrar
@@ -126,23 +129,18 @@ function requestPassword() {
     modal.appendChild(content);
     document.body.appendChild(modal);
 
-    // Focar no input
+    // Focar no input e Enter para submeter
     setTimeout(() => {
       const input = document.getElementById("admin-password");
       if (input) {
         input.focus();
+        input.addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            checkPassword();
+          }
+        });
       }
     }, 100);
-
-    // Enter para submeter
-    const input = document.getElementById("admin-password");
-    if (input) {
-      input.addEventListener("keypress", function(e) {
-        if (e.key === "Enter") {
-          checkPassword();
-        }
-      });
-    }
 
     console.log("✅ Modal de senha aberto");
   } catch (error) {
@@ -150,126 +148,17 @@ function requestPassword() {
   }
 }
 
-// Modal ultra simples
-function showModal() {
-  try {
-    console.log("🔄 Abrindo modal");
-
-    // Remove modal existente
-    const existing = document.getElementById("MODAL");
-    if (existing) {
-      existing.remove();
-    }
-
-    const modal = document.createElement("div");
-    modal.id = "MODAL";
-    modal.style.cssText = `
-      position: fixed !important;
-      top: 0 !important;
-      left: 0 !important;
-      width: 100% !important;
-      height: 100% !important;
-      background: rgba(0,0,0,0.8) !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      z-index: 9999999 !important;
-    `;
-
-    const content = document.createElement("div");
-    content.style.cssText = `
-      background: white !important;
-      padding: 25px !important;
-      border-radius: 15px !important;
-      max-width: 400px !important;
-      width: 90% !important;
-      text-align: center !important;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3) !important;
-    `;
-
-    content.innerHTML = `
-      <h2 style="color: #007784; margin-bottom: 20px;">⚙️ Definições</h2>
-
-      <div style="margin-bottom: 20px; text-align: left;">
-        <h3 style="color: #333; margin-bottom: 10px;">📱 Notificações</h3>
-        <div id="browser-info" style="font-size: 12px; padding: 8px; background: #f8f9fa; border-radius: 4px; margin-bottom: 8px; color: #666;">
-          🔍 A verificar suporte do browser...
-        </div>
-        <button onclick="activateNotifications()" style="width: 100%; padding: 10px; background: #007784; color: white; border: none; border-radius: 6px; margin-bottom: 8px; cursor: pointer;">
-          🔔 Ativar Notificações
-        </button>
-        <input type="text" id="test-message" placeholder="Mensagem teste" value="Teste Leirisonda" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 8px; box-sizing: border-box;">
-        <button onclick="testNotification()" style="width: 100%; padding: 10px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer;">
-          🧪 Testar Notificação
-        </button>
-        <div id="notif-info" style="margin-top: 8px; font-size: 13px; display: none;"></div>
-      </div>
-
-      <div style="background: #fff3cd; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
-        <h3 style="color: #856404; margin-bottom: 8px;">🗑️ Eliminar Dados</h3>
-        <p style="color: #856404; margin-bottom: 12px; font-size: 13px;">⚠️ Remove TODOS os dados!</p>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 15px;">
-          <div style="text-align: center; padding: 8px; background: white; border-radius: 6px; font-size: 12px;">
-            <div style="font-size: 18px;">🏗️</div>
-            <div style="font-weight: bold;">Obras</div>
-            <div id="works-count" style="color: #007784; font-weight: bold;">-</div>
-          </div>
-          <div style="text-align: center; padding: 8px; background: white; border-radius: 6px; font-size: 12px;">
-            <div style="font-size: 18px;">🔧</div>
-            <div style="font-weight: bold;">Manutenções</div>
-            <div id="maint-count" style="color: #007784; font-weight: bold;">-</div>
-          </div>
-          <div style="text-align: center; padding: 8px; background: white; border-radius: 6px; font-size: 12px;">
-            <div style="font-size: 18px;">🏊</div>
-            <div style="font-weight: bold;">Piscinas</div>
-            <div id="pools-count" style="color: #007784; font-weight: bold;">-</div>
-          </div>
-        </div>
-
-        <button onclick="deleteAllData()" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
-          💣 ELIMINAR TUDO
-        </button>
-        <div id="delete-info" style="margin-top: 8px; font-size: 13px; display: none;"></div>
-      </div>
-
-      <button onclick="closeModal()" style="width: 100%; padding: 12px; background: #6c757d; color: white; border: none; border-radius: 6px; cursor: pointer;">
-        Fechar
-      </button>
-    `;
-
-    modal.appendChild(content);
-    document.body.appendChild(modal);
-
-    // Fechar clicando fora
-    modal.addEventListener("click", function (e) {
-      if (e.target === this) {
-        closeModal();
-      }
-    });
-
-    // Carregar dados e verificar compatibilidade
-    loadCounts();
-    checkBrowserCompatibility();
-
-    console.log("✅ Modal aberto");
-  } catch (error) {
-    console.error("Erro ao abrir modal:", error);
-  }
-}
-
 // Verificar palavra-passe
-window.checkPassword = function() {
+window.checkPassword = function () {
   try {
     const input = document.getElementById("admin-password");
-    const errorDiv = document.getElementById("password-error");
 
     if (!input) return;
 
     const password = input.value.trim();
 
-    // Palavra-passe de administração (pode alterar aqui)
-    const adminPassword = "19867"; // Mesmo que na página admin.html
+    // Palavra-passe de administração
+    const adminPassword = "19867";
 
     if (password === "") {
       showPasswordError("Introduza a palavra-passe");
@@ -277,14 +166,14 @@ window.checkPassword = function() {
     }
 
     if (password === adminPassword) {
-      console.log("✅ Palavra-passe correta");
+      console.log("✅ Palavra-passe correta - abrindo definições");
       cancelPassword();
       showModal();
     } else {
       console.log("❌ Palavra-passe incorreta");
       showPasswordError("❌ Palavra-passe incorreta");
 
-      // Limpar campo e focar novamente
+      // Limpar e focar
       input.value = "";
       input.focus();
     }
@@ -294,7 +183,7 @@ window.checkPassword = function() {
 };
 
 // Cancelar entrada de senha
-window.cancelPassword = function() {
+window.cancelPassword = function () {
   try {
     const modal = document.getElementById("PASSWORD-MODAL");
     if (modal) {
@@ -323,36 +212,131 @@ function showPasswordError(message) {
   }
 }
 
-// Funções globais simples
+// Modal de definições (só abre após senha correta)
+function showModal() {
+  try {
+    console.log("🔄 Abrindo modal de definições");
+
+    const existing = document.getElementById("SETTINGS-MODAL");
+    if (existing) {
+      existing.remove();
+    }
+
+    const modal = document.createElement("div");
+    modal.id = "SETTINGS-MODAL";
+    modal.style.cssText = `
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      background: rgba(0,0,0,0.8) !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      z-index: 9999999 !important;
+    `;
+
+    const content = document.createElement("div");
+    content.style.cssText = `
+      background: white !important;
+      padding: 25px !important;
+      border-radius: 15px !important;
+      max-width: 400px !important;
+      width: 90% !important;
+      text-align: center !important;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3) !important;
+    `;
+
+    content.innerHTML = `
+      <h2 style="color: #007784; margin-bottom: 20px;">⚙️ Definições Administrativas</h2>
+      
+      <div style="margin-bottom: 20px; text-align: left;">
+        <h3 style="color: #333; margin-bottom: 10px;">📱 Notificações</h3>
+        <div id="browser-info" style="font-size: 12px; padding: 8px; background: #f8f9fa; border-radius: 4px; margin-bottom: 8px; color: #666;">
+          🔍 A verificar suporte do browser...
+        </div>
+        <button onclick="activateNotifications()" style="width: 100%; padding: 10px; background: #007784; color: white; border: none; border-radius: 6px; margin-bottom: 8px; cursor: pointer;">
+          🔔 Ativar Notificações
+        </button>
+        <input type="text" id="test-message" placeholder="Mensagem teste" value="Teste Leirisonda" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 8px; box-sizing: border-box;">
+        <button onclick="testNotification()" style="width: 100%; padding: 10px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer;">
+          🧪 Testar Notificação
+        </button>
+        <div id="notif-info" style="margin-top: 8px; font-size: 13px; display: none;"></div>
+      </div>
+
+      <div style="background: #fff3cd; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+        <h3 style="color: #856404; margin-bottom: 8px;">🗑️ Eliminar Dados</h3>
+        <p style="color: #856404; margin-bottom: 12px; font-size: 13px;">⚠️ Remove TODOS os dados!</p>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 15px;">
+          <div style="text-align: center; padding: 8px; background: white; border-radius: 6px; font-size: 12px;">
+            <div style="font-size: 18px;">🏗️</div>
+            <div style="font-weight: bold;">Obras</div>
+            <div id="works-count" style="color: #007784; font-weight: bold;">-</div>
+          </div>
+          <div style="text-align: center; padding: 8px; background: white; border-radius: 6px; font-size: 12px;">
+            <div style="font-size: 18px;">🔧</div>
+            <div style="font-weight: bold;">Manutenções</div>
+            <div id="maint-count" style="color: #007784; font-weight: bold;">-</div>
+          </div>
+          <div style="text-align: center; padding: 8px; background: white; border-radius: 6px; font-size: 12px;">
+            <div style="font-size: 18px;">🏊</div>
+            <div style="font-weight: bold;">Piscinas</div>
+            <div id="pools-count" style="color: #007784; font-weight: bold;">-</div>
+          </div>
+        </div>
+        
+        <button onclick="deleteAllData()" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+          💣 ELIMINAR TUDO
+        </button>
+        <div id="delete-info" style="margin-top: 8px; font-size: 13px; display: none;"></div>
+      </div>
+
+      <button onclick="closeModal()" style="width: 100%; padding: 12px; background: #6c757d; color: white; border: none; border-radius: 6px; cursor: pointer;">
+        Fechar
+      </button>
+    `;
+
+    modal.appendChild(content);
+    document.body.appendChild(modal);
+
+    // Fechar clicando fora
+    modal.addEventListener("click", function (e) {
+      if (e.target === this) {
+        closeModal();
+      }
+    });
+
+    // Carregar dados e verificar compatibilidade
+    loadCounts();
+    checkBrowserCompatibility();
+
+    console.log("✅ Modal de definições aberto");
+  } catch (error) {
+    console.error("Erro ao abrir modal:", error);
+  }
+}
+
+// Funções de notificações
 window.activateNotifications = function () {
   try {
     console.log("🔔 Ativando notificações...");
-    console.log("User Agent:", navigator.userAgent);
-    console.log("Notification in window:", "Notification" in window);
-    console.log("Service Worker:", "serviceWorker" in navigator);
 
-    // Verificar múltiplas formas de suporte
-    const hasNotificationAPI = "Notification" in window;
-    const hasServiceWorker = "serviceWorker" in navigator;
-    const isPWA =
-      window.matchMedia &&
-      window.matchMedia("(display-mode: standalone)").matches;
-
-    console.log("PWA mode:", isPWA);
-
-    if (!hasNotificationAPI && !hasServiceWorker) {
-      console.log("❌ Notificações não suportadas");
-      showInfo("notif-info", "❌ Browser não suporta notificações", "red");
-      return;
+    if (!("Notification" in window)) {
+      if ("serviceWorker" in navigator) {
+        showInfo(
+          "notif-info",
+          "ℹ️ Use Service Worker para notificações",
+          "orange",
+        );
+        return;
+      } else {
+        showInfo("notif-info", "❌ Browser não suporta notificações", "red");
+        return;
+      }
     }
-
-    if (!hasNotificationAPI && hasServiceWorker) {
-      console.log("⚠️ Usando Service Worker para notificações");
-      showInfo("notif-info", "ℹ️ Notificações via Service Worker", "orange");
-      return;
-    }
-
-    console.log("Permissão atual:", Notification.permission);
 
     if (Notification.permission === "granted") {
       showInfo("notif-info", "✅ Já estão ativadas!", "green");
@@ -368,24 +352,17 @@ window.activateNotifications = function () {
       return;
     }
 
-    // Solicitar permissão
-    if (Notification.requestPermission) {
-      Notification.requestPermission()
-        .then((permission) => {
-          console.log("Nova permissão:", permission);
-          if (permission === "granted") {
-            showInfo("notif-info", "✅ Notificações ativadas!", "green");
-          } else {
-            showInfo("notif-info", "❌ Permissão negada", "red");
-          }
-        })
-        .catch((error) => {
-          console.error("Erro ao solicitar permissão:", error);
-          showInfo("notif-info", "❌ Erro ao solicitar permissão", "red");
-        });
-    } else {
-      showInfo("notif-info", "❌ API não suportada", "red");
-    }
+    Notification.requestPermission()
+      .then((permission) => {
+        if (permission === "granted") {
+          showInfo("notif-info", "✅ Notificações ativadas!", "green");
+        } else {
+          showInfo("notif-info", "❌ Permissão negada", "red");
+        }
+      })
+      .catch((error) => {
+        showInfo("notif-info", "❌ Erro ao solicitar permissão", "red");
+      });
   } catch (error) {
     console.error("Erro ao ativar notificações:", error);
     showInfo("notif-info", `❌ Erro: ${error.message}`, "red");
@@ -395,27 +372,11 @@ window.activateNotifications = function () {
 window.testNotification = function () {
   try {
     console.log("🧪 Testando notificação...");
-    console.log("Browser:", navigator.userAgent);
 
-    // Verificar múltiplas formas de suporte
     if (!("Notification" in window)) {
-      if ("serviceWorker" in navigator) {
-        showInfo(
-          "notif-info",
-          "ℹ️ Use Service Worker para notificações",
-          "orange",
-        );
-        // Tentar via service worker
-        tryServiceWorkerNotification();
-        return;
-      } else {
-        showInfo("notif-info", "❌ Browser não suporta notificações", "red");
-        return;
-      }
+      showInfo("notif-info", "❌ Browser não suporta notificações", "red");
+      return;
     }
-
-    // Verificar permissão
-    console.log("Permissão atual:", Notification.permission);
 
     if (Notification.permission !== "granted") {
       showInfo("notif-info", "❌ Ative notificações primeiro", "red");
@@ -425,29 +386,20 @@ window.testNotification = function () {
     const msgEl = document.getElementById("test-message");
     const msg = msgEl ? msgEl.value || "Teste" : "Teste";
 
-    console.log("Criando notificação com mensagem:", msg);
-
-    // Criar notificação com configuração mínima
     const notification = new Notification("Leirisonda", {
       body: msg,
       icon: "/leirisonda-logo.svg",
       tag: "test-notification",
-      requireInteraction: false,
     });
 
-    // Listener para sucesso
     notification.onshow = function () {
-      console.log("✅ Notificação mostrada");
       showInfo("notif-info", "✅ Notificação enviada!", "green");
     };
 
-    // Listener para erro
     notification.onerror = function (error) {
-      console.error("Erro na notificação:", error);
       showInfo("notif-info", "❌ Erro ao enviar", "red");
     };
 
-    // Fechar automaticamente após 3 segundos
     setTimeout(() => {
       if (notification) {
         notification.close();
@@ -458,30 +410,6 @@ window.testNotification = function () {
     showInfo("notif-info", `❌ Erro: ${error.message}`, "red");
   }
 };
-
-// Tentar notificação via Service Worker
-function tryServiceWorkerNotification() {
-  try {
-    if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
-      const msgEl = document.getElementById("test-message");
-      const msg = msgEl ? msgEl.value || "Teste via SW" : "Teste via SW";
-
-      navigator.serviceWorker.controller.postMessage({
-        type: "SHOW_NOTIFICATION",
-        title: "Leirisonda",
-        body: msg,
-        icon: "/leirisonda-logo.svg",
-      });
-
-      showInfo("notif-info", "📡 Tentativa via Service Worker", "blue");
-    } else {
-      showInfo("notif-info", "❌ Service Worker não disponível", "red");
-    }
-  } catch (error) {
-    console.error("Erro Service Worker notification:", error);
-    showInfo("notif-info", "❌ Erro no Service Worker", "red");
-  }
-}
 
 window.deleteAllData = function () {
   try {
@@ -524,7 +452,7 @@ window.deleteAllData = function () {
         new Notification("Leirisonda", {
           body: "Dados eliminados!",
           icon: "/leirisonda-logo.svg",
-          tag: "delete-notification"
+          tag: "delete-notification",
         });
       }
     } catch (notifError) {
@@ -538,11 +466,11 @@ window.deleteAllData = function () {
 
 window.closeModal = function () {
   try {
-    const modal = document.getElementById("MODAL");
+    const modal = document.getElementById("SETTINGS-MODAL");
     if (modal) {
       modal.remove();
     }
-    console.log("✅ Modal fechado");
+    console.log("✅ Modal de definições fechado");
   } catch (error) {
     console.error("Erro ao fechar modal:", error);
   }
@@ -663,12 +591,12 @@ try {
   // Verificar constantemente
   setInterval(() => {
     if (!document.getElementById("SETTINGS-BTN")) {
-      console.log("🔄 Recriando botão");
+      console.log("🔄 Recriando botão protegido");
       createButton();
     }
   }, 1000);
 
-  console.log("✅ Script ultra robusto carregado");
+  console.log("✅ Script com proteção por senha carregado");
 } catch (error) {
   console.error("Erro crítico:", error);
 }
