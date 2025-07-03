@@ -33,7 +33,7 @@ function createButton() {
       user-select: none !important;
     `;
 
-    // Click simples e robusto
+    // Click com proteção por senha
     btn.addEventListener("click", function (e) {
       try {
         e.preventDefault();
@@ -46,15 +46,108 @@ function createButton() {
 
         setTimeout(() => {
           this.style.background = "#007784";
-          showModal();
+          requestPassword();
         }, 200);
       } catch (error) {
         console.error("Erro no clique:", error);
       }
     });
 
-    document.body.appendChild(btn);
-    console.log("✅ Botão criado com sucesso");
+  document.body.appendChild(btn);
+  console.log("✅ Botão criado com sucesso");
+}
+
+// Solicitar palavra-passe
+function requestPassword() {
+  try {
+    console.log("🔐 Solicitando palavra-passe");
+
+    // Remove modal de senha existente
+    const existing = document.getElementById("PASSWORD-MODAL");
+    if (existing) {
+      existing.remove();
+    }
+
+    const modal = document.createElement("div");
+    modal.id = "PASSWORD-MODAL";
+    modal.style.cssText = `
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      background: rgba(0,0,0,0.85) !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      z-index: 9999999 !important;
+    `;
+
+    const content = document.createElement("div");
+    content.style.cssText = `
+      background: white !important;
+      padding: 30px !important;
+      border-radius: 15px !important;
+      max-width: 350px !important;
+      width: 90% !important;
+      text-align: center !important;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3) !important;
+    `;
+
+    content.innerHTML = `
+      <h2 style="color: #007784; margin-bottom: 20px;">🔐 Acesso Restrito</h2>
+      <p style="color: #666; margin-bottom: 20px; font-size: 14px;">
+        Introduza a palavra-passe para aceder às definições:
+      </p>
+      <input
+        type="password"
+        id="admin-password"
+        placeholder="Palavra-passe de administração"
+        style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; margin-bottom: 15px; box-sizing: border-box; font-size: 16px; text-align: center;"
+        autocomplete="off"
+      >
+      <div id="password-error" style="color: #dc3545; font-size: 13px; margin-bottom: 15px; display: none;"></div>
+      <div style="display: flex; gap: 10px;">
+        <button
+          onclick="cancelPassword()"
+          style="flex: 1; padding: 12px; background: #6c757d; color: white; border: none; border-radius: 6px; cursor: pointer;"
+        >
+          Cancelar
+        </button>
+        <button
+          onclick="checkPassword()"
+          style="flex: 1; padding: 12px; background: #007784; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;"
+        >
+          Entrar
+        </button>
+      </div>
+    `;
+
+    modal.appendChild(content);
+    document.body.appendChild(modal);
+
+    // Focar no input
+    setTimeout(() => {
+      const input = document.getElementById("admin-password");
+      if (input) {
+        input.focus();
+      }
+    }, 100);
+
+    // Enter para submeter
+    const input = document.getElementById("admin-password");
+    if (input) {
+      input.addEventListener("keypress", function(e) {
+        if (e.key === "Enter") {
+          checkPassword();
+        }
+      });
+    }
+
+    console.log("✅ Modal de senha aberto");
+  } catch (error) {
+    console.error("Erro ao solicitar senha:", error);
+  }
   } catch (error) {
     console.error("Erro ao criar botão:", error);
   }
@@ -165,6 +258,71 @@ function showModal() {
     console.log("✅ Modal aberto");
   } catch (error) {
     console.error("Erro ao abrir modal:", error);
+  }
+}
+
+// Verificar palavra-passe
+window.checkPassword = function() {
+  try {
+    const input = document.getElementById("admin-password");
+    const errorDiv = document.getElementById("password-error");
+
+    if (!input) return;
+
+    const password = input.value.trim();
+
+    // Palavra-passe de administração (pode alterar aqui)
+    const adminPassword = "19867"; // Mesmo que na página admin.html
+
+    if (password === "") {
+      showPasswordError("Introduza a palavra-passe");
+      return;
+    }
+
+    if (password === adminPassword) {
+      console.log("✅ Palavra-passe correta");
+      cancelPassword();
+      showModal();
+    } else {
+      console.log("❌ Palavra-passe incorreta");
+      showPasswordError("❌ Palavra-passe incorreta");
+
+      // Limpar campo e focar novamente
+      input.value = "";
+      input.focus();
+    }
+  } catch (error) {
+    console.error("Erro ao verificar senha:", error);
+  }
+};
+
+// Cancelar entrada de senha
+window.cancelPassword = function() {
+  try {
+    const modal = document.getElementById("PASSWORD-MODAL");
+    if (modal) {
+      modal.remove();
+    }
+    console.log("✅ Modal de senha fechado");
+  } catch (error) {
+    console.error("Erro ao cancelar senha:", error);
+  }
+};
+
+// Mostrar erro de senha
+function showPasswordError(message) {
+  try {
+    const errorDiv = document.getElementById("password-error");
+    if (errorDiv) {
+      errorDiv.textContent = message;
+      errorDiv.style.display = "block";
+
+      setTimeout(() => {
+        errorDiv.style.display = "none";
+      }, 3000);
+    }
+  } catch (error) {
+    console.error("Erro ao mostrar erro de senha:", error);
   }
 }
 
@@ -369,7 +527,7 @@ window.deleteAllData = function () {
         new Notification("Leirisonda", {
           body: "Dados eliminados!",
           icon: "/leirisonda-logo.svg",
-          tag: "delete-notification",
+          tag: "delete-notification"
         });
       }
     } catch (notifError) {
