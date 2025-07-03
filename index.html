@@ -1,12 +1,75 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Leirisonda</title>
+    <title>Leirisonda - Gestão de Obras</title>
+
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Leirisonda" />
+    <meta name="application-name" content="Leirisonda" />
+    <meta name="theme-color" content="#007784" />
+    <meta
+      name="description"
+      content="Sistema de gestão de obras e manutenção de piscinas da Leirisonda"
+    />
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="leirisonda-deploy/manifest.json" />
+
+    <!-- Main App Styles and Scripts -->
+    <script
+      type="module"
+      crossorigin
+      src="leirisonda-deploy/assets/index-DnEsHg1H.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      crossorigin
+      href="leirisonda-deploy/assets/index-DFdR-byQ.css"
+    />
+    <link rel="stylesheet" href="leirisonda-deploy/menu-modifications.css" />
   </head>
   <body>
-    <h1>Leirisonda</h1>
-    <p>Sistema de gestão de obras</p>
+    <div id="root"></div>
+
+    <!-- Essential Leirisonda Scripts -->
+    <script>
+      console.log("🚀 Sistema Leirisonda iniciando...");
+
+      // Load essential scripts after main app
+      window.addEventListener("load", function () {
+        const essentialScripts = [
+          "leirisonda-deploy/auto-replace-mobile.js",
+          "leirisonda-deploy/furo-directo.js",
+          "leirisonda-deploy/seccao3-login.js",
+          "leirisonda-deploy/botao-teste-login.js",
+          "leirisonda-deploy/fix-protected-route.js",
+        ];
+
+        essentialScripts.forEach(function (src) {
+          const script = document.createElement("script");
+          script.src = src;
+          script.async = true;
+          script.onload = function () {
+            console.log("✅ Script carregado:", src);
+          };
+          script.onerror = function () {
+            console.log("⚠️ Script opcional não carregado:", src);
+          };
+          document.head.appendChild(script);
+        });
+      });
+
+      // Service worker
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("leirisonda-deploy/sw.js");
+      }
+    </script>
   </body>
 </html>
