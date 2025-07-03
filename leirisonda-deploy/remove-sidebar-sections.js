@@ -276,42 +276,127 @@ console.log("🗑️ SIDEBAR: Removendo seções desnecessárias do sidebar...")
 
   // Função mais agressiva - remover por posição no sidebar
   function removeByPosition() {
-    // Procurar pelo sidebar
-    const sidebarElements = document.querySelectorAll('[data-loc*="Sidebar"]');
+    // Procurar pelo sidebar com múltiplas estratégias
+    const sidebarSelectors = [
+      '[data-loc*="Sidebar"]',
+      "nav",
+      ".sidebar",
+      '[class*="sidebar"]',
+      "aside",
+      '[role="navigation"]',
+    ];
 
-    for (const sidebar of sidebarElements) {
-      // Procurar por seções que contenham os termos problemáticos
-      const sections = sidebar.querySelectorAll("div");
+    for (const selector of sidebarSelectors) {
+      const sidebarElements = document.querySelectorAll(selector);
 
-      for (const section of sections) {
-        const sectionText = section.textContent?.toLowerCase() || "";
+      for (const sidebar of sidebarElements) {
+        // Procurar por seções que contenham os termos problemáticos
+        const sections = sidebar.querySelectorAll("div, section, ul, li, nav");
 
-        if (
-          (sectionText.includes("diagnóstico") &&
-            !sectionText.includes("configurações")) ||
-          (sectionText.includes("administração") &&
-            !sectionText.includes("configurações"))
-        ) {
-          console.log(`🗑️ SIDEBAR: Removendo seção completa`);
-          section.style.display = "none";
+        for (const section of sections) {
+          const sectionText = section.textContent?.toLowerCase() || "";
+          const exactText = section.textContent?.trim() || "";
+
+          if (
+            exactText === "Diagnóstico" ||
+            exactText === "Administração" ||
+            (sectionText.includes("diagnóstico") &&
+              !sectionText.includes("configurações")) ||
+            (sectionText.includes("administração") &&
+              !sectionText.includes("configurações"))
+          ) {
+            console.log(`🗑️ SIDEBAR: Removendo seção completa no sidebar`);
+            section.style.display = "none !important";
+            section.style.visibility = "hidden !important";
+            section.style.opacity = "0 !important";
+            section.style.height = "0 !important";
+            section.style.overflow = "hidden !important";
+            section.setAttribute("hidden", "true");
+          }
         }
+      }
+    }
+  }
+
+  // Função especial para remover elementos React renderizados
+  function removeReactElements() {
+    // Procurar por elementos React com textContent específico
+    const walker = document.createTreeWalker(
+      document.body,
+      NodeFilter.SHOW_ELEMENT,
+      {
+        acceptNode: function (node) {
+          const text = node.textContent?.trim() || "";
+          if (
+            text === "Diagnóstico" ||
+            text === "Administração" ||
+            text === "Diagnóstico de Sincronização" ||
+            text.includes("Diagnóstico de Emergência") ||
+            text.includes("Diagnóstico do Sistema")
+          ) {
+            return NodeFilter.FILTER_ACCEPT;
+          }
+          return NodeFilter.FILTER_REJECT;
+        },
+      },
+    );
+
+    const elementsToRemove = [];
+    let node;
+    while ((node = walker.nextNode())) {
+      elementsToRemove.push(node);
+    }
+
+    for (const element of elementsToRemove) {
+      console.log(
+        `🗑️ SIDEBAR: Removendo elemento React "${element.textContent?.substring(0, 50)}..."`,
+      );
+
+      // Múltiplas estratégias de remoção
+      element.style.display = "none !important";
+      element.style.visibility = "hidden !important";
+      element.style.opacity = "0 !important";
+      element.style.height = "0 !important";
+      element.style.maxHeight = "0 !important";
+      element.style.overflow = "hidden !important";
+      element.setAttribute("hidden", "true");
+      element.setAttribute("aria-hidden", "true");
+
+      // Tentar remover do DOM se possível
+      try {
+        element.remove();
+      } catch (e) {
+        // Se não conseguir remover, pelo menos esconder completamente
+        element.innerHTML = "";
       }
     }
   }
 
   // Remover estilos inline que possam restaurar visibilidade
   function ensureHidden() {
-    const hiddenElements = document.querySelectorAll(
-      '[style*="display: none"]',
-    );
-    for (const element of hiddenElements) {
+    const problemTexts = [
+      "diagnóstico",
+      "administração",
+      "diagnostic",
+      "administration",
+    ];
+
+    const allElements = document.querySelectorAll("*");
+    for (const element of allElements) {
       const text = element.textContent?.toLowerCase() || "";
-      if (text.includes("diagnóstico") || text.includes("administração")) {
-        element.style.display = "none !important";
-        element.style.visibility = "hidden";
-        element.style.opacity = "0";
-        element.style.height = "0";
-        element.style.overflow = "hidden";
+
+      for (const problemText of problemTexts) {
+        if (text.includes(problemText) && !text.includes("configurações")) {
+          element.style.display = "none !important";
+          element.style.visibility = "hidden !important";
+          element.style.opacity = "0 !important";
+          element.style.height = "0 !important";
+          element.style.maxHeight = "0 !important";
+          element.style.overflow = "hidden !important";
+          element.setAttribute("hidden", "true");
+          element.setAttribute("aria-hidden", "true");
+          break;
+        }
       }
     }
   }
