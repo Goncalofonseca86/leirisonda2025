@@ -333,6 +333,9 @@ function showModal() {
         <button onclick="deleteLocalData()" style="width: 100%; padding: 10px; background: #fd7e14; color: white; border: none; border-radius: 6px; cursor: pointer; margin-bottom: 8px; font-weight: bold;">
           🗑️ ELIMINAR LOCAIS
         </button>
+        <button onclick="emergencyFixSync()" style="width: 100%; padding: 10px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 8px;">
+          🚨 CORREÇÃO EMERGÊNCIA SYNC
+        </button>
         <button onclick="fixSyncManually()" style="width: 100%; padding: 10px; background: #17a2b8; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 8px;">
           🔧 CORRIGIR PROBLEMAS DE SYNC
         </button>
@@ -1924,7 +1927,7 @@ window.deleteWorkData = function () {
 
     if (
       !confirm(
-        "🎯 ELIMINAR APENAS OBRAS, MANUTENÇÕES E PISCINAS?\n\nEsta função vai eliminar ESPECIFICAMENTE:\n✅ Todas as obras criadas\n✅ Todas as manutenções\n✅ Todas as piscinas\n\n❌ NÃO vai tocar em:\n⚪ Configurações de login\n⚪ Utilizadores\n⚪ Configurações da app\n\nContinuar?",
+        "���� ELIMINAR APENAS OBRAS, MANUTENÇÕES E PISCINAS?\n\nEsta função vai eliminar ESPECIFICAMENTE:\n✅ Todas as obras criadas\n✅ Todas as manutenções\n✅ Todas as piscinas\n\n❌ NÃO vai tocar em:\n⚪ Configurações de login\n⚪ Utilizadores\n⚪ Configurações da app\n\nContinuar?",
       )
     ) {
       return;
@@ -2344,7 +2347,7 @@ window.stopSyncAndDelete = function () {
                   })
                   .catch((e) => {
                     log(
-                      `  ❌ Erro na coleção ${collection}: ${e.message}`,
+                      `  ❌ Erro na coleç��o ${collection}: ${e.message}`,
                       "#dc3545",
                     );
                   });
