@@ -44,62 +44,62 @@ function createWaterDrillingSection() {
         ▼ Mostrar/Ocultar
       </button>
     </div>
-    
+
     <div id="water-drilling-content" style="display: block;">
       <!-- Grelha de dados técnicos -->
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 20px;">
-        
+
         <!-- Coluna 1: Medidas do Furo -->
         <div style="background: #f8fafc; padding: 15px; border-radius: 6px;">
           <h4 style="color: #1e40af; margin: 0 0 15px 0; font-size: 14px; font-weight: 600; border-bottom: 2px solid #3b82f6; padding-bottom: 5px;">
             📏 Medidas do Furo
           </h4>
-          
+
           <div style="margin-bottom: 12px;">
             <label style="display: block; font-weight: 500; color: #374151; margin-bottom: 4px; font-size: 13px;">
               Profundidade Total (metros)
             </label>
-            <input 
-              type="number" 
+            <input
+              type="number"
               id="profundidade-total"
               step="0.1"
               placeholder="Ex: 45.5"
               style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 14px;"
             >
           </div>
-          
+
           <div style="margin-bottom: 12px;">
             <label style="display: block; font-weight: 500; color: #374151; margin-bottom: 4px; font-size: 13px;">
               Nível da Água (metros)
             </label>
-            <input 
-              type="number" 
+            <input
+              type="number"
               id="nivel-agua"
               step="0.1"
               placeholder="Ex: 12.3"
               style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 14px;"
             >
           </div>
-          
+
           <div style="margin-bottom: 12px;">
             <label style="display: block; font-weight: 500; color: #374151; margin-bottom: 4px; font-size: 13px;">
               Profundidade da Bomba (metros)
             </label>
-            <input 
-              type="number" 
+            <input
+              type="number"
               id="profundidade-bomba"
               step="0.1"
               placeholder="Ex: 38.0"
               style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 14px;"
             >
           </div>
-          
+
           <div style="margin-bottom: 12px;">
             <label style="display: block; font-weight: 500; color: #374151; margin-bottom: 4px; font-size: 13px;">
               Caudal do Furo (m³/h)
             </label>
-            <input 
-              type="number" 
+            <input
+              type="number"
               id="caudal-furo"
               step="0.1"
               placeholder="Ex: 2.5"
@@ -107,18 +107,18 @@ function createWaterDrillingSection() {
             >
           </div>
         </div>
-        
+
         <!-- Coluna 2: Coluna e Tubagem -->
         <div style="background: #fefce8; padding: 15px; border-radius: 6px;">
           <h4 style="color: #a16207; margin: 0 0 15px 0; font-size: 14px; font-weight: 600; border-bottom: 2px solid #eab308; padding-bottom: 5px;">
             🔧 Coluna e Tubagem
           </h4>
-          
+
           <div style="margin-bottom: 12px;">
             <label style="display: block; font-weight: 500; color: #374151; margin-bottom: 4px; font-size: 13px;">
               Tipo de Coluna
             </label>
-            <select 
+            <select
               id="tipo-coluna"
               style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 14px; background: white;"
             >
@@ -127,12 +127,12 @@ function createWaterDrillingSection() {
               <option value="HIDROROSCADO">HIDROROSCADO</option>
             </select>
           </div>
-          
+
           <div style="margin-bottom: 12px;">
             <label style="display: block; font-weight: 500; color: #374151; margin-bottom: 4px; font-size: 13px;">
               Diâmetro da Coluna (mm)
             </label>
-            <select 
+            <select
               id="diametro-coluna"
               style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 14px; background: white;"
             >
@@ -149,30 +149,30 @@ function createWaterDrillingSection() {
             </select>
           </div>
         </div>
-        
+
         <!-- Coluna 3: Bomba Instalada -->
         <div style="background: #f0fdf4; padding: 15px; border-radius: 6px;">
           <h4 style="color: #166534; margin: 0 0 15px 0; font-size: 14px; font-weight: 600; border-bottom: 2px solid #22c55e; padding-bottom: 5px;">
             ⚡ Bomba Instalada
           </h4>
-          
+
           <div style="margin-bottom: 12px;">
             <label style="display: block; font-weight: 500; color: #374151; margin-bottom: 4px; font-size: 13px;">
               Modelo da Bomba
             </label>
-            <input 
-              type="text" 
+            <input
+              type="text"
               id="modelo-bomba"
               placeholder="Ex: Grundfos SQ3-105"
               style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 14px;"
             >
           </div>
-          
+
           <div style="margin-bottom: 12px;">
             <label style="display: block; font-weight: 500; color: #374151; margin-bottom: 4px; font-size: 13px;">
               Potência do Motor (HP)
             </label>
-            <select 
+            <select
               id="potencia-motor"
               style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 14px; background: white;"
             >
@@ -189,12 +189,12 @@ function createWaterDrillingSection() {
               <option value="10">10 HP</option>
             </select>
           </div>
-          
+
           <div style="margin-bottom: 12px;">
             <label style="display: block; font-weight: 500; color: #374151; margin-bottom: 4px; font-size: 13px;">
               Voltagem da Bomba
             </label>
-            <select 
+            <select
               id="voltagem-bomba"
               style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 14px; background: white;"
             >
@@ -205,7 +205,7 @@ function createWaterDrillingSection() {
           </div>
         </div>
       </div>
-      
+
       <!-- Botões de ação -->
       <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; padding-top: 15px; border-top: 1px solid #e5e7eb;">
         <button onclick="clearWaterDrillingData()" style="padding: 8px 16px; background: #6b7280; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px;">
@@ -215,7 +215,7 @@ function createWaterDrillingSection() {
           💾 Guardar Dados
         </button>
       </div>
-      
+
       <!-- Resumo dos dados -->
       <div id="water-drilling-summary" style="margin-top: 15px; padding: 10px; background: #eff6ff; border-radius: 4px; border-left: 4px solid #3b82f6; display: none;">
         <h5 style="margin: 0 0 5px 0; color: #1e40af; font-size: 13px;">📋 Resumo dos Dados:</h5>
@@ -425,30 +425,437 @@ function getWorkId() {
   );
 }
 
+// Monitorar campo tipo de trabalho
+function monitorWorkTypeField() {
+  console.log("👁️ Monitorizando campo tipo de trabalho...");
+
+  // Procurar por campos de tipo de trabalho
+  const possibleSelectors = [
+    'select[name*="tipo"]',
+    'select[name*="type"]',
+    'select[name*="trabalho"]',
+    'select[name*="work"]',
+    'input[name*="tipo"]',
+    'input[name*="type"]',
+    'select:has(option[value*="furo"])',
+    'select:has(option[value*="drilling"])',
+    '[data-testid*="work-type"]',
+    '[data-testid*="tipo"]',
+  ];
+
+  let workTypeField = null;
+
+  for (const selector of possibleSelectors) {
+    try {
+      const field = document.querySelector(selector);
+      if (field) {
+        // Verificar se tem opções relacionadas com furo
+        if (field.tagName === "SELECT") {
+          const options = Array.from(field.options || []);
+          const hasFuroOption = options.some(
+            (opt) =>
+              opt.value.toLowerCase().includes("furo") ||
+              opt.text.toLowerCase().includes("furo") ||
+              opt.value.toLowerCase().includes("drilling") ||
+              opt.text.toLowerCase().includes("drilling"),
+          );
+
+          if (hasFuroOption) {
+            workTypeField = field;
+            console.log("✅ Campo tipo de trabalho encontrado:", selector);
+            break;
+          }
+        }
+      }
+    } catch (e) {
+      // Ignorar erros de seletor
+    }
+  }
+
+  if (workTypeField) {
+    setupWorkTypeListener(workTypeField);
+  } else {
+    // Tentar encontrar por texto próximo
+    const labels = document.querySelectorAll("label, span, div");
+    for (const label of labels) {
+      const text = label.textContent.toLowerCase();
+      if (
+        (text.includes("tipo") && text.includes("trabalho")) ||
+        (text.includes("type") && text.includes("work"))
+      ) {
+        // Procurar campo próximo
+        const nearbyFields = [
+          label.querySelector("select"),
+          label.querySelector("input"),
+          label.nextElementSibling?.querySelector("select"),
+          label.nextElementSibling?.querySelector("input"),
+          label.parentElement?.querySelector("select"),
+          label.parentElement?.querySelector("input"),
+        ].filter(Boolean);
+
+        for (const field of nearbyFields) {
+          if (
+            field &&
+            (field.tagName === "SELECT" || field.tagName === "INPUT")
+          ) {
+            workTypeField = field;
+            console.log("✅ Campo encontrado por proximidade");
+            setupWorkTypeListener(workTypeField);
+            break;
+          }
+        }
+
+        if (workTypeField) break;
+      }
+    }
+  }
+
+  // Fallback: criar listener genérico para mudanças em selects
+  if (!workTypeField) {
+    console.log(
+      "⚠️ Campo específico não encontrado - usando listener genérico",
+    );
+    setupGenericListener();
+  }
+}
+
+function setupWorkTypeListener(field) {
+  console.log("🎯 Configurando listener para campo tipo de trabalho");
+
+  const checkAndToggleFuroSection = () => {
+    const value = field.value?.toLowerCase() || "";
+    const text = field.selectedOptions?.[0]?.text?.toLowerCase() || "";
+
+    const isFuroSelected =
+      value.includes("furo") ||
+      text.includes("furo") ||
+      value.includes("drilling") ||
+      text.includes("drilling");
+
+    console.log(
+      `💧 Furo selecionado: ${isFuroSelected} (valor: "${value}", texto: "${text}")`,
+    );
+
+    if (isFuroSelected) {
+      createWaterDrillingInlineSection();
+    } else {
+      removeWaterDrillingSection();
+    }
+  };
+
+  // Listener para mudanças
+  field.addEventListener("change", checkAndToggleFuroSection);
+  field.addEventListener("input", checkAndToggleFuroSection);
+
+  // Verificar estado inicial
+  setTimeout(checkAndToggleFuroSection, 500);
+}
+
+function setupGenericListener() {
+  // Listener genérico para qualquer mudança em selects
+  document.addEventListener("change", (e) => {
+    if (e.target.tagName === "SELECT") {
+      const value = e.target.value?.toLowerCase() || "";
+      const text = e.target.selectedOptions?.[0]?.text?.toLowerCase() || "";
+
+      if (
+        value.includes("furo") ||
+        text.includes("furo") ||
+        value.includes("drilling") ||
+        text.includes("drilling")
+      ) {
+        console.log("💧 Furo detectado em mudança genérica");
+        createWaterDrillingInlineSection();
+      }
+    }
+  });
+}
+
+function createWaterDrillingInlineSection() {
+  // Verificar se já existe
+  if (document.getElementById("inline-water-drilling")) {
+    return;
+  }
+
+  console.log("💧 Criando secção inline do Furo de Água");
+
+  // Procurar onde inserir (após o campo tipo de trabalho)
+  let insertTarget = findInsertionPoint();
+
+  if (!insertTarget) {
+    console.log("❌ Ponto de inserção não encontrado");
+    return;
+  }
+
+  // Criar secção compacta para o formulário
+  const section = document.createElement("div");
+  section.id = "inline-water-drilling";
+  section.style.cssText = `
+    background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+    border: 2px solid #0ea5e9;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 15px 0;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
+    animation: slideIn 0.3s ease-out;
+  `;
+
+  // Adicionar keyframes se não existirem
+  if (!document.getElementById("water-drilling-animations")) {
+    const style = document.createElement("style");
+    style.id = "water-drilling-animations";
+    style.textContent = `
+      @keyframes slideIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  section.innerHTML = `
+    <div style="display: flex; align-items: center; margin-bottom: 15px;">
+      <h4 style="color: #0c4a6e; margin: 0; font-size: 16px; font-weight: 600; display: flex; align-items: center;">
+        💧 Detalhes do Furo de Água
+      </h4>
+      <span style="margin-left: auto; font-size: 12px; color: #64748b; font-style: italic;">
+        Preencha os dados técnicos do furo
+      </span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+
+      <!-- Medidas básicas -->
+      <div>
+        <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px; font-size: 13px;">
+          Profundidade Total (m)
+        </label>
+        <input
+          type="number"
+          name="furo_profundidade_total"
+          step="0.1"
+          placeholder="Ex: 45.5"
+          style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px;"
+        >
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px; font-size: 13px;">
+          Nível da Água (m)
+        </label>
+        <input
+          type="number"
+          name="furo_nivel_agua"
+          step="0.1"
+          placeholder="Ex: 12.3"
+          style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px;"
+        >
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px; font-size: 13px;">
+          Profundidade Bomba (m)
+        </label>
+        <input
+          type="number"
+          name="furo_profundidade_bomba"
+          step="0.1"
+          placeholder="Ex: 38.0"
+          style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px;"
+        >
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px; font-size: 13px;">
+          Caudal (m³/h)
+        </label>
+        <input
+          type="number"
+          name="furo_caudal"
+          step="0.1"
+          placeholder="Ex: 2.5"
+          style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px;"
+        >
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px; font-size: 13px;">
+          Tipo de Coluna
+        </label>
+        <select
+          name="furo_tipo_coluna"
+          style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; background: white;"
+        >
+          <option value="">Selecionar...</option>
+          <option value="PEAD">PEAD</option>
+          <option value="HIDROROSCADO">HIDROROSCADO</option>
+        </select>
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px; font-size: 13px;">
+          Diâmetro Coluna (mm)
+        </label>
+        <select
+          name="furo_diametro_coluna"
+          style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; background: white;"
+        >
+          <option value="">Selecionar...</option>
+          <option value="50">50mm</option>
+          <option value="63">63mm</option>
+          <option value="75">75mm</option>
+          <option value="90">90mm</option>
+          <option value="110">110mm</option>
+          <option value="125">125mm</option>
+          <option value="160">160mm</option>
+          <option value="200">200mm</option>
+        </select>
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px; font-size: 13px;">
+          Modelo da Bomba
+        </label>
+        <input
+          type="text"
+          name="furo_modelo_bomba"
+          placeholder="Ex: Grundfos SQ3-105"
+          style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px;"
+        >
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px; font-size: 13px;">
+          Potência Motor (HP)
+        </label>
+        <select
+          name="furo_potencia_motor"
+          style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; background: white;"
+        >
+          <option value="">Selecionar...</option>
+          <option value="0.5">0.5 HP</option>
+          <option value="0.75">0.75 HP</option>
+          <option value="1">1 HP</option>
+          <option value="1.5">1.5 HP</option>
+          <option value="2">2 HP</option>
+          <option value="3">3 HP</option>
+          <option value="5">5 HP</option>
+          <option value="7.5">7.5 HP</option>
+          <option value="10">10 HP</option>
+        </select>
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px; font-size: 13px;">
+          Voltagem da Bomba
+        </label>
+        <select
+          name="furo_voltagem_bomba"
+          style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; background: white;"
+        >
+          <option value="">Selecionar...</option>
+          <option value="230V">230V (Monofásica)</option>
+          <option value="400V">400V (Trifásica)</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #cbd5e1; font-size: 12px; color: #64748b; text-align: center;">
+      💡 Estes dados serão guardados juntamente com a obra
+    </div>
+  `;
+
+  insertTarget.appendChild(section);
+  console.log("✅ Secção inline do furo criada");
+}
+
+function findInsertionPoint() {
+  // Procurar por pontos de inserção lógicos
+  const targets = [
+    // Após campo tipo de trabalho
+    document.querySelector('select[name*="tipo"] + *'),
+    document.querySelector('select[name*="type"] + *'),
+
+    // Dentro de containers de formulário
+    document.querySelector("form .grid"),
+    document.querySelector("form .form-grid"),
+    document.querySelector('[class*="grid"]'),
+
+    // Containers genéricos
+    document.querySelector("form > div:last-child"),
+    document.querySelector("main form"),
+    document.querySelector(".container form"),
+
+    // Fallback
+    document.querySelector("main"),
+    document.querySelector(".container"),
+    document.body,
+  ];
+
+  for (const target of targets) {
+    if (target) {
+      console.log(
+        "🎯 Ponto de inserção encontrado:",
+        target.tagName,
+        target.className,
+      );
+      return target;
+    }
+  }
+
+  return null;
+}
+
+function removeWaterDrillingSection() {
+  const section = document.getElementById("inline-water-drilling");
+  if (section) {
+    section.style.animation = "slideOut 0.3s ease-in";
+    setTimeout(() => {
+      section.remove();
+      console.log("🗑️ Secção do furo removida");
+    }, 300);
+  }
+}
+
 // Auto-inicializar quando a página carrega
 function initWaterDrilling() {
-  // Verificar se estamos numa página de obra
-  const isWorkPage =
-    window.location.pathname.includes("/work") ||
+  // Verificar se estamos numa página de criação ou edição de obra
+  const isCreateWorkPage =
+    window.location.pathname.includes("/create-work") ||
     window.location.pathname.includes("/obra") ||
-    document.querySelector('[data-testid*="work"]') ||
-    document.body.textContent.includes("Obra") ||
-    document.body.textContent.includes("Work");
+    window.location.pathname.includes("/new") ||
+    document.querySelector("form") ||
+    document.body.textContent.includes("Nova Obra") ||
+    document.body.textContent.includes("Criar Obra");
 
-  if (isWorkPage) {
-    console.log("💧 Página de obra detectada");
+  if (isCreateWorkPage) {
+    console.log("💧 Página de criação de obra detectada");
 
     // Esperar um pouco para a página carregar
     setTimeout(() => {
-      createWaterDrillingSection();
+      monitorWorkTypeField();
     }, 2000);
 
-    // Verificar periodicamente se precisa recriar
+    // Verificar periodicamente
     setInterval(() => {
-      if (!document.getElementById("water-drilling-section") && isWorkPage) {
-        createWaterDrillingSection();
+      if (
+        !document.querySelector('select[name*="tipo"], select[name*="type"]')
+      ) {
+        monitorWorkTypeField();
       }
     }, 5000);
+  }
+
+  // Também verificar páginas de obra existente
+  const isWorkDetailPage =
+    window.location.pathname.includes("/work") &&
+    !window.location.pathname.includes("/create");
+
+  if (isWorkDetailPage) {
+    console.log("💧 Página de detalhes de obra detectada");
+    setTimeout(() => {
+      createWaterDrillingSection();
+    }, 2000);
   }
 }
 
