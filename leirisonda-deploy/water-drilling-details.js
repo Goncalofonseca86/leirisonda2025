@@ -279,7 +279,7 @@ window.saveWaterDrillingData = function () {
     // Mostrar resumo
     showWaterDrillingSummary(data);
 
-    console.log("���� Dados do furo de água guardados:", data);
+    console.log("💾 Dados do furo de água guardados:", data);
     alert("✅ Dados do Furo de Água guardados com sucesso!");
 
     // Tentar sincronizar com Firebase se disponível
@@ -733,7 +733,7 @@ function createWaterDrillingInlineSection() {
 
       <div>
         <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px; font-size: 13px;">
-          Di��metro Coluna (mm)
+          Diâmetro Coluna (mm)
         </label>
         <select
           name="furo_diametro_coluna"
@@ -1255,6 +1255,131 @@ window.forcarFuroAgua = function () {
   return section;
 };
 
-console.log("✅ Sistema Furo de Água carregado com monitoramento universal");
-console.log("🔧 Para debug: debugFuroAgua()");
-console.log("💪 Para forçar: forcarFuroAgua()");
+// Criar botão de teste visível na página
+function criarBotaoTesteFuro() {
+  // Só criar se não existir
+  if (document.getElementById("botao-teste-furo")) return;
+
+  const botao = document.createElement("button");
+  botao.id = "botao-teste-furo";
+  botao.innerHTML = "💧 TESTE FURO";
+  botao.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 99999;
+    background: #0ea5e9;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  `;
+
+  botao.onclick = function () {
+    forcarFuroAgua();
+    // Esconder o botão após usar
+    this.style.display = "none";
+  };
+
+  document.body.appendChild(botao);
+  console.log("🔵 Botão de teste criado no canto superior direito");
+}
+
+// Detecção automática super agressiva
+function detecaoAgressiva() {
+  console.log("🔍 Iniciando detecção agressiva...");
+
+  // Procurar por qualquer texto que mencione furo/tipo de trabalho
+  const textos = document.querySelectorAll("*");
+  let campoTipoEncontrado = false;
+
+  for (let elemento of textos) {
+    const texto = elemento.textContent?.toLowerCase() || "";
+
+    // Se encontrar texto sobre tipo de trabalho
+    if (
+      (texto.includes("tipo") && texto.includes("trabalho")) ||
+      (texto.includes("categoria") && texto.includes("obra")) ||
+      texto.includes("tipo de obra") ||
+      texto.includes("tipo de trabalho")
+    ) {
+      console.log("🎯 Encontrado texto relevante:", texto.substring(0, 100));
+
+      // Procurar campo próximo
+      const parent = elemento.closest("div, form, section");
+      if (parent) {
+        const selects = parent.querySelectorAll("select");
+        const inputs = parent.querySelectorAll("input");
+
+        [...selects, ...inputs].forEach((campo) => {
+          if (campo && !campoTipoEncontrado) {
+            console.log(
+              "📋 Campo encontrado próximo ao texto:",
+              campo.name || campo.id,
+            );
+            setupWorkTypeListener(campo);
+            campoTipoEncontrado = true;
+          }
+        });
+      }
+    }
+  }
+
+  // Se ainda não encontrou, procurar por qualquer select que tenha "furo" nas opções
+  if (!campoTipoEncontrado) {
+    const todosSelects = document.querySelectorAll("select");
+    for (let select of todosSelects) {
+      const opcoes = Array.from(select.options || []);
+      const temFuro = opcoes.some(
+        (opt) =>
+          opt.value.toLowerCase().includes("furo") ||
+          opt.text.toLowerCase().includes("furo"),
+      );
+
+      if (temFuro) {
+        console.log(
+          "🎯 Select com opção 'furo' encontrado:",
+          select.name || select.id,
+        );
+        setupWorkTypeListener(select);
+        campoTipoEncontrado = true;
+        break;
+      }
+    }
+  }
+
+  return campoTipoEncontrado;
+}
+
+// Verificar página periodicamente e mostrar botão se necessário
+setInterval(() => {
+  const esPaginaObra =
+    window.location.pathname.includes("/work") ||
+    window.location.pathname.includes("/obra") ||
+    window.location.pathname.includes("/create") ||
+    document.querySelector("form") ||
+    document.body.textContent.toLowerCase().includes("nova obra");
+
+  if (esPaginaObra) {
+    // Mostrar botão de teste em páginas de obra
+    criarBotaoTesteFuro();
+
+    // Tentar detecção automática
+    if (!document.getElementById("inline-water-drilling")) {
+      detecaoAgressiva();
+    }
+  } else {
+    // Esconder botão se não estiver numa página de obra
+    const botao = document.getElementById("botao-teste-furo");
+    if (botao) botao.style.display = "none";
+  }
+}, 3000);
+
+console.log("✅ Sistema Furo de Água carregado com botão de teste");
+console.log(
+  "🔵 Procure pelo botão '💧 TESTE FURO' no canto superior direito quando estiver na página de criar obra",
+);
