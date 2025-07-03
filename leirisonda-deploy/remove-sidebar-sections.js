@@ -5,6 +5,73 @@ console.log("🗑️ SIDEBAR: Removendo seções desnecessárias do sidebar...")
 (function () {
   "use strict";
 
+  // Injetar CSS para esconder elementos permanentemente
+  function injectHidingCSS() {
+    const cssRules = `
+      /* Hide diagnostic and administration sections */
+      span.text-xs.font-semibold.text-gray-400.uppercase.tracking-wider {
+        display: block !important;
+      }
+
+      /* Hide specific text content */
+      *:not(script):not(style) {
+        /* This will be handled by JavaScript since CSS can't select by text content */
+      }
+
+      /* Force hide elements with specific attributes */
+      [data-testid*="diagnostic"],
+      [data-testid*="administration"],
+      [data-loc*="diagnostic"],
+      [data-loc*="administration"],
+      [class*="diagnostic"],
+      [class*="administration"] {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        height: 0 !important;
+        overflow: hidden !important;
+      }
+
+      /* Hide elements that were marked as hidden by our script */
+      [hidden="true"] {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        height: 0 !important;
+        overflow: hidden !important;
+      }
+
+      /* Prevent any visibility restoration */
+      .sidebar-hidden-element {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        height: 0 !important;
+        max-height: 0 !important;
+        overflow: hidden !important;
+      }
+    `;
+
+    const style = document.createElement("style");
+    style.type = "text/css";
+    style.innerHTML = cssRules;
+    style.id = "sidebar-hiding-styles";
+
+    // Add to head
+    if (document.head) {
+      document.head.appendChild(style);
+      console.log("🗑️ SIDEBAR: CSS de ocultação injetado");
+    } else {
+      // Fallback - add to body if head not available
+      document.addEventListener("DOMContentLoaded", () => {
+        if (document.head) {
+          document.head.appendChild(style);
+          console.log("🗑️ SIDEBAR: CSS de ocultação injetado (fallback)");
+        }
+      });
+    }
+  }
+
   // Função para remover seções específicas
   function removeSidebarSections() {
     let removedSections = 0;
