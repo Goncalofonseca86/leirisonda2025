@@ -333,6 +333,9 @@ function showModal() {
         <button onclick="deleteLocalData()" style="width: 100%; padding: 10px; background: #fd7e14; color: white; border: none; border-radius: 6px; cursor: pointer; margin-bottom: 8px; font-weight: bold;">
           🗑️ ELIMINAR LOCAIS
         </button>
+        <button onclick="fixSyncManually()" style="width: 100%; padding: 10px; background: #17a2b8; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 8px;">
+          🔧 CORRIGIR PROBLEMAS DE SYNC
+        </button>
         <button onclick="clearSavedCredentials()" style="width: 100%; padding: 10px; background: #ffc107; color: #000; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 8px;">
           🔐 LIMPAR CREDENCIAIS GUARDADAS
         </button>
@@ -962,7 +965,7 @@ window.deleteAllDataIncludingFirebase = function () {
   }
 };
 
-// Função para eliminar dados do Firebase através da API da aplicação
+// Função para eliminar dados do Firebase através da API da aplicaç��o
 function deleteFirebaseDataThroughAPI() {
   try {
     console.log("🎯 Tentando eliminar através da API da aplicação...");
@@ -1065,7 +1068,7 @@ function deleteFirebaseDataDirect() {
       showInfo("delete-info", "📜 Script Firebase executado", "blue");
     } catch (evalError) {
       console.log(
-        "���️ Não foi possível executar script direto:",
+        "⚠️ Não foi possível executar script direto:",
         evalError.message,
       );
 
@@ -1288,7 +1291,7 @@ window.forceDeleteRemaining = function () {
         window.remainingKeys.forEach((key) => {
           try {
             delete localStorage[key];
-            console.log(`💀 delete localStorage['${key}']`);
+            console.log(`���� delete localStorage['${key}']`);
           } catch (e) {
             console.error(`❌ Erro no delete ${key}:`, e);
           }
@@ -2121,7 +2124,7 @@ window.deleteWorkData = function () {
           const targetedDiv = document.getElementById("targeted-deletion");
           if (targetedDiv) {
             targetedDiv.innerHTML = `
-              <h3 style="color: #28a745;">��� Eliminação Concluída!</h3>
+              <h3 style="color: #28a745;">🎉 Eliminação Concluída!</h3>
               <div style="text-align: left; margin: 15px 0; font-size: 13px;">
                 ✅ ${localDeleted} tipos de dados locais eliminados<br>
                 ✅ Comandos Firebase enviados para obras/manutenções/piscinas<br>
@@ -2197,7 +2200,7 @@ window.stopSyncAndDelete = function () {
     };
 
     // FASE 1: Parar sincronização
-    updateStatus("🛑 Parando sincronização...");
+    updateStatus("�� Parando sincronização...");
     log("🛑 FASE 1: Parando toda a sincronização");
 
     try {
@@ -2966,7 +2969,7 @@ window.emergencyShowAndDelete = function () {
 // FUNÇÃO NUCLEAR REACT - Limpa estado React + Reinicia app
 window.reactStateNuke = function () {
   try {
-    console.log("⚛️ NUCLEAR REACT STATE + APP RESTART");
+    console.log("���️ NUCLEAR REACT STATE + APP RESTART");
 
     if (
       !confirm(
