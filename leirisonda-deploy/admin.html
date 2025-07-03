@@ -1,0 +1,697 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Administração - Leirisonda</title>
+    <link rel="icon" type="image/svg+xml" href="/leirisonda-logo.svg" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .login-container {
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+      }
+
+      .admin-container {
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-width: 800px;
+        min-height: 600px;
+      }
+
+      .logo {
+        width: 80px;
+        height: 80px;
+        background: #007784;
+        border-radius: 50%;
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 32px;
+        font-weight: bold;
+      }
+
+      h1 {
+        color: #333;
+        margin-bottom: 30px;
+        font-size: 28px;
+      }
+
+      h2 {
+        color: #007784;
+        margin-bottom: 20px;
+        font-size: 24px;
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 10px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+        text-align: left;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        color: #555;
+        font-weight: 500;
+      }
+
+      input {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid #e1e5e9;
+        border-radius: 10px;
+        font-size: 16px;
+        transition: border-color 0.3s;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: #007784;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 15px;
+        background: #007784;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-bottom: 10px;
+      }
+
+      .btn:hover {
+        background: #005f6a;
+      }
+
+      .btn-danger {
+        background: #dc3545;
+        margin-top: 20px;
+      }
+
+      .btn-danger:hover {
+        background: #c82333;
+      }
+
+      .btn-warning {
+        background: #ffc107;
+        color: #000;
+      }
+
+      .btn-warning:hover {
+        background: #e0a800;
+      }
+
+      .error {
+        color: #dc3545;
+        margin-top: 10px;
+        font-size: 14px;
+      }
+
+      .success {
+        color: #28a745;
+        margin-top: 10px;
+        font-size: 14px;
+      }
+
+      .section {
+        margin-bottom: 40px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 10px;
+      }
+
+      .device-list {
+        display: grid;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .device-item {
+        padding: 15px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .device-info {
+        flex: 1;
+      }
+
+      .device-name {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+      }
+
+      .device-status {
+        font-size: 14px;
+        color: #666;
+      }
+
+      .status-active {
+        color: #28a745;
+      }
+
+      .status-inactive {
+        color: #dc3545;
+      }
+
+      .device-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .btn-small {
+        padding: 8px 16px;
+        font-size: 14px;
+        width: auto;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .logout-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        padding: 10px 20px;
+        background: rgba(0, 0, 0, 0.1);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .confirmation-dialog {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+
+      .dialog-content {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        text-align: center;
+        max-width: 400px;
+        width: 90%;
+      }
+
+      .dialog-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .btn-secondary {
+        background: #6c757d;
+      }
+
+      .btn-secondary:hover {
+        background: #5a6268;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loginContainer" class="login-container">
+      <div class="logo">L</div>
+      <h1>Administração</h1>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="password">Senha de Acesso</label>
+          <input
+            type="password"
+            id="password"
+            placeholder="Digite a senha"
+            required
+          />
+        </div>
+        <button type="submit" class="btn">Entrar</button>
+        <div id="loginError" class="error hidden"></div>
+      </form>
+    </div>
+
+    <div id="adminContainer" class="admin-container hidden">
+      <button class="logout-btn" onclick="logout()">Sair</button>
+
+      <h1>🔧 Painel de Administração</h1>
+
+      <!-- Seção Notificações Push -->
+      <div class="section">
+        <h2>📱 Notificações Push</h2>
+        <p>Gerir e testar notificaç��es push em todos os dispositivos.</p>
+
+        <button
+          class="btn btn-warning"
+          onclick="requestNotificationPermission()"
+        >
+          🔔 Ativar Notificações neste Dispositivo
+        </button>
+
+        <div class="form-group">
+          <label for="testMessage">Mensagem de Teste</label>
+          <input
+            type="text"
+            id="testMessage"
+            placeholder="Digite uma mensagem para testar"
+            value="Teste de notificação - Leirisonda"
+          />
+        </div>
+
+        <button class="btn" onclick="sendTestNotification()">
+          🧪 Enviar Notificação de Teste
+        </button>
+
+        <div id="notificationStatus" class="success hidden"></div>
+
+        <h3 style="margin-top: 30px; margin-bottom: 15px">
+          Dispositivos Registados
+        </h3>
+        <div id="deviceList" class="device-list">
+          <!-- Dispositivos serão carregados aqui -->
+        </div>
+      </div>
+
+      <!-- Seção Limpeza de Dados -->
+      <div class="section">
+        <h2>🗑️ Limpeza de Dados</h2>
+        <p style="color: #dc3545; font-weight: 600; margin-bottom: 20px">
+          ⚠️ ATENÇÃO: Esta ação eliminará TODOS os dados permanentemente!
+        </p>
+
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+          "
+        >
+          <div
+            style="
+              padding: 15px;
+              background: white;
+              border-radius: 8px;
+              text-align: center;
+            "
+          >
+            <div style="font-size: 32px; margin-bottom: 10px">🏗️</div>
+            <div style="font-weight: 600">Obras</div>
+            <div id="worksCount" style="color: #007784">Carregando...</div>
+          </div>
+          <div
+            style="
+              padding: 15px;
+              background: white;
+              border-radius: 8px;
+              text-align: center;
+            "
+          >
+            <div style="font-size: 32px; margin-bottom: 10px">🔧</div>
+            <div style="font-weight: 600">Manutenções</div>
+            <div id="maintenanceCount" style="color: #007784">
+              Carregando...
+            </div>
+          </div>
+          <div
+            style="
+              padding: 15px;
+              background: white;
+              border-radius: 8px;
+              text-align: center;
+            "
+          >
+            <div style="font-size: 32px; margin-bottom: 10px">🏊</div>
+            <div style="font-weight: 600">Piscinas</div>
+            <div id="poolsCount" style="color: #007784">Carregando...</div>
+          </div>
+        </div>
+
+        <button class="btn btn-danger" onclick="showConfirmation()">
+          💣 ELIMINAR TODOS OS DADOS
+        </button>
+
+        <div id="deleteStatus" class="success hidden"></div>
+      </div>
+    </div>
+
+    <!-- Diálogo de Confirmação -->
+    <div id="confirmationDialog" class="confirmation-dialog hidden">
+      <div class="dialog-content">
+        <h2 style="color: #dc3545; margin-bottom: 20px">⚠️ Confirmação</h2>
+        <p style="margin-bottom: 20px">
+          Tem a certeza que quer eliminar <strong>TODOS</strong> os dados?<br />
+          Esta ação <strong>NÃO PODE</strong> ser desfeita!
+        </p>
+        <div class="dialog-buttons">
+          <button class="btn btn-secondary" onclick="hideConfirmation()">
+            Cancelar
+          </button>
+          <button class="btn btn-danger" onclick="deleteAllData()">
+            SIM, ELIMINAR TUDO
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const ADMIN_PASSWORD = "19867";
+      let isLoggedIn = false;
+
+      // Login
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const password = document.getElementById("password").value;
+          const errorDiv = document.getElementById("loginError");
+
+          if (password === ADMIN_PASSWORD) {
+            isLoggedIn = true;
+            document.getElementById("loginContainer").classList.add("hidden");
+            document
+              .getElementById("adminContainer")
+              .classList.remove("hidden");
+            loadDashboard();
+          } else {
+            errorDiv.textContent = "Senha incorreta!";
+            errorDiv.classList.remove("hidden");
+            document.getElementById("password").value = "";
+          }
+        });
+
+      function logout() {
+        isLoggedIn = false;
+        document.getElementById("adminContainer").classList.add("hidden");
+        document.getElementById("loginContainer").classList.remove("hidden");
+        document.getElementById("password").value = "";
+        document.getElementById("loginError").classList.add("hidden");
+      }
+
+      // Carregamento do dashboard
+      function loadDashboard() {
+        loadDevices();
+        loadDataCounts();
+      }
+
+      // Notificações Push
+      async function requestNotificationPermission() {
+        if (!("Notification" in window)) {
+          alert("Este dispositivo não suporta notificações");
+          return;
+        }
+
+        const permission = await Notification.requestPermission();
+        const statusDiv = document.getElementById("notificationStatus");
+
+        if (permission === "granted") {
+          statusDiv.textContent = "✅ Notificações ativadas neste dispositivo!";
+          statusDiv.classList.remove("hidden");
+
+          // Registrar dispositivo
+          registerDevice();
+
+          setTimeout(() => {
+            statusDiv.classList.add("hidden");
+          }, 3000);
+        } else {
+          statusDiv.textContent = "❌ Permissão de notificações negada";
+          statusDiv.className = "error";
+          statusDiv.classList.remove("hidden");
+        }
+      }
+
+      function sendTestNotification() {
+        const message =
+          document.getElementById("testMessage").value ||
+          "Teste de notificação";
+        const statusDiv = document.getElementById("notificationStatus");
+
+        if (Notification.permission === "granted") {
+          new Notification("Leirisonda Admin", {
+            body: message,
+            icon: "/leirisonda-logo.svg",
+            badge: "/leirisonda-logo.svg",
+          });
+
+          statusDiv.textContent = "✅ Notificação enviada!";
+          statusDiv.classList.remove("hidden");
+
+          setTimeout(() => {
+            statusDiv.classList.add("hidden");
+          }, 2000);
+        } else {
+          statusDiv.textContent = "❌ Ative as notificações primeiro";
+          statusDiv.className = "error";
+          statusDiv.classList.remove("hidden");
+        }
+      }
+
+      function registerDevice() {
+        const deviceInfo = {
+          id: generateDeviceId(),
+          name: getDeviceName(),
+          userAgent: navigator.userAgent,
+          timestamp: new Date().toISOString(),
+          notificationsEnabled: true,
+        };
+
+        let devices = JSON.parse(localStorage.getItem("adminDevices") || "[]");
+        const existingIndex = devices.findIndex((d) => d.id === deviceInfo.id);
+
+        if (existingIndex >= 0) {
+          devices[existingIndex] = deviceInfo;
+        } else {
+          devices.push(deviceInfo);
+        }
+
+        localStorage.setItem("adminDevices", JSON.stringify(devices));
+        loadDevices();
+      }
+
+      function loadDevices() {
+        const devices = JSON.parse(
+          localStorage.getItem("adminDevices") || "[]",
+        );
+        const deviceList = document.getElementById("deviceList");
+
+        if (devices.length === 0) {
+          deviceList.innerHTML =
+            '<p style="text-align: center; color: #666;">Nenhum dispositivo registado</p>';
+          return;
+        }
+
+        deviceList.innerHTML = devices
+          .map(
+            (device, index) => `
+                <div class="device-item">
+                    <div class="device-info">
+                        <div class="device-name">${device.name}</div>
+                        <div class="device-status ${device.notificationsEnabled ? "status-active" : "status-inactive"}">
+                            ${device.notificationsEnabled ? "🟢 Ativo" : "🔴 Inativo"} • 
+                            ${new Date(device.timestamp).toLocaleDateString("pt-PT")}
+                        </div>
+                    </div>
+                    <div class="device-actions">
+                        <button class="btn btn-small" onclick="testDeviceNotification('${device.id}', '${device.name}')">
+                            🧪 Testar
+                        </button>
+                        <button class="btn btn-small btn-danger" onclick="removeDevice(${index})">
+                            🗑️ Remover
+                        </button>
+                    </div>
+                </div>
+            `,
+          )
+          .join("");
+      }
+
+      function testDeviceNotification(deviceId, deviceName) {
+        if (Notification.permission === "granted") {
+          new Notification(`Teste para ${deviceName}`, {
+            body: "Esta é uma notificação de teste específica para este dispositivo",
+            icon: "/leirisonda-logo.svg",
+          });
+        }
+      }
+
+      function removeDevice(index) {
+        let devices = JSON.parse(localStorage.getItem("adminDevices") || "[]");
+        devices.splice(index, 1);
+        localStorage.setItem("adminDevices", JSON.stringify(devices));
+        loadDevices();
+      }
+
+      function generateDeviceId() {
+        return navigator.userAgent
+          .split("")
+          .reduce((a, b) => {
+            a = (a << 5) - a + b.charCodeAt(0);
+            return a & a;
+          }, 0)
+          .toString(16);
+      }
+
+      function getDeviceName() {
+        const ua = navigator.userAgent;
+        if (/Mobile|Android|iPhone|iPad/.test(ua)) {
+          if (/iPhone/.test(ua)) return "📱 iPhone";
+          if (/iPad/.test(ua)) return "📱 iPad";
+          if (/Android/.test(ua)) return "📱 Android";
+          return "📱 Mobile";
+        }
+        if (/Mac/.test(ua)) return "💻 Mac";
+        if (/Windows/.test(ua)) return "💻 Windows";
+        if (/Linux/.test(ua)) return "💻 Linux";
+        return "💻 Desktop";
+      }
+
+      // Limpeza de dados
+      function loadDataCounts() {
+        // Simular carregamento de dados do localStorage/indexedDB
+        try {
+          const works = JSON.parse(
+            localStorage.getItem("leirisonda_works") || "[]",
+          );
+          const maintenances = JSON.parse(
+            localStorage.getItem("leirisonda_maintenances") || "[]",
+          );
+          const pools = JSON.parse(
+            localStorage.getItem("leirisonda_pools") || "[]",
+          );
+
+          document.getElementById("worksCount").textContent =
+            `${works.length} registos`;
+          document.getElementById("maintenanceCount").textContent =
+            `${maintenances.length} registos`;
+          document.getElementById("poolsCount").textContent =
+            `${pools.length} registos`;
+        } catch (error) {
+          document.getElementById("worksCount").textContent = "Erro";
+          document.getElementById("maintenanceCount").textContent = "Erro";
+          document.getElementById("poolsCount").textContent = "Erro";
+        }
+      }
+
+      function showConfirmation() {
+        document
+          .getElementById("confirmationDialog")
+          .classList.remove("hidden");
+      }
+
+      function hideConfirmation() {
+        document.getElementById("confirmationDialog").classList.add("hidden");
+      }
+
+      function deleteAllData() {
+        hideConfirmation();
+
+        // Lista de chaves do localStorage relacionadas à Leirisonda
+        const keysToDelete = [
+          "leirisonda_works",
+          "leirisonda_maintenances",
+          "leirisonda_pools",
+          "leirisonda_users",
+          "leirisonda_settings",
+          "leirisonda_backups",
+          "works",
+          "maintenances",
+          "pools",
+          "users",
+        ];
+
+        let deletedCount = 0;
+
+        // Limpar localStorage
+        keysToDelete.forEach((key) => {
+          if (localStorage.getItem(key)) {
+            localStorage.removeItem(key);
+            deletedCount++;
+          }
+        });
+
+        // Limpar IndexedDB (se existir)
+        if ("indexedDB" in window) {
+          try {
+            indexedDB.deleteDatabase("leirisonda");
+            indexedDB.deleteDatabase("LeirisondaDB");
+          } catch (error) {
+            console.error("Erro ao limpar IndexedDB:", error);
+          }
+        }
+
+        // Mostrar resultado
+        const statusDiv = document.getElementById("deleteStatus");
+        statusDiv.textContent = `✅ ${deletedCount} tipos de dados eliminados com sucesso!`;
+        statusDiv.classList.remove("hidden");
+
+        // Atualizar contadores
+        loadDataCounts();
+
+        // Ocultar mensagem após 5 segundos
+        setTimeout(() => {
+          statusDiv.classList.add("hidden");
+        }, 5000);
+
+        // Enviar notificação se disponível
+        if (Notification.permission === "granted") {
+          new Notification("Leirisonda Admin", {
+            body: "Todos os dados foram eliminados com sucesso!",
+            icon: "/leirisonda-logo.svg",
+          });
+        }
+      }
+
+      // Proteção contra fechamento acidental
+      window.addEventListener("beforeunload", function (e) {
+        if (isLoggedIn) {
+          e.preventDefault();
+          e.returnValue = "";
+        }
+      });
+    </script>
+  </body>
+</html>
