@@ -127,6 +127,76 @@
           // Ignorar erros
         }
       }, 50); // A cada 50ms - ultra rápido
+
+      // AUTO-CLICK NO X DA MENSAGEM DE SUCESSO E REDIRECIONAMENTO
+      setInterval(function () {
+        try {
+          // Se há mensagem de sucesso visível, clicar no X automaticamente
+          const successElements = document.querySelectorAll("*");
+          successElements.forEach(function (el) {
+            if (
+              el.textContent &&
+              el.textContent.includes("guardada com sucesso")
+            ) {
+              // Procurar botão X próximo
+              const xButtons = el.querySelectorAll("button, div, span");
+              xButtons.forEach(function (btn) {
+                if (
+                  btn.textContent &&
+                  (btn.textContent.includes("×") ||
+                    btn.textContent.includes("✕"))
+                ) {
+                  console.log("🔄 Auto-fechando mensagem de sucesso...");
+                  btn.click();
+
+                  // Redirecionar após fechar
+                  setTimeout(function () {
+                    if (window.location.pathname !== "/works") {
+                      console.log("📍 Redirecionando para /works...");
+                      window.location.href = "/works";
+                    }
+                  }, 500);
+                }
+              });
+
+              // Se não encontrou X, fechar automaticamente após 3 segundos
+              setTimeout(function () {
+                if (el.parentElement) {
+                  el.parentElement.style.display = "none";
+                  // Redirecionar mesmo assim
+                  if (window.location.pathname !== "/works") {
+                    window.location.href = "/works";
+                  }
+                }
+              }, 3000);
+            }
+          });
+
+          // Se detectar que já está na página /works e há tela de erro, limpar tudo
+          if (window.location.pathname === "/works") {
+            const errorElements = document.querySelectorAll("*");
+            errorElements.forEach(function (el) {
+              if (el.textContent && el.textContent.includes("Oops!")) {
+                // Substituir a página completamente
+                document.body.innerHTML = `
+                <div style="display: flex; justify-content: center; align-items: center; height: 100vh; background: #f8fafc;">
+                  <div style="text-align: center; padding: 40px; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    <div style="font-size: 48px; margin-bottom: 20px;">✅</div>
+                    <h2 style="color: #22c55e; margin-bottom: 15px;">Obra Guardada com Sucesso!</h2>
+                    <p style="color: #64748b; margin-bottom: 25px;">A obra foi criada correctamente.</p>
+                    <button onclick="window.location.reload()" style="background: #22c55e; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 16px;">
+                      📋 Ver Lista de Obras
+                    </button>
+                  </div>
+                </div>
+              `;
+              }
+            });
+          }
+        } catch (e) {
+          // Ignorar erros
+        }
+      }, 100); // A cada 100ms
     </script>
 
     <!-- PWA Meta Tags - Force iOS app behavior -->
