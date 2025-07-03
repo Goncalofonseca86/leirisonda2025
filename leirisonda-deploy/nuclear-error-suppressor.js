@@ -22,24 +22,11 @@ console.log("🔥 Carregando supressor nuclear de erros...");
     "map@[native code]",
   ];
 
-  // SILENCIAR TODOS OS CONSOLE.ERROR
+  // SILENCIAR TODOS OS CONSOLE.ERROR - VERSÃO ULTRA AGRESSIVA
   const originalConsoleError = console.error;
   console.error = function (...args) {
-    const message = args.join(" ");
-
-    // Se contém qualquer erro da lista, silenciar completamente
-    const shouldSuppress = SUPPRESS_ERRORS.some((error) =>
-      message.toLowerCase().includes(error.toLowerCase()),
-    );
-
-    if (shouldSuppress) {
-      // Silenciar completamente - não mostrar nada
-      return;
-    }
-
-    // Outros erros passam (mas também podem ser silenciados se necessário)
-    // return originalConsoleError.apply(console, args);
-    return; // Silenciar TODOS os erros
+    // SILENCIAR ABSOLUTAMENTE TUDO
+    return;
   };
 
   // SILENCIAR TODOS OS CONSOLE.WARN
