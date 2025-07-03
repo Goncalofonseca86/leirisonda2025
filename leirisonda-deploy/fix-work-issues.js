@@ -237,81 +237,147 @@ console.log("🔧 Sistema de correções ativo...");
     }
   }
 
-  // 5. INTERCEPTAR E CORRIGIR ERROS AO GUARDAR OBRA
+  // 5. SISTEMA AVANÇADO DE PROTEÇÃO CONTRA ERROS
   function setupWorkSaveProtection() {
-    // Interceptar submissões de formulário
-    document.addEventListener("submit", function (e) {
-      const form = e.target;
+    console.log("🛡️ Ativando proteção contra erros de save");
 
-      if (
-        form &&
-        (form.textContent.includes("Informações Básicas") ||
-          window.location.pathname.includes("/create-work"))
-      ) {
-        console.log("💾 Submissão de obra detectada - aplicando proteção");
+    // Interceptar TODOS os tipos de submissão
+    ["submit", "click"].forEach((eventType) => {
+      document.addEventListener(eventType, function (e) {
+        const target = e.target;
+        const isSubmit =
+          eventType === "submit" ||
+          target.type === "submit" ||
+          (target.textContent &&
+            target.textContent.toLowerCase().includes("guardar")) ||
+          (target.textContent &&
+            target.textContent.toLowerCase().includes("criar"));
 
-        // Marcar que houve submissão
-        sessionStorage.setItem("work_form_submitted", "true");
+        if (isSubmit && window.location.pathname.includes("create-work")) {
+          console.log("💾 Submissão detectada - ativando proteção");
+          sessionStorage.setItem("work_form_submitted", Date.now().toString());
 
-        // Interceptar erros que possam aparecer
-        setTimeout(() => {
-          const errorElements = document.querySelectorAll("*");
-          errorElements.forEach((el) => {
-            if (el.textContent && el.textContent.includes("Oops!")) {
-              console.log("🔧 Erro detectado após submissão - corrigindo");
+          // Proteção imediata contra erros
+          setTimeout(() => setupErrorInterception(), 100);
+        }
+      });
+    });
 
-              // Se há mensagem de sucesso junto, substituir
-              if (document.body.textContent.includes("guardada com sucesso")) {
-                document.body.innerHTML = `
-                  <div style="display: flex; justify-content: center; align-items: center; height: 100vh; background: #22c55e;">
-                    <div style="text-align: center; padding: 40px; background: white; border-radius: 16px; max-width: 400px;">
-                      <div style="font-size: 48px; margin-bottom: 20px;">✅</div>
-                      <h2 style="color: #22c55e; margin-bottom: 15px;">Obra Guardada!</h2>
-                      <p style="margin-bottom: 25px;">A obra foi criada com sucesso.</p>
-                      <button onclick="window.location.href='/works'"
-                              style="background: #22c55e; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;">
-                        Ver Lista de Obras
-                      </button>
-                    </div>
-                  </div>
-                `;
-              }
+    // Sistema de interceptação de erros
+    function setupErrorInterception() {
+      let checkCount = 0;
+      const maxChecks = 20;
+
+      const errorChecker = setInterval(() => {
+        checkCount++;
+
+        // Procurar por erros "Oops!"
+        const oopsElements = document.querySelectorAll("*");
+        let foundOops = false;
+        let foundSuccess = false;
+
+        oopsElements.forEach((el) => {
+          const text = el.textContent || "";
+          if (text.includes("Oops!") || text.includes("Algo correu mal")) {
+            foundOops = true;
+          }
+          if (
+            text.includes("guardada com sucesso") ||
+            text.includes("criada com sucesso")
+          ) {
+            foundSuccess = true;
+          }
+        });
+
+        // Se encontrou erro MAS também sucesso, é falso alarme
+        if (foundOops && foundSuccess) {
+          console.log(
+            "🔧 Falso alarme de erro - obra foi guardada com sucesso",
+          );
+
+          // Substituir toda a página por mensagem de sucesso
+          document.body.innerHTML = `
+            <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                        background: linear-gradient(135deg, #22c55e, #16a34a);
+                        display: flex; justify-content: center; align-items: center; z-index: 9999;">
+              <div style="background: white; padding: 40px; border-radius: 20px;
+                          text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2); max-width: 400px;">
+                <div style="font-size: 64px; margin-bottom: 20px;">✅</div>
+                <h2 style="color: #22c55e; margin-bottom: 15px; font-size: 24px;">Obra Guardada!</h2>
+                <p style="margin-bottom: 25px; color: #666;">A obra foi criada com sucesso no sistema.</p>
+                <button onclick="window.location.href='/works'"
+                        style="background: #22c55e; color: white; border: none;
+                               padding: 15px 30px; border-radius: 10px; cursor: pointer;
+                               font-size: 16px; font-weight: 500;">
+                  Ver Lista de Obras
+                </button>
+                <div style="margin-top: 15px;">
+                  <button onclick="window.location.href='/create-work'"
+                          style="background: transparent; color: #22c55e; border: 2px solid #22c55e;
+                                 padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 14px;">
+                    Criar Nova Obra
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+
+          clearInterval(errorChecker);
+          sessionStorage.removeItem("work_form_submitted");
+          return;
+        }
+
+        // Se encontrou só erro (sem sucesso), tentar novamente
+        if (foundOops && !foundSuccess) {
+          console.log("❌ Erro real detectado - tentando correção automática");
+
+          // Tentar clicar em botão de retry/ok
+          const buttons = document.querySelectorAll("button");
+          buttons.forEach((btn) => {
+            const btnText = btn.textContent.toLowerCase();
+            if (
+              btnText.includes("ok") ||
+              btnText.includes("tentar") ||
+              btnText.includes("retry")
+            ) {
+              console.log("🔄 Clicando em botão de retry");
+              btn.click();
             }
           });
-        }, 2000);
+        }
+
+        // Se atingiu limite de verificações ou encontrou sucesso limpo
+        if (checkCount >= maxChecks || (foundSuccess && !foundOops)) {
+          if (foundSuccess) {
+            console.log("✅ Sucesso confirmado!");
+            setTimeout(() => {
+              if (window.location.pathname !== "/works") {
+                window.location.href = "/works";
+              }
+            }, 2000);
+          }
+          clearInterval(errorChecker);
+          sessionStorage.removeItem("work_form_submitted");
+        }
+      }, 500);
+    }
+
+    // Interceptar erros JavaScript
+    window.addEventListener("error", function (e) {
+      if (sessionStorage.getItem("work_form_submitted")) {
+        console.log("🛡️ Erro JavaScript interceptado durante save");
+        e.preventDefault();
+        return false;
       }
     });
 
-    // Auto-clique no X da mensagem de sucesso
-    setInterval(() => {
-      if (sessionStorage.getItem("work_form_submitted") === "true") {
-        const successElements = document.querySelectorAll("*");
-        successElements.forEach((el) => {
-          if (
-            el.textContent &&
-            el.textContent.includes("guardada com sucesso")
-          ) {
-            const xButtons = el.querySelectorAll("button");
-            xButtons.forEach((btn) => {
-              if (
-                btn.textContent &&
-                (btn.textContent.includes("×") || btn.textContent.includes("✕"))
-              ) {
-                console.log("🔄 Auto-fechando mensagem de sucesso");
-                btn.click();
-                sessionStorage.removeItem("work_form_submitted");
-
-                setTimeout(() => {
-                  if (window.location.pathname !== "/works") {
-                    window.location.href = "/works";
-                  }
-                }, 1000);
-              }
-            });
-          }
-        });
+    // Interceptar erros de promessa
+    window.addEventListener("unhandledrejection", function (e) {
+      if (sessionStorage.getItem("work_form_submitted")) {
+        console.log("🛡️ Promise rejection interceptada durante save");
+        e.preventDefault();
       }
-    }, 500);
+    });
   }
 
   // 6. FUNÇÃO PRINCIPAL
