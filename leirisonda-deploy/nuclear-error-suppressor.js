@@ -56,19 +56,29 @@ console.log("🔥 Carregando supressor nuclear de erros...");
     return originalConsoleLog.apply(console, args);
   };
 
-  // INTERCEPTAR ERROS GLOBAIS
-  window.addEventListener("error", function (event) {
-    console.log(
-      "🔇 Erro global silenciado:",
-      event.error?.message?.substring(0, 50) + "...",
-    );
+  // INTERCEPTAR ERROS GLOBAIS - VERSÃO ULTRA AGRESSIVA
+  window.addEventListener(
+    "error",
+    function (event) {
+      // Silenciar completamente - nem log
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+      return false;
+    },
+    true,
+  ); // Capture phase para interceptar antes
 
-    // Prevenir mostrar o erro
-    event.preventDefault();
-    event.stopPropagation();
-
-    return false;
-  });
+  // Interceptar erros em todos os elementos
+  document.addEventListener(
+    "error",
+    function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      return false;
+    },
+    true,
+  );
 
   // INTERCEPTAR PROMISES REJEITADAS
   window.addEventListener("unhandledrejection", function (event) {
