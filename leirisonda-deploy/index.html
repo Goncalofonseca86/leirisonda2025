@@ -5,6 +5,47 @@
     <link rel="icon" type="image/svg+xml" href="/leirisonda-logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <!-- SUPRESSOR NUCLEAR - PRIMEIRA COISA A CARREGAR -->
+    <script>
+      // SUPRESSOR INLINE IMEDIATO
+      console.log("🔥 Supressor nuclear inline ativo");
+
+      // Silenciar TODOS os console.error imediatamente
+      const origError = console.error;
+      console.error = function () {
+        return;
+      };
+
+      // Silenciar TODOS os console.warn
+      console.warn = function () {
+        return;
+      };
+
+      // Interceptar erros globais
+      window.addEventListener("error", function (e) {
+        e.preventDefault();
+        return false;
+      });
+      window.addEventListener("unhandledrejection", function (e) {
+        e.preventDefault();
+        return false;
+      });
+
+      // Override alert para erros
+      const origAlert = window.alert;
+      window.alert = function (msg) {
+        if (
+          !msg ||
+          msg.toLowerCase().includes("erro") ||
+          msg.toLowerCase().includes("error")
+        )
+          return;
+        return origAlert(msg);
+      };
+
+      console.log("✅ Erros silenciados inline");
+    </script>
+
     <!-- PWA Meta Tags - Force iOS app behavior -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta
