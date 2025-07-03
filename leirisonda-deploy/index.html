@@ -35,6 +35,148 @@
 
     <title>Leirisonda - Gestão de Obras</title>
 
+    <style>
+      /* CSS super agressivo que força as modificações constantemente */
+
+      /* Esconde qualquer elemento que contenha exatamente "DIAGNÓSTICO" */
+      *:not(script):not(style):not(title) {
+        /* Verifica o conteúdo de texto */
+      }
+
+      /* Seletores específicos para esconder DIAGNÓSTICO */
+      [role="button"][aria-label*="DIAGNÓSTICO"],
+      [role="button"][title*="DIAGNÓSTICO"],
+      button[aria-label*="DIAGNÓSTICO"],
+      button[title*="DIAGNÓSTICO"],
+      div[aria-label*="DIAGNÓSTICO"],
+      div[title*="DIAGNÓSTICO"],
+      a[aria-label*="DIAGNÓSTICO"],
+      a[title*="DIAGNÓSTICO"],
+      span[aria-label*="DIAGNÓSTICO"],
+      span[title*="DIAGNÓSTICO"],
+      li[aria-label*="DIAGNÓSTICO"],
+      li[title*="DIAGNÓSTICO"],
+      [data-testid*="diagnostico"],
+      [data-testid*="DIAGNOSTICO"],
+      [class*="diagnostico"],
+      [class*="DIAGNOSTICO"] {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        height: 0px !important;
+        width: 0px !important;
+        overflow: hidden !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        position: absolute !important;
+        left: -9999px !important;
+        top: -9999px !important;
+        z-index: -1 !important;
+      }
+
+      /* Destaca ADMINISTRAÇÃO */
+      [role="button"][aria-label*="ADMINISTRAÇÃO"],
+      [role="button"][title*="ADMINISTRAÇÃO"],
+      button[aria-label*="ADMINISTRAÇÃO"],
+      button[title*="ADMINISTRAÇÃO"],
+      div[aria-label*="ADMINISTRAÇÃO"],
+      div[title*="ADMINISTRAÇÃO"],
+      a[aria-label*="ADMINISTRAÇÃO"],
+      a[title*="ADMINISTRAÇÃO"],
+      span[aria-label*="ADMINISTRAÇÃO"],
+      span[title*="ADMINISTRAÇÃO"],
+      li[aria-label*="ADMINISTRAÇÃO"],
+      li[title*="ADMINISTRAÇÃO"],
+      [data-testid*="administracao"],
+      [data-testid*="ADMINISTRACAO"],
+      [class*="administracao"],
+      [class*="ADMINISTRACAO"] {
+        background: linear-gradient(
+          135deg,
+          #fbbf24 0%,
+          #f59e0b 100%
+        ) !important;
+        border-radius: 12px !important;
+        padding: 16px !important;
+        margin: 8px !important;
+        color: #1f2937 !important;
+        font-weight: bold !important;
+        box-shadow: 0 4px 20px rgba(251, 191, 36, 0.3) !important;
+        border: 2px solid #f59e0b !important;
+      }
+
+      /* Força cor dos textos filhos de ADMINISTRAÇÃO */
+      [role="button"][aria-label*="ADMINISTRAÇÃO"] *,
+      [role="button"][title*="ADMINISTRAÇÃO"] *,
+      button[aria-label*="ADMINISTRAÇÃO"] *,
+      button[title*="ADMINISTRAÇÃO"] *,
+      div[aria-label*="ADMINISTRAÇÃO"] *,
+      div[title*="ADMINISTRAÇÃO"] *,
+      a[aria-label*="ADMINISTRAÇÃO"] *,
+      a[title*="ADMINISTRAÇÃO"] *,
+      [data-testid*="administracao"] *,
+      [data-testid*="ADMINISTRACAO"] *,
+      [class*="administracao"] *,
+      [class*="ADMINISTRACAO"] * {
+        color: #1f2937 !important;
+      }
+
+      /* Esconde por posição se estiver numa estrutura de lista */
+      nav > ul > li:nth-child(4),
+      nav > div > div:nth-child(4),
+      aside > ul > li:nth-child(4),
+      aside > div > div:nth-child(4),
+      [role="navigation"] > ul > li:nth-child(4),
+      [role="navigation"] > div > div:nth-child(4),
+      .sidebar > ul > li:nth-child(4),
+      .sidebar > div > div:nth-child(4) {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+      }
+
+      /* Destaca ADMINISTRAÇÃO por posição */
+      nav > ul > li:nth-child(5),
+      nav > div > div:nth-child(5),
+      aside > ul > li:nth-child(5),
+      aside > div > div:nth-child(5),
+      [role="navigation"] > ul > li:nth-child(5),
+      [role="navigation"] > div > div:nth-child(5),
+      .sidebar > ul > li:nth-child(5),
+      .sidebar > div > div:nth-child(5) {
+        background: linear-gradient(
+          135deg,
+          #fbbf24 0%,
+          #f59e0b 100%
+        ) !important;
+        border-radius: 12px !important;
+        padding: 16px !important;
+        margin: 8px !important;
+        color: #1f2937 !important;
+        font-weight: bold !important;
+        box-shadow: 0 4px 20px rgba(251, 191, 36, 0.3) !important;
+        border: 2px solid #f59e0b !important;
+      }
+
+      /* Animação que reaplica constantemente os estilos */
+      @keyframes forceStyles {
+        0%,
+        100% {
+          /* Força aplicação dos estilos */
+        }
+      }
+
+      /* Aplica animação a todos os elementos de menu */
+      nav *,
+      aside *,
+      [role="navigation"] *,
+      .sidebar *,
+      [class*="sidebar"] *,
+      [class*="menu"] * {
+        animation: forceStyles 0.1s infinite;
+      }
+    </style>
+
     <script type="module" crossorigin src="/assets/index-DnEsHg1H.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-DFdR-byQ.css" />
   </head>
