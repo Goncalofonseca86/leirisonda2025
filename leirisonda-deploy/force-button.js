@@ -330,8 +330,11 @@ function showModal() {
         <button onclick="inspectData()" style="width: 100%; padding: 8px; background: #17a2b8; color: white; border: none; border-radius: 6px; cursor: pointer; margin-bottom: 8px; font-size: 14px;">
           🔍 ANALISAR DADOS
         </button>
-        <button onclick="deleteAllData()" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
-          💣 ELIMINAR TUDO
+        <button onclick="deleteLocalData()" style="width: 100%; padding: 10px; background: #fd7e14; color: white; border: none; border-radius: 6px; cursor: pointer; margin-bottom: 8px; font-weight: bold;">
+          🗑️ ELIMINAR LOCAIS
+        </button>
+        <button onclick="deleteAllDataIncludingFirebase()" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+          💣 ELIMINAR TUDO (LOCAL + FIREBASE)
         </button>
         <div id="delete-info" style="margin-top: 8px; font-size: 13px; display: none;"></div>
       </div>
@@ -594,7 +597,8 @@ window.inspectData = function () {
   }
 };
 
-window.deleteAllData = function () {
+// Eliminar apenas dados locais
+window.deleteLocalData = function () {
   try {
     console.log("🗑️ ELIMINAÇÃO ULTRA AGRESSIVA INICIADA");
 
@@ -735,6 +739,202 @@ window.deleteAllData = function () {
     }
   }
 };
+
+// Eliminar dados locais + Firebase
+window.deleteAllDataIncludingFirebase = function () {
+  try {
+    console.log("🔥 ELIMINAÇÃO COMPLETA: LOCAL + FIREBASE");
+
+    if (
+      !confirm(
+        "💥 ELIMINAR TUDO (LOCAL + FIREBASE)?\n\nEsta ação vai eliminar:\n✅ Todos os dados locais\n✅ Todas as obras no Firebase\n✅ Todas as manutenções no Firebase\n✅ Todas as piscinas no Firebase\n\n❌ NÃO PODE SER DESFEITO!",
+      )
+    ) {
+      return;
+    }
+
+    if (
+      !confirm(
+        "🔥 CONFIRMAÇÃO FINAL!\n\nVou eliminar TUDO do localStorage E do Firebase!\n\nTens ABSOLUTA certeza?",
+      )
+    ) {
+      return;
+    }
+
+    showInfo(
+      "delete-info",
+      "🔥 Eliminando dados locais e Firebase...",
+      "orange",
+    );
+
+    // PASSO 1: Eliminar dados locais
+    console.log("📱 PASSO 1: Eliminando dados locais...");
+    const localKeys = Object.keys(localStorage);
+    localStorage.clear();
+    console.log(`✅ ${localKeys.length} chaves locais eliminadas`);
+
+    // PASSO 2: Tentar eliminar dados do Firebase
+    console.log("🔥 PASSO 2: Tentando eliminar dados do Firebase...");
+
+    // Verificar se existe a instância Firebase global
+    if (typeof window.hr !== "undefined" && window.hr) {
+      console.log("📡 Encontrada instância Firebase (hr)");
+
+      // Tentar eliminar através da API da aplicação
+      deleteFirebaseDataThroughAPI();
+    } else {
+      console.log("🔍 Procurando outras formas de aceder ao Firebase...");
+
+      // Tentar encontrar outras instâncias ou métodos
+      deleteFirebaseDataDirect();
+    }
+
+    // PASSO 3: Resultado final
+    setTimeout(() => {
+      alert(
+        "✅ ELIMINAÇÃO COMPLETA!\n\n📱 Dados locais: ELIMINADOS\n🔥 Firebase: TENTATIVA REALIZADA\n\n🔄 A página vai ser atualizada para refletir as mudanças...",
+      );
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    }, 2000);
+  } catch (error) {
+    console.error("💥 ERRO na eliminação completa:", error);
+    showInfo("delete-info", `❌ ERRO: ${error.message}`, "red");
+  }
+};
+
+// Função para eliminar dados do Firebase através da API da aplicação
+function deleteFirebaseDataThroughAPI() {
+  try {
+    console.log("🎯 Tentando eliminar através da API da aplicação...");
+
+    // Verificar se a instância Firebase está disponível
+    if (window.hr && typeof window.hr.isFirebaseAvailable !== "undefined") {
+      if (!window.hr.isFirebaseAvailable) {
+        console.log("❌ Firebase não está disponível");
+        showInfo(
+          "delete-info",
+          "⚠️ Firebase offline - apenas dados locais eliminados",
+          "orange",
+        );
+        return;
+      }
+
+      console.log("✅ Firebase disponível, tentando eliminação...");
+
+      // Tentar eliminar através de métodos da aplicação
+      if (typeof window.hr.deleteAllWorks === "function") {
+        window.hr
+          .deleteAllWorks()
+          .then(() => {
+            console.log("✅ Obras do Firebase eliminadas");
+          })
+          .catch((e) => {
+            console.error("❌ Erro ao eliminar obras:", e);
+          });
+      }
+
+      if (typeof window.hr.deleteAllMaintenances === "function") {
+        window.hr
+          .deleteAllMaintenances()
+          .then(() => {
+            console.log("✅ Manutenções do Firebase eliminadas");
+          })
+          .catch((e) => {
+            console.error("❌ Erro ao eliminar manutenções:", e);
+          });
+      }
+
+      if (typeof window.hr.deleteAllPools === "function") {
+        window.hr
+          .deleteAllPools()
+          .then(() => {
+            console.log("✅ Piscinas do Firebase eliminadas");
+          })
+          .catch((e) => {
+            console.error("❌ Erro ao eliminar piscinas:", e);
+          });
+      }
+
+      showInfo(
+        "delete-info",
+        "🔥 Comandos de eliminação Firebase enviados",
+        "blue",
+      );
+    }
+  } catch (error) {
+    console.error("❌ Erro na eliminação via API:", error);
+  }
+}
+
+// Função para tentar eliminação direta do Firebase
+function deleteFirebaseDataDirect() {
+  try {
+    console.log("🔍 Tentando eliminação direta do Firebase...");
+
+    // Tentar executar script direto no console para eliminar coleções
+    const firebaseScript = `
+      // Script para eliminação de coleções Firebase
+      if (typeof firebase !== 'undefined' && firebase.firestore) {
+        const db = firebase.firestore();
+
+        // Eliminar coleção 'works'
+        db.collection('works').get().then(snapshot => {
+          snapshot.forEach(doc => doc.ref.delete());
+          console.log('Works collection deleted');
+        });
+
+        // Eliminar coleção 'maintenances'
+        db.collection('maintenances').get().then(snapshot => {
+          snapshot.forEach(doc => doc.ref.delete());
+          console.log('Maintenances collection deleted');
+        });
+
+        // Eliminar coleção 'pools'
+        db.collection('pools').get().then(snapshot => {
+          snapshot.forEach(doc => doc.ref.delete());
+          console.log('Pools collection deleted');
+        });
+      }
+    `;
+
+    console.log("📋 Script Firebase gerado:", firebaseScript);
+
+    // Tentar executar o script
+    try {
+      eval(firebaseScript);
+      showInfo("delete-info", "📜 Script Firebase executado", "blue");
+    } catch (evalError) {
+      console.log(
+        "⚠️ Não foi possível executar script direto:",
+        evalError.message,
+      );
+
+      // Mostrar instruções manuais
+      console.log(`
+🔧 INSTRUÇÕES MANUAIS PARA ELIMINAR FIREBASE:
+
+1. Abre as ferramentas de desenvolvimento (F12)
+2. Vai ao separador Console
+3. Cola e executa este código:
+
+${firebaseScript}
+
+4. Recarrega a página
+      `);
+
+      showInfo(
+        "delete-info",
+        "📋 Vê instruções no console para Firebase",
+        "blue",
+      );
+    }
+  } catch (error) {
+    console.error("❌ Erro na eliminação direta:", error);
+  }
+}
 
 window.closeModal = function () {
   try {
