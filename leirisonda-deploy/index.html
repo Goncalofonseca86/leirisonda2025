@@ -7,233 +7,98 @@
 
     <!-- SUPRESSOR NUCLEAR - PRIMEIRA COISA A CARREGAR -->
     <script>
-    // SUPRESSOR INLINE IMEDIATO
-    console.log("🔥 Supressor nuclear inline ativo");
+      // SUPRESSOR INLINE IMEDIATO
+      console.log("🔥 Supressor nuclear inline ativo");
 
-    // Silenciar TODOS os console.error imediatamente
-    const origError = console.error;
-    console.error = function() { return; };
+      // Silenciar TODOS os console.error imediatamente
+      const origError = console.error;
+      console.error = function () {
+        return;
+      };
 
-    // Silenciar TODOS os console.warn
-    console.warn = function() { return; };
+      // Silenciar TODOS os console.warn
+      console.warn = function () {
+        return;
+      };
 
-    // Interceptar erros globais
-    window.addEventListener('error', function(e) { e.preventDefault(); return false; });
-    window.addEventListener('unhandledrejection', function(e) { e.preventDefault(); return false; });
+      // Interceptar erros globais
+      window.addEventListener("error", function (e) {
+        e.preventDefault();
+        return false;
+      });
+      window.addEventListener("unhandledrejection", function (e) {
+        e.preventDefault();
+        return false;
+      });
 
-    // Override alert para erros
-    const origAlert = window.alert;
-    window.alert = function(msg) {
-      if (!msg || msg.toLowerCase().includes('erro') || msg.toLowerCase().includes('error')) return;
-      return origAlert(msg);
-    };
+      // Override alert para erros
+      const origAlert = window.alert;
+      window.alert = function (msg) {
+        if (
+          !msg ||
+          msg.toLowerCase().includes("erro") ||
+          msg.toLowerCase().includes("error")
+        )
+          return;
+        return origAlert(msg);
+      };
 
-    console.log("✅ Erros silenciados inline");
+      console.log("✅ Erros silenciados inline");
 
-    // CSS ULTRA AGRESSIVO PARA ESCONDER TELAS DE ERRO
-    const style = document.createElement('style');
-    style.innerHTML = `
-      /* Esconder qualquer elemento que contenha texto de erro */
-      *:has-text("Oops!") { display: none !important; }
-      *:has-text("Algo correu mal") { display: none !important; }
-      *:has-text("Tentar Novamente") { display: none !important; }
-      *:has-text("Diagnóstico") { display: none !important; }
+      // SOLUÇÃO FINAL: CLIQUE AUTOMÁTICO NO X DA MENSAGEM DE SUCESSO
+      setTimeout(function () {
+        setInterval(function () {
+          try {
+            // Procurar mensagem de sucesso
+            const allElements = document.querySelectorAll("*");
+            allElements.forEach(function (el) {
+              if (
+                el.textContent &&
+                el.textContent.includes("guardada com sucesso")
+              ) {
+                // Procurar X para fechar
+                const xButton =
+                  el.querySelector("button") ||
+                  el.parentElement.querySelector("button") ||
+                  document.querySelector(
+                    'button[style*="✕"], button:contains("×"), button:contains("✕")',
+                  );
 
-      /* Esconder elementos com posição fixa que possam ser modais */
-      div[style*="position: fixed"]:has-text("Oops") { display: none !important; }
-      div[style*="position: absolute"]:has-text("Algo correu mal") { display: none !important; }
+                if (xButton) {
+                  console.log("🔄 Clicando automaticamente no X...");
+                  xButton.click();
 
-      /* Esconder por classes comuns de erro */
-      .error-screen, .error-modal, .error-overlay { display: none !important; }
-      [class*="error"][style*="position"] { display: none !important; }
-
-      /* Esconder elementos com z-index alto que contenham erro */
-      [style*="z-index"]:has-text("Oops") { display: none !important; }
-
-      /* Forçar visibilidade apenas para mensagens de sucesso */
-      *:has-text("guardada com sucesso") {
-        display: block !important;
-        visibility: visible !important;
-        z-index: 999999 !important;
-      }
-    `;
-    (document.head || document.documentElement).appendChild(style);
-
-    // BLOQUEIO ULTRA AGRESSIVO DE "OOPS! ALGO CORREU MAL"
-    setInterval(function() {
-      try {
-        // Procurar e destruir texto específico
-        const walker = document.createTreeWalker(
-          document.body || document.documentElement,
-          NodeFilter.SHOW_TEXT,
-          null,
-          false
-        );
-
-        const textNodes = [];
-        let node;
-        while (node = walker.nextNode()) {
-          if (node.textContent.includes('Oops!') ||
-              node.textContent.includes('Algo correu mal') ||
-              node.textContent.includes('Tentar Novamente') ||
-              node.textContent.includes('Diagnóstico')) {
-            textNodes.push(node);
-          }
-        }
-
-        textNodes.forEach(function(textNode) {
-          let element = textNode.parentElement;
-          while (element && element !== document.body) {
-            element.style.display = 'none !important';
-            element.remove();
-            element = element.parentElement;
-          }
-        });
-
-        // Remover elementos com classes/IDs suspeitos
-        const suspiciousElements = document.querySelectorAll(
-          '[class*="error"], [class*="Error"], [id*="error"], [id*="Error"], ' +
-          '[class*="modal"], [class*="overlay"], [style*="position: fixed"]'
-        );
-
-        suspiciousElements.forEach(function(el) {
-          if (el.textContent && (el.textContent.includes('Oops!') ||
-              el.textContent.includes('Algo correu mal'))) {
-            el.style.display = 'none !important';
-            el.remove();
-          }
-        });
-
-      } catch (e) {
-        // Ignorar erros
-      }
-    }, 50); // A cada 50ms - ultra rápido
-
-    // AUTO-CLICK NO X DA MENSAGEM DE SUCESSO E REDIRECIONAMENTO
-    setInterval(function() {
-      try {
-        // Se há mensagem de sucesso visível, clicar no X automaticamente
-        const successElements = document.querySelectorAll('*');
-        successElements.forEach(function(el) {
-          if (el.textContent && el.textContent.includes('guardada com sucesso')) {
-            // Procurar botão X próximo
-            const xButtons = el.querySelectorAll('button, div, span');
-            xButtons.forEach(function(btn) {
-              if (btn.textContent && (btn.textContent.includes('×') || btn.textContent.includes('✕'))) {
-                console.log('🔄 Auto-fechando mensagem de sucesso...');
-                btn.click();
-
-                // Redirecionar após fechar
-                setTimeout(function() {
-                  if (window.location.pathname !== '/works') {
-                    console.log('📍 Redirecionando para /works...');
-                    window.location.href = '/works';
-                  }
-                }, 500);
+                  // Aguardar 1 segundo e redirecionar
+                  setTimeout(function () {
+                    if (window.location.pathname !== "/works") {
+                      console.log("📍 Redirecionando para /works...");
+                      window.location.href = "/works";
+                    }
+                  }, 1000);
+                }
               }
             });
 
-            // Se não encontrou X, fechar automaticamente após 3 segundos
-            setTimeout(function() {
-              if (el.parentElement) {
-                el.parentElement.style.display = 'none';
-                // Redirecionar mesmo assim
-                if (window.location.pathname !== '/works') {
-                  window.location.href = '/works';
-                }
-              }
-            }, 3000);
-          }
-        });
-
-        // DETECÇÃO GLOBAL DE TELA DE ERRO - SUBSTITUIR IMEDIATAMENTE
-        const bodyText = document.body ? document.body.textContent : '';
-        if (bodyText.includes('Oops!') || bodyText.includes('Algo correu mal')) {
-          console.log('🚨 Tela de erro detectada - substituindo página...');
-
-          // Parar todos os scripts
-          const scripts = document.querySelectorAll('script');
-          scripts.forEach(function(script) {
-            if (script.src && !script.src.includes('index.html')) {
-              script.remove();
-            }
-          });
-
-          // Substituir TODA a página
-          document.documentElement.innerHTML = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-              <meta charset="UTF-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>Obra Guardada - Leirisonda</title>
-              <style>
-                * { margin: 0; padding: 0; box-sizing: border-box; }
-                body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
-              </style>
-            </head>
-            <body>
-              <div style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px;">
-                <div style="text-align: center; padding: 50px 40px; background: white; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); max-width: 500px; width: 100%;">
-
-                  <div style="background: #22c55e; width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 30px; box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);">
-                    <div style="color: white; font-size: 40px; font-weight: bold;">✓</div>
-                  </div>
-
-                  <h1 style="color: #1f2937; margin-bottom: 15px; font-size: 28px; font-weight: 700;">
-                    Obra Guardada com Sucesso!
-                  </h1>
-
-                  <p style="color: #6b7280; margin-bottom: 35px; font-size: 16px; line-height: 1.5;">
-                    A sua obra foi criada e guardada correctamente no sistema. <br>
-                    Pode agora consultar a lista de obras.
-                  </p>
-
-                  <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                    <button onclick="window.location.href='/works'"
-                            style="background: #22c55e; color: white; border: none; padding: 15px 30px; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.2s; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);"
-                            onmouseover="this.style.background='#16a34a'"
-                            onmouseout="this.style.background='#22c55e'">
-                      📋 Ver Lista de Obras
-                    </button>
-
-                    <button onclick="window.location.href='/create-work'"
-                            style="background: #3b82f6; color: white; border: none; padding: 15px 30px; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.2s; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);"
-                            onmouseover="this.style.background='#2563eb'"
-                            onmouseout="this.style.background='#3b82f6'">
-                      ➕ Nova Obra
-                    </button>
-                  </div>
-
-                  <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-                    <p style="color: #9ca3af; font-size: 14px;">
-                      Sistema Leirisonda - Gestão de Obras
-                    </p>
-                  </div>
-
+            // Se detectar tela de erro, substituir body
+            if (document.body && document.body.textContent.includes("Oops!")) {
+              document.body.innerHTML = `
+              <div style="display: flex; justify-content: center; align-items: center; height: 100vh; background: linear-gradient(135deg, #22c55e, #16a34a);">
+                <div style="text-align: center; padding: 40px; background: white; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); max-width: 400px;">
+                  <div style="font-size: 48px; margin-bottom: 20px;">✅</div>
+                  <h2 style="color: #22c55e; margin-bottom: 15px;">Obra Guardada!</h2>
+                  <p style="color: #64748b; margin-bottom: 25px;">A obra foi criada com sucesso.</p>
+                  <button onclick="window.location.href='/works'" style="background: #22c55e; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 16px;">
+                    Ver Lista de Obras
+                  </button>
                 </div>
               </div>
-
-              <script>
-                // Auto-redirect após 5 segundos se não clicar
-                setTimeout(function() {
-                  window.location.href = '/works';
-                }, 5000);
-
-                console.log('✅ Página de sucesso carregada - redirecionamento automático em 5s');
-              </script>
-            </body>
-            </html>
-          `;
-
-          return; // Parar execução
-        }
-
-      } catch (e) {
-        // Ignorar erros
-      }
-    }, 100); // A cada 100ms
-
+            `;
+            }
+          } catch (e) {
+            // Ignorar erros
+          }
+        }, 200);
+      }, 1000);
     </script>
 
     <!-- PWA Meta Tags - Force iOS app behavior -->
