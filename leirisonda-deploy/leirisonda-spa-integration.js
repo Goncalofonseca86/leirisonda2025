@@ -307,22 +307,51 @@ console.log("🚀 LEIRISONDA: Integração SPA React iniciada");
         id: select.id,
       });
 
-      // Detectar se é um dropdown de tipo de trabalho
+      // Detectar se é um dropdown de tipo de trabalho - versão melhorada
+      const labelElement =
+        document.querySelector(`label[for="${select.id}"]`) ||
+        select.closest("label") ||
+        parentElement?.querySelector("label");
+      const labelText = labelElement?.textContent || "";
+
       const isWorkTypeSelect =
+        // Por nome do campo
+        select.name?.toLowerCase().includes("type") ||
+        select.name?.toLowerCase().includes("tipo") ||
+        select.name?.toLowerCase().includes("categoria") ||
+        select.name?.toLowerCase().includes("servico") ||
+        select.name?.toLowerCase().includes("trabalho") ||
+        // Por ID do campo
+        select.id?.toLowerCase().includes("type") ||
+        select.id?.toLowerCase().includes("tipo") ||
+        select.id?.toLowerCase().includes("categoria") ||
+        // Por label do campo
+        labelText.toLowerCase().includes("tipo") ||
+        labelText.toLowerCase().includes("trabalho") ||
+        labelText.toLowerCase().includes("serviço") ||
+        labelText.toLowerCase().includes("categoria") ||
+        labelText.toLowerCase().includes("type") ||
+        // Por contexto do parent
+        parentText.toLowerCase().includes("tipo de trabalho") ||
+        parentText.toLowerCase().includes("tipo de serviço") ||
+        parentText.toLowerCase().includes("categoria") ||
         parentText.toLowerCase().includes("tipo") ||
         parentText.toLowerCase().includes("trabalho") ||
         parentText.toLowerCase().includes("type") ||
-        select.name?.toLowerCase().includes("type") ||
-        select.name?.toLowerCase().includes("trabalho") ||
-        options.some(
-          (opt) =>
-            opt.text.toLowerCase().includes("piscina") ||
-            opt.text.toLowerCase().includes("manutenção") ||
-            opt.text.toLowerCase().includes("instalação") ||
-            opt.text.toLowerCase().includes("reparação") ||
-            opt.text.toLowerCase().includes("pool") ||
-            opt.text.toLowerCase().includes("maintenance"),
-        );
+        // Por opções existentes - critério mais rigoroso
+        (options.length > 1 &&
+          options.some(
+            (opt) =>
+              opt.text.toLowerCase().includes("piscina") ||
+              opt.text.toLowerCase().includes("manutenção") ||
+              opt.text.toLowerCase().includes("instalação") ||
+              opt.text.toLowerCase().includes("reparação") ||
+              opt.text.toLowerCase().includes("construção") ||
+              opt.text.toLowerCase().includes("limpeza") ||
+              opt.text.toLowerCase().includes("pool") ||
+              opt.text.toLowerCase().includes("maintenance") ||
+              opt.text.toLowerCase().includes("cleaning"),
+          ));
 
       if (isWorkTypeSelect) {
         // Verificar se já tem opção de furo
@@ -587,7 +616,7 @@ console.log("🚀 LEIRISONDA: Integração SPA React iniciada");
     // Adicionar novo listener
     form.addEventListener("submit", handleFormSubmit);
 
-    console.log("✅ Interceptação de formulário configurada");
+    console.log("�� Interceptação de formulário configurada");
   }
 
   function handleFormSubmit(event) {
