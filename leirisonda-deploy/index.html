@@ -200,40 +200,24 @@
           "/loading-fix.js",
         ];
 
-        // Verificar e carregar scripts com segurança
-        function carregarScriptSeguro(src) {
-          return new Promise(function (resolve, reject) {
-            // Primeiro verificar se o script existe
-            fetch(src, { method: "HEAD" })
-              .then(function (response) {
-                if (response.ok) {
-                  // Script existe, carregar
-                  const script = document.createElement("script");
-                  script.src = src;
-                  script.async = true;
-                  script.onload = function () {
-                    console.log("✅ Script carregado:", src);
-                    resolve();
-                  };
-                  script.onerror = function () {
-                    console.log("❌ Erro ao carregar script:", src);
-                    reject();
-                  };
-                  document.head.appendChild(script);
-                } else {
-                  console.log("⚠️ Script não encontrado:", src);
-                  resolve(); // Continuar mesmo se script não existir
-                }
-              })
-              .catch(function () {
-                console.log("⚠️ Não foi possível verificar script:", src);
-                resolve(); // Continuar mesmo se verificação falhar
-              });
-          });
-        }
-
-        // Carregar scripts de forma assíncrona
-        scriptsParaCarregar.forEach(carregarScriptSeguro);
+        // Carregar scripts de forma simples e segura
+        scriptsParaCarregar.forEach(function (src) {
+          try {
+            const script = document.createElement("script");
+            script.src = src;
+            script.async = true;
+            script.onload = function () {
+              console.log("✅ Script carregado:", src);
+            };
+            script.onerror = function () {
+              console.log("⚠️ Script não carregado (ignorando):", src);
+              // Não fazer nada - continuar normalmente
+            };
+            document.head.appendChild(script);
+          } catch (e) {
+            console.log("⚠️ Erro ao criar script (ignorando):", src);
+          }
+        });
 
         console.log(
           "📦 Total de scripts para carregar:",
