@@ -10,7 +10,17 @@
       // SUPRESSOR INLINE IMEDIATO
       console.log("🔥 Supressor nuclear inline ativo");
 
-      // Silenciar TODOS os console.error imediatamente
+      // PROTEÇÃO ESPECIAL PARA PÁGINA DE LOGIN - NÃO INTERFERIR
+      if (window.location.pathname === "/login") {
+        console.log(
+          "🔓 Página de login detectada - desativando interferências",
+        );
+        // Na página de login, não fazer NADA que possa interferir
+        console.log("✅ Scripts desativados para login");
+        return; // Parar execução de qualquer script
+      }
+
+      // Silenciar TODOS os console.error imediatamente (APENAS fora do login)
       const origError = console.error;
       console.error = function () {
         return;
