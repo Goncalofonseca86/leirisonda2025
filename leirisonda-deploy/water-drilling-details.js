@@ -443,7 +443,7 @@ function monitorWorkTypeField() {
       `📋 Select ${index}: name="${select.name}" id="${select.id}" options=[${optionTexts}]`,
     );
 
-    // Verificar se alguma opç��o menciona furo
+    // Verificar se alguma opção menciona furo
     const hasFuroOption = options.some(
       (opt) =>
         opt.value.toLowerCase().includes("furo") ||
@@ -1355,6 +1355,60 @@ function detecaoAgressiva() {
   return campoTipoEncontrado;
 }
 
+// Verificar se a página carregou completamente
+function paginaCarregada() {
+  const temTextoCarregar = document.body.textContent.includes("A carregar");
+  const temInformacoesBasicas = document.body.textContent.includes(
+    "Informações Básicas",
+  );
+  const temTipoTrabalho =
+    document.body.textContent.includes("Tipo de Trabalho");
+
+  return !temTextoCarregar && (temInformacoesBasicas || temTipoTrabalho);
+}
+
+// Adicionar opção Furo se não existir
+function adicionarOpcaoFuro() {
+  const selects = document.querySelectorAll("select");
+
+  for (let select of selects) {
+    const opcoes = Array.from(select.options);
+    const textoOpcoes = opcoes.map((opt) => opt.text.toLowerCase()).join(" ");
+
+    // Se este select tem as opções que vimos no screenshot
+    if (textoOpcoes.includes("piscina") && textoOpcoes.includes("manutenção")) {
+      console.log("🎯 Encontrado select de tipo de trabalho!");
+
+      // Verificar se já tem opção Furo
+      const temFuro = opcoes.some(
+        (opt) =>
+          opt.text.toLowerCase().includes("furo") ||
+          opt.value.toLowerCase().includes("furo"),
+      );
+
+      if (!temFuro) {
+        console.log("➕ Adicionando opção 'Furo de Água' ao dropdown");
+
+        const novaOpcao = document.createElement("option");
+        novaOpcao.value = "furo";
+        novaOpcao.text = "Furo de Água";
+        select.appendChild(novaOpcao);
+
+        // Configurar listener para este select
+        setupWorkTypeListener(select);
+
+        console.log("✅ Opção 'Furo de Água' adicionada!");
+        return true;
+      } else {
+        console.log("✅ Opção Furo já existe");
+        setupWorkTypeListener(select);
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 // Verificar página periodicamente e mostrar botão se necessário
 setInterval(() => {
   // Detecção mais robusta para SPAs
@@ -1362,22 +1416,17 @@ setInterval(() => {
   const titulo = document.title.toLowerCase();
 
   const esPaginaObra =
-    // URL inclui termos relevantes
+    // URL inclui create-work
+    window.location.pathname.includes("/create-work") ||
+    // OU tem o conteúdo específico que vimos
+    (textoCorpo.includes("informações básicas") &&
+      textoCorpo.includes("tipo de trabalho")) ||
+    // OU outras variações
     window.location.pathname.includes("/work") ||
     window.location.pathname.includes("/obra") ||
     window.location.pathname.includes("/create") ||
-    // OU a página tem formulários E não é a página de login
-    (document.querySelector("form") &&
-      !textoCorpo.includes("entrar") &&
-      !textoCorpo.includes("login")) ||
-    // OU contém texto específico de criação de obra
     textoCorpo.includes("nova obra") ||
-    textoCorpo.includes("criar obra") ||
-    textoCorpo.includes("tipo de trabalho") ||
-    textoCorpo.includes("categoria de obra") ||
-    // OU título sugere página de obra
-    titulo.includes("obra") ||
-    titulo.includes("work");
+    textoCorpo.includes("criar obra");
 
   // Se detectar que está numa página de login, forçar ocultação
   const esPaginaLogin =
@@ -1385,17 +1434,23 @@ setInterval(() => {
     textoCorpo.includes("email") &&
     textoCorpo.includes("palavra-passe");
 
+  const paginaCompleta = paginaCarregada();
+
   console.log("🔍 Verificação página:", {
     url: window.location.pathname,
     esPaginaObra,
     esPaginaLogin,
-    temFormulario: !!document.querySelector("form"),
-    titulo: document.title,
+    paginaCompleta,
+    temInformacoesBasicas: textoCorpo.includes("informações básicas"),
+    temTipoTrabalho: textoCorpo.includes("tipo de trabalho"),
   });
 
-  if (esPaginaObra && !esPaginaLogin) {
+  if (esPaginaObra && !esPaginaLogin && paginaCompleta) {
     // Mostrar botão de teste em páginas de obra
     criarBotaoTesteFuro();
+
+    // Tentar adicionar opção Furo
+    adicionarOpcaoFuro();
 
     // Tentar detecção automática
     if (!document.getElementById("inline-water-drilling")) {
