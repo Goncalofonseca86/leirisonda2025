@@ -149,43 +149,108 @@ console.log("🗑️ SIDEBAR: Removendo seções desnecessárias do sidebar...")
 
   // Função para remover seções por seletor CSS mais específico
   function removeByCSS() {
-    const selectorsToHide = [
-      // Elementos que contenham texto específico
-      '*:contains("Diagnóstico")',
-      '*:contains("Administração")',
-      // Elementos com classes específicas do sidebar
-      '.space-y-2 > div:has(:contains("Diagnóstico"))',
-      '.space-y-2 > div:has(:contains("Administração"))',
-      // Buttons específicos
-      'button:contains("Diagnóstico")',
-      'button:contains("Administração")',
-    ];
-
     let removed = 0;
 
-    // Como :contains não é suportado nativamente, usar alternativa
-    const allElements = document.querySelectorAll("*");
-    for (const element of allElements) {
-      const text = element.textContent?.toLowerCase() || "";
+    // Procurar especificamente por elementos com as classes exatas do React compilado
+    const reactElements = document.querySelectorAll(
+      "div, span, button, nav, ul, li",
+    );
 
+    for (const element of reactElements) {
+      const text = element.textContent?.toLowerCase() || "";
+      const exactText = element.textContent?.trim() || "";
+
+      // Remover elementos que contenham exatamente os textos problemáticos
       if (
+        exactText === "Diagnóstico" ||
+        exactText === "Administração" ||
+        exactText === "Diagnóstico de Sincronização" ||
+        text.includes("diagnóstico de emergência") ||
+        text.includes("diagnóstico do sistema")
+      ) {
+        console.log(`🗑️ SIDEBAR: Removendo elemento exato "${exactText}"`);
+
+        // Aplicar múltiplas estratégias de ocultação
+        element.style.display = "none !important";
+        element.style.visibility = "hidden !important";
+        element.style.opacity = "0 !important";
+        element.style.height = "0 !important";
+        element.style.overflow = "hidden !important";
+        element.style.maxHeight = "0 !important";
+        element.setAttribute("hidden", "true");
+
+        // Também esconder containers pais que possam ser seções completas
+        let parent = element.parentElement;
+        for (let i = 0; i < 8; i++) {
+          if (!parent) break;
+
+          const parentText = parent.textContent?.toLowerCase() || "";
+          const parentExactText = parent.textContent?.trim() || "";
+
+          // Se o pai contém apenas este elemento problemático, esconder o pai também
+          if (
+            parent.children.length <= 3 &&
+            (parentText.includes("diagnóstico") ||
+              parentText.includes("administração")) &&
+            !parentText.includes("configurações") &&
+            !parentText.includes("obras") &&
+            !parentText.includes("utilizadores")
+          ) {
+            console.log(
+              `🗑️ SIDEBAR: Removendo container pai "${parentExactText.substring(0, 50)}..."`,
+            );
+            parent.style.display = "none !important";
+            parent.style.visibility = "hidden !important";
+            parent.style.opacity = "0 !important";
+            parent.style.height = "0 !important";
+            parent.style.overflow = "hidden !important";
+            parent.setAttribute("hidden", "true");
+            removed++;
+            break;
+          }
+
+          parent = parent.parentElement;
+        }
+
+        removed++;
+      }
+
+      // Procurar por elementos que contenham texto problemático mas não configurações
+      else if (
         (text.includes("diagnóstico") || text.includes("administração")) &&
-        !text.includes("configurações")
+        !text.includes("configurações") &&
+        !text.includes("obras") &&
+        !text.includes("utilizadores") &&
+        !text.includes("notificações")
       ) {
         // Se é um elemento pequeno (provavelmente só texto), esconder o pai
         if (
           element.children.length === 0 &&
-          element.textContent?.trim().length < 50
+          element.textContent?.trim().length < 80
         ) {
           let parent = element.parentElement;
-          for (let i = 0; i < 5; i++) {
+          for (let i = 0; i < 6; i++) {
             if (!parent) break;
 
-            if (parent.tagName === "DIV" && parent.children.length > 1) {
+            const parentChildren = parent.children.length;
+            const parentText = parent.textContent?.toLowerCase() || "";
+
+            if (
+              parent.tagName === "DIV" &&
+              parentChildren >= 1 &&
+              parentChildren <= 5 &&
+              (parentText.includes("diagnóstico") ||
+                parentText.includes("administração"))
+            ) {
               console.log(
-                `🗑️ SIDEBAR: Removendo container pai de "${element.textContent}"`,
+                `🗑️ SIDEBAR: Removendo container pai de "${element.textContent?.substring(0, 30)}..."`,
               );
-              parent.style.display = "none";
+              parent.style.display = "none !important";
+              parent.style.visibility = "hidden !important";
+              parent.style.opacity = "0 !important";
+              parent.style.height = "0 !important";
+              parent.style.overflow = "hidden !important";
+              parent.setAttribute("hidden", "true");
               removed++;
               break;
             }
@@ -195,7 +260,12 @@ console.log("🗑️ SIDEBAR: Removendo seções desnecessárias do sidebar...")
           console.log(
             `🗑️ SIDEBAR: Removendo elemento "${element.textContent?.substring(0, 50)}..."`,
           );
-          element.style.display = "none";
+          element.style.display = "none !important";
+          element.style.visibility = "hidden !important";
+          element.style.opacity = "0 !important";
+          element.style.height = "0 !important";
+          element.style.overflow = "hidden !important";
+          element.setAttribute("hidden", "true");
           removed++;
         }
       }
