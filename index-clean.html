@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Leirisonda - Gestão de Obras</title>
+    <link rel="icon" type="image/svg+xml" href="/leirisonda-logo.svg" />
+
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Leirisonda" />
+    <meta name="application-name" content="Leirisonda" />
+    <meta name="theme-color" content="#007784" />
+    <meta
+      name="description"
+      content="Sistema de gestão de obras e manutenç��o de piscinas da Leirisonda"
+    />
+
+    <!-- PWA Manifest -->
+    <link
+      rel="manifest"
+      href="/leirisonda-deploy/manifest.json"
+      crossorigin="use-credentials"
+    />
+
+    <!-- Main App Styles and Scripts -->
+    <script
+      type="module"
+      crossorigin
+      src="/leirisonda-deploy/assets/index-DnEsHg1H.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      crossorigin
+      href="/leirisonda-deploy/assets/index-DFdR-byQ.css"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <!-- Menu Styles -->
+    <link rel="stylesheet" href="/leirisonda-deploy/menu-modifications.css" />
+
+    <!-- Minimal initialization -->
+    <script>
+      console.log("Leirisonda system initialized");
+
+      // Service worker
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/leirisonda-deploy/sw.js");
+      }
+    </script>
+  </body>
+</html>
