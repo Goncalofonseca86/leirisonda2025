@@ -751,47 +751,70 @@ console.log("🚀 LEIRISONDA: Integração SPA React iniciada");
     overlay.appendChild(modal);
     document.body.appendChild(overlay);
 
-    // Funções do modal
-    window.checkPassword = function () {
-      const password = document.getElementById("settings-password").value;
-      if (password === SETTINGS_PASSWORD) {
-        document.getElementById("password-section").style.display = "none";
-        document.getElementById("settings-content").style.display = "block";
-      } else {
-        alert("❌ Password incorreta");
-      }
-    };
+    // Event listeners seguros para os botões
+    const passwordBtn = modal.querySelector("#leirisonda-password-btn");
+    const closeBtn = modal.querySelector("#leirisonda-close-btn");
+    const testYuriBtn = modal.querySelector("#leirisonda-test-yuri-btn");
+    const testFurosBtn = modal.querySelector("#leirisonda-test-furos-btn");
 
-    window.closeModal = function () {
-      overlay.remove();
-    };
+    if (passwordBtn) {
+      passwordBtn.addEventListener("click", function () {
+        const password = document.getElementById("settings-password").value;
+        if (password === SETTINGS_PASSWORD) {
+          document.getElementById("password-section").style.display = "none";
+          document.getElementById("settings-content").style.display = "block";
+        } else {
+          alert("❌ Password incorreta");
+        }
+      });
+    }
 
-    window.testYuri = function () {
-      const emailInput = document.querySelector('input[type="email"]');
-      const passwordInput = document.querySelector('input[type="password"]');
-
-      if (emailInput && passwordInput) {
-        emailInput.value = YURI_CREDENTIALS.email;
-        passwordInput.value = YURI_CREDENTIALS.password;
-
-        ["input", "change"].forEach((eventType) => {
-          emailInput.dispatchEvent(new Event(eventType, { bubbles: true }));
-          passwordInput.dispatchEvent(new Event(eventType, { bubbles: true }));
-        });
-
-        alert("✅ Credenciais do Yuri preenchidas");
+    if (closeBtn) {
+      closeBtn.addEventListener("click", function () {
         overlay.remove();
-      } else {
-        alert("❌ Campos de login não encontrados");
-      }
-    };
+      });
+    }
 
-    window.testFuros = function () {
-      const status = window.leirisondaFuros.status();
-      alert(
-        `💧 Status Furos:\n\nURL: ${status.url}\nSelects: ${status.selectsTotal}\nOpções Furo: ${status.furoOptions}\nSecção: ${status.sectionExists ? "Ativa" : "Inativa"}`,
-      );
-    };
+    if (testYuriBtn) {
+      testYuriBtn.addEventListener("click", function () {
+        const emailInput = document.querySelector('input[type="email"]');
+        const passwordInput = document.querySelector('input[type="password"]');
+
+        if (emailInput && passwordInput) {
+          emailInput.value = YURI_CREDENTIALS.email;
+          passwordInput.value = YURI_CREDENTIALS.password;
+
+          ["input", "change"].forEach((eventType) => {
+            emailInput.dispatchEvent(new Event(eventType, { bubbles: true }));
+            passwordInput.dispatchEvent(
+              new Event(eventType, { bubbles: true }),
+            );
+          });
+
+          alert("✅ Credenciais do Yuri preenchidas");
+          overlay.remove();
+        } else {
+          alert("❌ Campos de login não encontrados");
+        }
+      });
+    }
+
+    if (testFurosBtn) {
+      testFurosBtn.addEventListener("click", function () {
+        try {
+          if (window.leirisondaFuros && window.leirisondaFuros.status) {
+            const status = window.leirisondaFuros.status();
+            alert(
+              `💧 Status Furos:\n\nURL: ${status.url}\nSelects: ${status.selectsTotal}\nOpções Furo: ${status.furoOptions}\nSecção: ${status.sectionExists ? "Ativa" : "Inativa"}`,
+            );
+          } else {
+            alert("⚠️ Sistema de furos não inicializado");
+          }
+        } catch (e) {
+          alert("❌ Erro ao verificar status dos furos");
+        }
+      });
+    }
 
     overlay.addEventListener("click", (e) => {
       if (e.target === overlay) overlay.remove();
