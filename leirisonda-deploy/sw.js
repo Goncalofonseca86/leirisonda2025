@@ -1,9 +1,9 @@
 const CACHE_NAME = "leirisonda-v6-ultimate";
 const urlsToCache = [
   "/",
-  "/assets/index-DFdR-byQ.css",
-  "/assets/index-DnEsHg1H.js",
-  "/manifest.json",
+  "/leirisonda-deploy/assets/index-DFdR-byQ.css",
+  "/leirisonda-deploy/assets/index-DnEsHg1H.js",
+  "/leirisonda-deploy/manifest.json",
 ];
 
 // Flag to prevent logout during operations
