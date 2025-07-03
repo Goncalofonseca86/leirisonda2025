@@ -23,21 +23,31 @@ console.log("🔧 Sistema de correções ativo...");
     });
   }
 
-  // 2. ADICIONAR OPÇÃO "FURO DE ÁGUA" AO DROPDOWN TIPO DE TRABALHO
+  // 2. ADICIONAR OPÇÃO "FURO DE ÁGUA" - DETECÇÃO MELHORADA
   function addFuroOption() {
+    // Procurar por selects de forma mais ampla
     const selects = document.querySelectorAll("select");
 
     selects.forEach((select) => {
-      // Verificar se é o select de tipo de trabalho
+      const parentText = select.parentElement
+        ? select.parentElement.textContent
+        : "";
       const options = Array.from(select.options);
-      const hasWorkOptions = options.some(
-        (opt) =>
-          opt.text.toLowerCase().includes("piscina") ||
-          opt.text.toLowerCase().includes("manutenção"),
-      );
 
-      if (hasWorkOptions) {
-        // Verificar se já tem opção furo
+      // Verificar se é dropdown de tipo de trabalho (várias formas)
+      const isWorkTypeSelect =
+        parentText.toLowerCase().includes("tipo") ||
+        parentText.toLowerCase().includes("trabalho") ||
+        options.some(
+          (opt) =>
+            opt.text.toLowerCase().includes("piscina") ||
+            opt.text.toLowerCase().includes("manutenção") ||
+            opt.text.toLowerCase().includes("instalação") ||
+            opt.text.toLowerCase().includes("reparação"),
+        );
+
+      if (isWorkTypeSelect) {
+        // Verificar se já tem furo
         const hasFuro = options.some(
           (opt) =>
             opt.text.toLowerCase().includes("furo") ||
@@ -45,18 +55,30 @@ console.log("🔧 Sistema de correções ativo...");
         );
 
         if (!hasFuro) {
-          console.log("➕ Adicionando opção 'Furo de Água'");
+          console.log("➕ Adicionando 'Furo de Água' ao dropdown");
+
           const furoOption = document.createElement("option");
           furoOption.value = "furo_agua";
           furoOption.text = "Furo de Água";
           select.appendChild(furoOption);
 
-          // Adicionar listener para mostrar secção quando selecionado
-          select.addEventListener("change", function () {
+          // Event listener melhorado
+          const originalHandler = select.onchange;
+          select.onchange = function (e) {
+            if (originalHandler) originalHandler.call(this, e);
+
             if (this.value === "furo_agua") {
-              setTimeout(() => createWaterDrillingSection(), 500);
+              console.log("🎯 Furo de Água selecionado - criando secção");
+              setTimeout(() => createWaterDrillingSection(), 300);
             } else {
               removeWaterDrillingSection();
+            }
+          };
+
+          // Também addEventListener para garantir
+          select.addEventListener("change", function () {
+            if (this.value === "furo_agua") {
+              setTimeout(() => createWaterDrillingSection(), 300);
             }
           });
         }
