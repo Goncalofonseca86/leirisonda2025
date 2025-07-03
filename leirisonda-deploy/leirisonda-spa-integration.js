@@ -395,6 +395,23 @@ console.log("🚀 LEIRISONDA: Integração SPA React iniciada");
         select.setAttribute("data-leirisonda-processed", "true");
       }
     });
+
+    // Log final com estatísticas
+    const processedSelects = document.querySelectorAll(
+      'select[data-leirisonda-processed="true"]',
+    );
+    const furoOptions = document.querySelectorAll(
+      'option[data-leirisonda-furo="true"]',
+    );
+    console.log(
+      `📈 Resumo: ${processedSelects.length} selects processados, ${furoOptions.length} opções furo adicionadas`,
+    );
+
+    if (furoOptions.length === 0) {
+      console.log(
+        "⚠️ Nenhuma opção de furo foi adicionada. Critérios de detecção podem precisar ajuste.",
+      );
+    }
   }
 
   function setupWaterDrillingTriggers() {
