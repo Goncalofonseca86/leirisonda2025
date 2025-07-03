@@ -452,96 +452,124 @@ window.testNotification = function () {
 
 window.deleteAllData = function () {
   try {
-    console.log("🗑️ Iniciando eliminação de dados...");
+    console.log("🗑️ Iniciando análise completa do localStorage...");
+
+    // PRIMEIRO: Mostrar TODOS os dados existentes
+    const allKeys = Object.keys(localStorage);
+    console.log("📋 TODAS as chaves no localStorage:", allKeys);
+
+    let debugInfo = "🔍 DADOS ENCONTRADOS:\n\n";
+    allKeys.forEach((key) => {
+      const value = localStorage.getItem(key);
+      const preview =
+        value.length > 100 ? value.substring(0, 100) + "..." : value;
+      debugInfo += `${key}: ${preview}\n`;
+      console.log(`📦 ${key}:`, value);
+    });
+
+    // Mostrar numa caixa de diálogo
+    alert(debugInfo);
 
     if (
       !confirm(
-        "⚠️ ELIMINAR TODOS OS DADOS?\n\nObras, Manutenções e Piscinas!\n\nNÃO pode ser desfeito!",
+        "⚠️ ELIMINAR TODOS OS DADOS?\n\nViu a lista acima. Quer continuar?\n\nNÃO pode ser desfeito!",
       )
     ) {
       return;
     }
 
-    if (!confirm("🔥 CONFIRMAÇÃO FINAL!\n\nClique OK para ELIMINAR TUDO!")) {
+    if (
+      !confirm(
+        "🔥 CONFIRMAÇÃO FINAL!\n\nEsta ação elimina TUDO do localStorage!\n\nClique OK para ELIMINAR TUDO!",
+      )
+    ) {
       return;
     }
 
-    // Verificar TODAS as chaves no localStorage
-    console.log("📋 Verificando localStorage...");
-    const allKeys = Object.keys(localStorage);
-    console.log("Todas as chaves encontradas:", allKeys);
-
-    // Lista de possíveis chaves de dados
-    const possibleKeys = [
-      "leirisonda_works",
-      "leirisonda_maintenances",
-      "leirisonda_pools",
-      "works",
-      "maintenances",
-      "pools",
-      "users",
-      // Adicionar mais variações possíveis
-      "leirisonda-works",
-      "leirisonda-maintenances",
-      "leirisonda-pools",
-      "app-works",
-      "app-maintenances",
-      "app-pools",
-      "data-works",
-      "data-maintenances",
-      "data-pools",
-    ];
-
+    // ELIMINAÇÃO AGRESSIVA: Todas as chaves que possam ser da aplicação
     let deleted = 0;
     let foundKeys = [];
+    const keysToDelete = [];
 
-    // Verificar chaves conhecidas
-    possibleKeys.forEach((key) => {
-      if (localStorage.getItem(key)) {
-        console.log(`📦 Encontrada chave: ${key}`, localStorage.getItem(key));
-        localStorage.removeItem(key);
-        deleted++;
-        foundKeys.push(key);
-      }
-    });
-
-    // Verificar TODAS as chaves que possam conter dados da app
     allKeys.forEach((key) => {
-      if (
+      const value = localStorage.getItem(key);
+      const shouldDelete =
+        // Palavras-chave relacionadas com a aplicação
         key.toLowerCase().includes("work") ||
         key.toLowerCase().includes("maintenance") ||
         key.toLowerCase().includes("pool") ||
         key.toLowerCase().includes("leirisonda") ||
         key.toLowerCase().includes("obra") ||
-        key.toLowerCase().includes("piscina")
-      ) {
-        if (!foundKeys.includes(key)) {
-          console.log(
-            `🔍 Encontrada chave adicional: ${key}`,
-            localStorage.getItem(key),
-          );
-          localStorage.removeItem(key);
-          deleted++;
-          foundKeys.push(key);
-        }
+        key.toLowerCase().includes("piscina") ||
+        key.toLowerCase().includes("user") ||
+        key.toLowerCase().includes("auth") ||
+        key.toLowerCase().includes("login") ||
+        key.toLowerCase().includes("session") ||
+        // Valores que parecem arrays de dados
+        (value && value.startsWith("[") && value.includes("{")) ||
+        // Valores que parecem objetos de configuração
+        (value &&
+          value.startsWith("{") &&
+          (value.includes("name") ||
+            value.includes("email") ||
+            value.includes("id") ||
+            value.includes("data")));
+
+      if (shouldDelete) {
+        keysToDelete.push(key);
       }
     });
+
+    console.log("🎯 Chaves identificadas para eliminação:", keysToDelete);
+
+    // Confirmar chaves específicas
+    if (keysToDelete.length > 0) {
+      const keysList = keysToDelete.join("\n");
+      if (
+        !confirm(
+          `🔍 Encontradas ${keysToDelete.length} chaves para eliminar:\n\n${keysList}\n\nContinuar?`,
+        )
+      ) {
+        return;
+      }
+    }
+
+    // Eliminar cada chave identificada
+    keysToDelete.forEach((key) => {
+      console.log(`🗑️ Eliminando: ${key}`);
+      localStorage.removeItem(key);
+      deleted++;
+      foundKeys.push(key);
+    });
+
+    // Se não encontrou nada específico, oferecer para limpar TUDO
+    if (deleted === 0) {
+      if (
+        confirm(
+          "❓ Não foram encontrados dados específicos.\n\nLimpar COMPLETAMENTE o localStorage?\n\n⚠️ Isto remove TUDO, incluindo outras aplicações!",
+        )
+      ) {
+        localStorage.clear();
+        deleted = allKeys.length;
+        foundKeys = [...allKeys];
+        console.log("🧹 localStorage completamente limpo!");
+      }
+    }
 
     console.log(`✅ Total eliminado: ${deleted} chaves`);
     console.log("🗑️ Chaves eliminadas:", foundKeys);
 
     if (deleted > 0) {
-      showInfo(
-        "delete-info",
-        `✅ ${deleted} tipos eliminados!\n${foundKeys.join(", ")}`,
-        "green",
-      );
+      showInfo("delete-info", `✅ ${deleted} chaves eliminadas!`, "green");
+
+      // Mostrar resultado detalhado
+      setTimeout(() => {
+        alert(
+          `✅ ELIMINAÇÃO CONCLUÍDA!\n\n📊 ${deleted} chaves eliminadas:\n${foundKeys.join("\n")}`,
+        );
+      }, 1000);
     } else {
-      showInfo(
-        "delete-info",
-        "ℹ️ Nenhum dado encontrado para eliminar",
-        "orange",
-      );
+      showInfo("delete-info", "ℹ️ Nenhum dado foi eliminado", "orange");
     }
 
     // Recarregar contadores
@@ -551,7 +579,7 @@ window.deleteAllData = function () {
     try {
       if ("Notification" in window && Notification.permission === "granted") {
         new Notification("Leirisonda", {
-          body: `${deleted} tipos de dados eliminados!`,
+          body: `${deleted} chaves eliminadas do localStorage!`,
           icon: "/leirisonda-logo.svg",
           tag: "delete-notification",
         });
@@ -560,14 +588,10 @@ window.deleteAllData = function () {
       console.log("Notificação não enviada:", notifError.message);
     }
 
-    // Forçar refresh da página após 2 segundos se dados foram eliminados
+    // Forçar refresh da página
     if (deleted > 0) {
       setTimeout(() => {
-        if (
-          confirm(
-            "🔄 Dados eliminados! Atualizar página para refletir mudanças?",
-          )
-        ) {
+        if (confirm("🔄 Dados eliminados! Atualizar página agora?")) {
           window.location.reload();
         }
       }, 2000);
