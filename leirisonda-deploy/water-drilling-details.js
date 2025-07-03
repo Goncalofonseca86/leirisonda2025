@@ -871,6 +871,14 @@ function initWaterDrilling() {
   console.log("💧 Inicializando sistema Furo de Água...");
   console.log("📍 URL atual:", window.location.pathname);
   console.log("📄 Título da página:", document.title);
+  console.log("🔍 Texto da página contém:", {
+    novaObra: document.body.textContent.includes("Nova Obra"),
+    criarObra: document.body.textContent.includes("Criar Obra"),
+    createWork: document.body.textContent.includes("Create Work"),
+    work: document.body.textContent.includes("work"),
+    obra: document.body.textContent.includes("obra"),
+    formulario: !!document.querySelector("form"),
+  });
 
   // Verificar se estamos numa página de criação ou edição de obra
   const isCreateWorkPage =
@@ -879,32 +887,50 @@ function initWaterDrilling() {
     window.location.pathname.includes("/new") ||
     window.location.pathname.includes("/work") ||
     document.querySelector("form") ||
-    document.body.textContent.includes("Nova Obra") ||
-    document.body.textContent.includes("Criar Obra") ||
-    document.body.textContent.includes("Create Work") ||
-    document.body.textContent.includes("Edit Work");
+    document.body.textContent.toLowerCase().includes("nova obra") ||
+    document.body.textContent.toLowerCase().includes("criar obra") ||
+    document.body.textContent.toLowerCase().includes("create work") ||
+    document.body.textContent.toLowerCase().includes("edit work") ||
+    document.body.textContent.toLowerCase().includes("nova manutenção") ||
+    // Detecção mais ampla
+    document.title.toLowerCase().includes("obra") ||
+    document.title.toLowerCase().includes("work") ||
+    window.location.hash.includes("work") ||
+    window.location.hash.includes("obra");
+
+  console.log("🎯 É página de criação/edição de obra?", isCreateWorkPage);
 
   if (isCreateWorkPage) {
     console.log("💧 Página de criação/edição de obra detectada");
 
-    // Esperar um pouco para a página carregar
+    // Monitorar imediatamente
+    monitorWorkTypeField();
+
+    // Esperar um pouco para a página carregar completamente
+    setTimeout(() => {
+      monitorWorkTypeField();
+    }, 1000);
+
+    setTimeout(() => {
+      monitorWorkTypeField();
+    }, 3000);
+
+    setTimeout(() => {
+      monitorWorkTypeField();
+    }, 5000);
+
+    // Verificar periodicamente para SPAs
+    setInterval(() => {
+      monitorWorkTypeField();
+    }, 10000);
+  } else {
+    console.log(
+      "ℹ️ Não é uma página de obra detectada. Tentando monitorar mesmo assim...",
+    );
+    // Tentar monitorar mesmo assim, pode ser uma SPA
     setTimeout(() => {
       monitorWorkTypeField();
     }, 2000);
-
-    // Verificar periodicamente
-    setInterval(() => {
-      if (
-        !document.querySelector('select[name*="tipo"], select[name*="type"]') &&
-        isCreateWorkPage
-      ) {
-        monitorWorkTypeField();
-      }
-    }, 5000);
-  } else {
-    console.log(
-      "ℹ️ Não é uma página de obra. Para testar, use: testWaterDrilling()",
-    );
   }
 
   // Verificar páginas de obra existente
