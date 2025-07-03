@@ -177,21 +177,20 @@
         const path = window.location.pathname;
         console.log("📍 Página detectada:", path);
 
-        // Scripts básicos que carregam em todas as páginas (exceto login)
-        const scriptsBasicos = [];
+        if (path === "/login") {
+          console.log("🔓 Página de login - nenhum script carregado");
+          return; // Não carregar nada no login
+        }
 
-        // Scripts para páginas de obra (criar, editar, listar)
-        const scriptsObras = [
+        // TODOS OS SCRIPTS ESSENCIAIS (excepto login)
+        console.log("📋 Carregando todos os scripts essenciais");
+        const scriptsParaCarregar = [
           "/nuclear-error-suppressor.js",
           "/block-error-screen.js",
           "/prevent-login-redirect.js",
           "/stay-on-work-page.js",
           "/water-drilling-details.js",
           "/furo-directo.js",
-        ];
-
-        // Scripts para todas as páginas autenticadas (depois do login)
-        const scriptsAutenticados = [
           "/force-button.js",
           "/simple-work-delete.js",
           "/sync-fix.js",
@@ -200,31 +199,6 @@
           "/error-recovery.js",
           "/loading-fix.js",
         ];
-
-        let scriptsParaCarregar = [];
-
-        if (path === "/login") {
-          console.log("🔓 Página de login - nenhum script carregado");
-          return; // Não carregar nada no login
-        }
-
-        // Se é página de obra, carregar scripts específicos
-        if (
-          path.includes("/work") ||
-          path.includes("/create") ||
-          path === "/works"
-        ) {
-          console.log("📋 Página de obras detectada");
-          scriptsParaCarregar = [
-            ...scriptsBasicos,
-            ...scriptsObras,
-            ...scriptsAutenticados,
-          ];
-        } else {
-          // Outras páginas autenticadas
-          console.log("🔐 Página autenticada detectada");
-          scriptsParaCarregar = [...scriptsBasicos, ...scriptsAutenticados];
-        }
 
         // Verificar e carregar scripts com segurança
         function carregarScriptSeguro(src) {
