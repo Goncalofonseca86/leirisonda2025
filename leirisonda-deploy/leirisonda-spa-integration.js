@@ -472,38 +472,39 @@ console.log("🚀 LEIRISONDA: Integração SPA React iniciada");
         <div style="background: rgba(255, 255, 255, 0.8); padding: 15px; border-radius: 10px;">
           <h4 style="color: #0c4a6e; margin: 0 0 12px 0; font-size: 16px;">⚡ Bomba</h4>
 
-          <div style="margin-bottom: 12px;">
-            <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 6px; font-size: 14px;">
-              Modelo da Bomba
-            </label>
-            <input type="text" name="furo_modelo_bomba" placeholder="Ex: Grundfos SQ3-105"
-                   style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
-          </div>
+            <div style="margin-bottom: 12px;">
+              <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 6px; font-size: 14px;">
+                Modelo da Bomba
+              </label>
+              <input type="text" name="leirisonda_furo_modelo_bomba" placeholder="Ex: Grundfos SQ3-105"
+                     data-leirisonda-field="true"
+                     style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+            </div>
 
-          <div style="margin-bottom: 12px;">
-            <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 6px; font-size: 14px;">
-              Potência (HP)
-            </label>
-            <select name="furo_potencia" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box; background: white;">
-              <option value="">Selecionar...</option>
-              <option value="0.5">0.5 HP</option>
-              <option value="1">1 HP</option>
-              <option value="1.5">1.5 HP</option>
-              <option value="2">2 HP</option>
-              <option value="3">3 HP</option>
-            </select>
-          </div>
+            <div style="margin-bottom: 12px;">
+              <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 6px; font-size: 14px;">
+                Potência (HP)
+              </label>
+              <select name="leirisonda_furo_potencia" data-leirisonda-field="true" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box; background: white;">
+                <option value="">Selecionar...</option>
+                <option value="0.5">0.5 HP</option>
+                <option value="1">1 HP</option>
+                <option value="1.5">1.5 HP</option>
+                <option value="2">2 HP</option>
+                <option value="3">3 HP</option>
+              </select>
+            </div>
 
-          <div>
-            <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 6px; font-size: 14px;">
-              Voltagem
-            </label>
-            <select name="furo_voltagem" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box; background: white;">
-              <option value="">Selecionar...</option>
-              <option value="230V">230V</option>
-              <option value="400V">400V</option>
-            </select>
-          </div>
+            <div>
+              <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 6px; font-size: 14px;">
+                Voltagem
+              </label>
+              <select name="leirisonda_furo_voltagem" data-leirisonda-field="true" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box; background: white;">
+                <option value="">Selecionar...</option>
+                <option value="230V">230V</option>
+                <option value="400V">400V</option>
+              </select>
+            </div>
         </div>
       </div>
 
