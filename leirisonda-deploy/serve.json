@@ -1,0 +1,18 @@
+{
+  "rewrites": [
+    { "source": "/admin.html", "destination": "/admin.html" },
+    { "source": "/test-admin.html", "destination": "/test-admin.html" },
+    { "source": "**", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "**/*.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
+      ]
+    }
+  ]
+}
