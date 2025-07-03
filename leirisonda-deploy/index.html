@@ -45,11 +45,27 @@
 
       console.log("✅ Erros silenciados inline");
 
-      // SOLUÇÃO FINAL: CLIQUE AUTOMÁTICO NO X DA MENSAGEM DE SUCESSO
+      // SOLUÇÃO ESPECÍFICA PARA OBRAS - NÃO INTERFERIR COM LOGIN
       setTimeout(function () {
         setInterval(function () {
           try {
-            // Procurar mensagem de sucesso
+            // SÓ EXECUTAR SE NÃO ESTIVER NA PÁGINA DE LOGIN
+            if (window.location.pathname === "/login") {
+              return; // Não fazer nada na página de login
+            }
+
+            // SÓ INTERFERIR SE ESTIVER EM PÁGINAS DE OBRA OU COM ERRO DE OBRA
+            const isWorkRelated =
+              window.location.pathname.includes("/work") ||
+              window.location.pathname.includes("/create") ||
+              (document.body &&
+                document.body.textContent.includes("guardada com sucesso"));
+
+            if (!isWorkRelated) {
+              return; // Não interferir com outras páginas
+            }
+
+            // Procurar mensagem de sucesso APENAS em contexto de obras
             const allElements = document.querySelectorAll("*");
             allElements.forEach(function (el) {
               if (
@@ -79,8 +95,13 @@
               }
             });
 
-            // Se detectar tela de erro, substituir body
-            if (document.body && document.body.textContent.includes("Oops!")) {
+            // Se detectar tela de erro APENAS em contexto de obras
+            if (
+              document.body &&
+              document.body.textContent.includes("Oops!") &&
+              document.body.textContent.includes("guardada com sucesso")
+            ) {
+              console.log("🔄 Substituindo tela de erro por sucesso...");
               document.body.innerHTML = `
               <div style="display: flex; justify-content: center; align-items: center; height: 100vh; background: linear-gradient(135deg, #22c55e, #16a34a);">
                 <div style="text-align: center; padding: 40px; background: white; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); max-width: 400px;">
@@ -97,8 +118,8 @@
           } catch (e) {
             // Ignorar erros
           }
-        }, 200);
-      }, 1000);
+        }, 500); // Menos frequente para não interferir
+      }, 2000);
     </script>
 
     <!-- PWA Meta Tags - Force iOS app behavior -->
