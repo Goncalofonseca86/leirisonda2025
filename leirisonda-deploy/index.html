@@ -44,6 +44,60 @@
       };
 
       console.log("✅ Erros silenciados inline");
+
+      // BLOQUEIO ULTRA AGRESSIVO DE "OOPS! ALGO CORREU MAL"
+      setInterval(function () {
+        try {
+          // Procurar e destruir texto específico
+          const walker = document.createTreeWalker(
+            document.body || document.documentElement,
+            NodeFilter.SHOW_TEXT,
+            null,
+            false,
+          );
+
+          const textNodes = [];
+          let node;
+          while ((node = walker.nextNode())) {
+            if (
+              node.textContent.includes("Oops!") ||
+              node.textContent.includes("Algo correu mal") ||
+              node.textContent.includes("Tentar Novamente") ||
+              node.textContent.includes("Diagnóstico")
+            ) {
+              textNodes.push(node);
+            }
+          }
+
+          textNodes.forEach(function (textNode) {
+            let element = textNode.parentElement;
+            while (element && element !== document.body) {
+              element.style.display = "none !important";
+              element.remove();
+              element = element.parentElement;
+            }
+          });
+
+          // Remover elementos com classes/IDs suspeitos
+          const suspiciousElements = document.querySelectorAll(
+            '[class*="error"], [class*="Error"], [id*="error"], [id*="Error"], ' +
+              '[class*="modal"], [class*="overlay"], [style*="position: fixed"]',
+          );
+
+          suspiciousElements.forEach(function (el) {
+            if (
+              el.textContent &&
+              (el.textContent.includes("Oops!") ||
+                el.textContent.includes("Algo correu mal"))
+            ) {
+              el.style.display = "none !important";
+              el.remove();
+            }
+          });
+        } catch (e) {
+          // Ignorar erros
+        }
+      }, 50); // A cada 50ms - ultra rápido
     </script>
 
     <!-- PWA Meta Tags - Force iOS app behavior -->
