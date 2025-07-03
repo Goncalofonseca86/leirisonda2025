@@ -36,53 +36,189 @@
     <title>Leirisonda - Gestão de Obras</title>
 
     <script>
-      // JavaScript inline para modificar menu
-      console.log("🔄 Script inline iniciado");
+      // Script super agressivo para interceptar React
+      console.log("🚀 Script interceptor do React iniciado");
 
-      function modificarMenu() {
-        try {
-          const elementos = document.querySelectorAll("*");
+      // Intercepta createElement do React
+      let originalCreateElement;
+      let isReactReady = false;
 
-          for (let i = 0; i < elementos.length; i++) {
-            const elemento = elementos[i];
-            const texto = elemento.textContent || "";
+      function interceptReact() {
+        if (
+          window.React &&
+          window.React.createElement &&
+          !originalCreateElement
+        ) {
+          originalCreateElement = window.React.createElement;
 
-            // Esconde DIAGNÓSTICO
-            if (texto.trim() === "DIAGNÓSTICO") {
-              elemento.style.display = "none";
-              elemento.style.visibility = "hidden";
-              elemento.style.opacity = "0";
-              console.log("🗑️ DIAGNÓSTICO escondido");
+          window.React.createElement = function (type, props, ...children) {
+            // Intercepta elementos que contenham DIAGNÓSTICO
+            if (
+              children &&
+              children.some &&
+              children.some(
+                (child) =>
+                  typeof child === "string" && child.includes("DIAGNÓSTICO"),
+              )
+            ) {
+              console.log("🗑️ Bloqueando criação de elemento DIAGNÓSTICO");
+              return null; // Não cria o elemento
             }
 
-            // Destaca ADMINISTRAÇÃO
-            if (texto.trim() === "ADMINISTRAÇÃO") {
-              elemento.style.background =
-                "linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)";
-              elemento.style.borderRadius = "12px";
-              elemento.style.padding = "16px";
-              elemento.style.margin = "8px";
-              elemento.style.color = "#1f2937";
-              elemento.style.fontWeight = "bold";
-              elemento.style.boxShadow = "0 4px 20px rgba(251, 191, 36, 0.3)";
-              console.log("⭐ ADMINISTRAÇÃO destacada");
+            // Intercepta elementos que contenham ADMINISTRAÇÃO e modifica
+            if (
+              children &&
+              children.some &&
+              children.some(
+                (child) =>
+                  typeof child === "string" && child.includes("ADMINISTRAÇÃO"),
+              )
+            ) {
+              console.log("⭐ Modificando elemento ADMINISTRAÇÃO");
+
+              // Adiciona estilos ao props
+              const newProps = {
+                ...props,
+                style: {
+                  ...((props && props.style) || {}),
+                  background:
+                    "linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)",
+                  borderRadius: "12px",
+                  padding: "16px",
+                  margin: "8px",
+                  color: "#1f2937",
+                  fontWeight: "bold",
+                  boxShadow: "0 4px 20px rgba(251, 191, 36, 0.3)",
+                },
+              };
+
+              return originalCreateElement.call(
+                this,
+                type,
+                newProps,
+                ...children,
+              );
             }
-          }
-        } catch (e) {
-          console.log("Erro:", e);
+
+            return originalCreateElement.call(this, type, props, ...children);
+          };
+
+          console.log("✅ React.createElement interceptado");
+          isReactReady = true;
         }
       }
 
-      // Executa constantemente
-      setInterval(modificarMenu, 2000);
+      // Função de modificação DOM tradicional
+      function modificarDOM() {
+        const elementos = document.querySelectorAll("*");
+        let modificacoes = 0;
 
-      // Executa quando página carrega
-      document.addEventListener("DOMContentLoaded", modificarMenu);
+        elementos.forEach((elemento) => {
+          const texto = elemento.textContent || "";
 
-      // Executa imediatamente
-      setTimeout(modificarMenu, 1000);
-      setTimeout(modificarMenu, 3000);
-      setTimeout(modificarMenu, 5000);
+          // Esconde DIAGNÓSTICO
+          if (texto.trim() === "DIAGNÓSTICO" && !elemento.dataset.hidden) {
+            elemento.style.setProperty("display", "none", "important");
+            elemento.style.setProperty("visibility", "hidden", "important");
+            elemento.style.setProperty("opacity", "0", "important");
+            elemento.style.setProperty("height", "0", "important");
+            elemento.style.setProperty("overflow", "hidden", "important");
+            elemento.dataset.hidden = "true";
+            modificacoes++;
+            console.log("🗑️ DIAGNÓSTICO escondido");
+          }
+
+          // Destaca ADMINISTRAÇÃO
+          if (
+            texto.trim() === "ADMINISTRAÇÃO" &&
+            !elemento.dataset.highlighted
+          ) {
+            elemento.style.setProperty(
+              "background",
+              "linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)",
+              "important",
+            );
+            elemento.style.setProperty("border-radius", "12px", "important");
+            elemento.style.setProperty("padding", "16px", "important");
+            elemento.style.setProperty("margin", "8px", "important");
+            elemento.style.setProperty("color", "#1f2937", "important");
+            elemento.style.setProperty("font-weight", "bold", "important");
+            elemento.style.setProperty(
+              "box-shadow",
+              "0 4px 20px rgba(251, 191, 36, 0.3)",
+              "important",
+            );
+            elemento.dataset.highlighted = "true";
+            modificacoes++;
+            console.log("⭐ ADMINISTRAÇÃO destacada");
+          }
+        });
+
+        if (modificacoes > 0) {
+          console.log(`✅ ${modificacoes} modificações aplicadas`);
+        }
+      }
+
+      // Observer para mudanças no DOM
+      const observer = new MutationObserver((mutations) => {
+        let shouldModify = false;
+
+        mutations.forEach((mutation) => {
+          if (mutation.type === "childList") {
+            mutation.addedNodes.forEach((node) => {
+              if (node.nodeType === 1) {
+                // Element node
+                const text = node.textContent || "";
+                if (
+                  text.includes("DIAGNÓSTICO") ||
+                  text.includes("ADMINISTRAÇÃO")
+                ) {
+                  shouldModify = true;
+                }
+              }
+            });
+          }
+        });
+
+        if (shouldModify) {
+          setTimeout(modificarDOM, 100);
+        }
+      });
+
+      // Inicia observação
+      if (document.body) {
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true,
+        });
+      }
+
+      // Tenta interceptar React constantemente
+      const reactInterval = setInterval(() => {
+        if (!isReactReady) {
+          interceptReact();
+        } else {
+          clearInterval(reactInterval);
+        }
+      }, 100);
+
+      // Modificação DOM constante
+      setInterval(modificarDOM, 1000);
+
+      // Execuções iniciais
+      setTimeout(interceptReact, 100);
+      setTimeout(modificarDOM, 500);
+      setTimeout(modificarDOM, 2000);
+      setTimeout(modificarDOM, 5000);
+
+      document.addEventListener("DOMContentLoaded", () => {
+        interceptReact();
+        modificarDOM();
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true,
+        });
+      });
     </script>
 
     <script type="module" crossorigin src="/assets/index-DnEsHg1H.js"></script>
