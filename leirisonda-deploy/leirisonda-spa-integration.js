@@ -281,10 +281,37 @@ console.log("🚀 LEIRISONDA: Integração SPA React iniciada");
 
     selects.forEach((select, index) => {
       const options = Array.from(select.options);
-      const selectText = select.outerHTML.substring(0, 100);
       const parentElement =
         select.closest("div, label, fieldset") || select.parentElement;
       const parentText = parentElement?.textContent || "";
+
+      // Detectar label ANTES de usar nas logs
+      const labelElement =
+        document.querySelector(`label[for="${select.id}"]`) ||
+        select.closest("label") ||
+        parentElement?.querySelector("label");
+      const labelText = labelElement?.textContent || "";
+
+      // Detectar se é o dropdown específico de tipo de trabalho REAL
+      const isWorkTypeSelect =
+        // 🎯 Campo exato real: id="type" com label "Tipo de Trabalho *"
+        (select.id === "type" && labelText.includes("Tipo de Trabalho")) ||
+        // 🎯 Opções exatas reais: Piscina, Manutenção, Avaria, Montagem
+        (options.length >= 4 &&
+          options.some((opt) => opt.text === "Piscina") &&
+          options.some((opt) => opt.text === "Manutenção") &&
+          options.some((opt) => opt.text === "Avaria") &&
+          options.some((opt) => opt.text === "Montagem")) ||
+        // 🔄 Fallback: critérios anteriores como backup
+        labelText.toLowerCase().includes("tipo de trabalho") ||
+        (select.id?.toLowerCase().includes("type") &&
+          parentText.toLowerCase().includes("tipo")) ||
+        (options.length > 1 &&
+          options.some(
+            (opt) =>
+              opt.text.toLowerCase().includes("piscina") ||
+              opt.text.toLowerCase().includes("manutenção"),
+          ));
 
       console.log(`🔍 Select ${index + 1}:`, {
         name: select.name,
@@ -296,52 +323,6 @@ console.log("🚀 LEIRISONDA: Integração SPA React iniciada");
         optionsCount: options.length,
         isWorkType: isWorkTypeSelect,
       });
-
-      // Detectar se é um dropdown de tipo de trabalho - versão melhorada
-      const labelElement =
-        document.querySelector(`label[for="${select.id}"]`) ||
-        select.closest("label") ||
-        parentElement?.querySelector("label");
-      const labelText = labelElement?.textContent || "";
-
-      const isWorkTypeSelect =
-        // Por nome do campo
-        select.name?.toLowerCase().includes("type") ||
-        select.name?.toLowerCase().includes("tipo") ||
-        select.name?.toLowerCase().includes("categoria") ||
-        select.name?.toLowerCase().includes("servico") ||
-        select.name?.toLowerCase().includes("trabalho") ||
-        // Por ID do campo
-        select.id?.toLowerCase().includes("type") ||
-        select.id?.toLowerCase().includes("tipo") ||
-        select.id?.toLowerCase().includes("categoria") ||
-        // Por label do campo
-        labelText.toLowerCase().includes("tipo") ||
-        labelText.toLowerCase().includes("trabalho") ||
-        labelText.toLowerCase().includes("serviço") ||
-        labelText.toLowerCase().includes("categoria") ||
-        labelText.toLowerCase().includes("type") ||
-        // Por contexto do parent
-        parentText.toLowerCase().includes("tipo de trabalho") ||
-        parentText.toLowerCase().includes("tipo de serviço") ||
-        parentText.toLowerCase().includes("categoria") ||
-        parentText.toLowerCase().includes("tipo") ||
-        parentText.toLowerCase().includes("trabalho") ||
-        parentText.toLowerCase().includes("type") ||
-        // Por opções existentes - critério mais rigoroso
-        (options.length > 1 &&
-          options.some(
-            (opt) =>
-              opt.text.toLowerCase().includes("piscina") ||
-              opt.text.toLowerCase().includes("manutenção") ||
-              opt.text.toLowerCase().includes("instalação") ||
-              opt.text.toLowerCase().includes("reparação") ||
-              opt.text.toLowerCase().includes("construção") ||
-              opt.text.toLowerCase().includes("limpeza") ||
-              opt.text.toLowerCase().includes("pool") ||
-              opt.text.toLowerCase().includes("maintenance") ||
-              opt.text.toLowerCase().includes("cleaning"),
-          ));
 
       if (isWorkTypeSelect) {
         // Verificar se já tem opção de furo
