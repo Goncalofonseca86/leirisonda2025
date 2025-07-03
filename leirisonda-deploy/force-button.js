@@ -333,6 +333,9 @@ function showModal() {
         <button onclick="deleteLocalData()" style="width: 100%; padding: 10px; background: #fd7e14; color: white; border: none; border-radius: 6px; cursor: pointer; margin-bottom: 8px; font-weight: bold;">
           🗑️ ELIMINAR LOCAIS
         </button>
+        <button onclick="clearSavedCredentials()" style="width: 100%; padding: 10px; background: #ffc107; color: #000; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 8px;">
+          🔐 LIMPAR CREDENCIAIS GUARDADAS
+        </button>
         <button onclick="deleteWorkDataOnly()" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
           🗑️ ELIMINAR OBRAS/PISCINAS/MANUTENÇÕES
         </button>
@@ -384,7 +387,7 @@ window.activateNotifications = function () {
     }
 
     if (Notification.permission === "granted") {
-      showInfo("notif-info", "✅ Já est��o ativadas!", "green");
+      showInfo("notif-info", "✅ Já estão ativadas!", "green");
       return;
     }
 
@@ -1062,7 +1065,7 @@ function deleteFirebaseDataDirect() {
       showInfo("delete-info", "📜 Script Firebase executado", "blue");
     } catch (evalError) {
       console.log(
-        "⚠️ Não foi possível executar script direto:",
+        "���️ Não foi possível executar script direto:",
         evalError.message,
       );
 
@@ -1359,7 +1362,7 @@ window.comprehensiveDelete = function () {
 
     if (
       !confirm(
-        "💥 ELIMINAÇÃO TOTAL DE TUDO!\n\nVou atacar TODAS as formas de armazenamento:\n✅ localStorage\n✅ sessionStorage\n✅ IndexedDB\n✅ Firebase\n✅ Cookies\n✅ Cache\n\n��� IRREVERSÍVEL!",
+        "💥 ELIMINAÇÃO TOTAL DE TUDO!\n\nVou atacar TODAS as formas de armazenamento:\n✅ localStorage\n✅ sessionStorage\n✅ IndexedDB\n✅ Firebase\n✅ Cookies\n✅ Cache\n\n❌ IRREVERSÍVEL!",
       )
     ) {
       return;
@@ -2118,7 +2121,7 @@ window.deleteWorkData = function () {
           const targetedDiv = document.getElementById("targeted-deletion");
           if (targetedDiv) {
             targetedDiv.innerHTML = `
-              <h3 style="color: #28a745;">🎉 Eliminação Concluída!</h3>
+              <h3 style="color: #28a745;">��� Eliminação Concluída!</h3>
               <div style="text-align: left; margin: 15px 0; font-size: 13px;">
                 ✅ ${localDeleted} tipos de dados locais eliminados<br>
                 ✅ Comandos Firebase enviados para obras/manutenções/piscinas<br>

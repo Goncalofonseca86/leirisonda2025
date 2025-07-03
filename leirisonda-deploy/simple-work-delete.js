@@ -108,3 +108,78 @@ window.deleteWorkDataOnly = function () {
     alert(`❌ ERRO: ${error.message}`);
   }
 };
+
+// Função para limpar credenciais auto-preenchidas
+window.clearSavedCredentials = function () {
+  try {
+    console.log("🔐 Limpando credenciais guardadas");
+
+    // Limpar auto-complete e dados salvos de formulários
+    const forms = document.querySelectorAll("form");
+    const inputs = document.querySelectorAll(
+      'input[type="email"], input[type="password"], input[type="text"]',
+    );
+
+    // Limpar valores dos inputs
+    inputs.forEach((input) => {
+      input.value = "";
+      input.setAttribute("autocomplete", "off");
+      input.setAttribute("data-form-type", "other");
+    });
+
+    // Limpar dados guardados específicos
+    const credentialKeys = [
+      "email",
+      "password",
+      "username",
+      "user",
+      "login",
+      "savedCredentials",
+      "userCredentials",
+      "loginData",
+      "leirisonda_user",
+      "leirisonda_login",
+      "leirisonda_credentials",
+    ];
+
+    credentialKeys.forEach((key) => {
+      localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
+    });
+
+    // Forçar reload da página para limpar cache de formulários
+    setTimeout(() => {
+      window.location.reload();
+    }, 100);
+
+    console.log("✅ Credenciais limpas");
+  } catch (error) {
+    console.error("❌ Erro ao limpar credenciais:", error);
+  }
+};
+
+// Auto-executar limpeza se URL tiver parâmetro específico
+if (
+  window.location.search.includes("clear=credentials") ||
+  window.location.hash.includes("clear")
+) {
+  console.log(
+    "🔐 URL indica limpeza de credenciais - executando automaticamente",
+  );
+  setTimeout(clearSavedCredentials, 1000);
+}
+
+// Prevenir auto-preenchimento automático
+document.addEventListener("DOMContentLoaded", function () {
+  setTimeout(() => {
+    // Adicionar atributos para prevenir auto-complete
+    const inputs = document.querySelectorAll(
+      'input[type="email"], input[type="password"]',
+    );
+    inputs.forEach((input) => {
+      input.setAttribute("autocomplete", "new-password");
+      input.setAttribute("data-lpignore", "true");
+      input.setAttribute("data-form-type", "other");
+    });
+  }, 500);
+});
