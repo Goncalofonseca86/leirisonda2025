@@ -2,21 +2,9 @@
 <html lang="pt">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/leirisonda-logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <!-- Minimal error suppression -->
-    <script>
-      // Basic error suppression for production deployment
-      const originalError = console.error;
-      console.error = function (...args) {
-        const msg = args.join(" ");
-        if (msg.includes("SYNC") || msg.includes("Firebase")) {
-          return;
-        }
-        return originalError.apply(console, args);
-      };
-    </script>
+    <title>Leirisonda - Gestão de Obras</title>
+    <link rel="icon" type="image/svg+xml" href="/leirisonda-logo.svg" />
 
     <!-- PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -31,10 +19,6 @@
       name="description"
       content="Sistema de gestão de obras e manutenção de piscinas da Leirisonda"
     />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-touch-fullscreen" content="yes" />
-    <meta name="format-detection" content="telephone=no" />
-    <meta name="msapplication-tap-highlight" content="no" />
 
     <!-- PWA Manifest -->
     <link
@@ -43,11 +27,7 @@
       crossorigin="use-credentials"
     />
 
-    <!-- iOS Splash Screens -->
-    <link rel="apple-touch-startup-image" href="/apple-splash-2796-1290.jpg" />
-
-    <title>Leirisonda - Gestão de Obras</title>
-
+    <!-- Main App Styles and Scripts -->
     <script
       type="module"
       crossorigin
@@ -62,16 +42,14 @@
   <body>
     <div id="root"></div>
 
-    <!-- CSS para modificações do menu -->
+    <!-- Menu Styles -->
     <link rel="stylesheet" href="/leirisonda-deploy/menu-modifications.css" />
 
-    <!-- Leirisonda system -->
+    <!-- Minimal initialization -->
     <script>
-      console.log("Leirisonda system ready");
-    </script>
+      console.log("Leirisonda system initialized");
 
-    <script>
-      // Service worker apenas
+      // Service worker
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("/leirisonda-deploy/sw.js");
       }
