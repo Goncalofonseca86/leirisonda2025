@@ -333,8 +333,8 @@ function showModal() {
         <button onclick="deleteLocalData()" style="width: 100%; padding: 10px; background: #fd7e14; color: white; border: none; border-radius: 6px; cursor: pointer; margin-bottom: 8px; font-weight: bold;">
           🗑️ ELIMINAR LOCAIS
         </button>
-        <button onclick="debugAndDelete()" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
-          🔍 DEBUG + ELIMINAR FORÇADO
+        <button onclick="comprehensiveDelete()" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+          💥 ELIMINAÇÃO TOTAL (TUDO)
         </button>
         <div id="delete-info" style="margin-top: 8px; font-size: 13px; display: none;"></div>
       </div>
@@ -856,7 +856,7 @@ window.deleteLocalData = function () {
 
         if (
           confirm(
-            `⚠️ Ainda restam ${finalKeys.length} chaves:\n${finalKeys.join("\n")}\n\nTentar eliminar novamente?`,
+            `⚠��� Ainda restam ${finalKeys.length} chaves:\n${finalKeys.join("\n")}\n\nTentar eliminar novamente?`,
           )
         ) {
           // Tentar eliminar as restantes uma vez mais
@@ -959,7 +959,7 @@ window.deleteAllDataIncludingFirebase = function () {
   }
 };
 
-// Fun��ão para eliminar dados do Firebase através da API da aplicação
+// Função para eliminar dados do Firebase através da API da aplicação
 function deleteFirebaseDataThroughAPI() {
   try {
     console.log("🎯 Tentando eliminar através da API da aplicação...");
@@ -983,7 +983,7 @@ function deleteFirebaseDataThroughAPI() {
         window.hr
           .deleteAllWorks()
           .then(() => {
-            console.log("✅ Obras do Firebase eliminadas");
+            console.log("��� Obras do Firebase eliminadas");
           })
           .catch((e) => {
             console.error("❌ Erro ao eliminar obras:", e);
@@ -1349,6 +1349,318 @@ window.forceDeleteRemaining = function () {
   } catch (error) {
     console.error("💥 Erro na eliminação forçada:", error);
     alert(`❌ Erro: ${error.message}`);
+  }
+};
+
+// Função de eliminação TOTAL - ataca TODOS os tipos de armazenamento
+window.comprehensiveDelete = function () {
+  try {
+    console.log("💥 ELIMINAÇÃO TOTAL INICIADA");
+
+    if (
+      !confirm(
+        "💥 ELIMINAÇÃO TOTAL DE TUDO!\n\nVou atacar TODAS as formas de armazenamento:\n✅ localStorage\n✅ sessionStorage\n✅ IndexedDB\n✅ Firebase\n✅ Cookies\n✅ Cache\n\n❌ IRREVERSÍVEL!",
+      )
+    ) {
+      return;
+    }
+
+    if (
+      !confirm(
+        "🔥 ÚLTIMA CONFIRMAÇÃO!\n\nVou eliminar ABSOLUTAMENTE TUDO!\n\nISTO VAI DESTRUIR TODOS OS DADOS!\n\nTens certeza?",
+      )
+    ) {
+      return;
+    }
+
+    // Interface de progresso
+    const progressDiv = document.createElement("div");
+    progressDiv.id = "deletion-progress";
+    progressDiv.style.cssText = `
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      background: white; padding: 30px; border-radius: 15px;
+      border: 3px solid #dc3545; z-index: 10000000;
+      font-family: monospace; text-align: center; min-width: 300px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    `;
+    progressDiv.innerHTML = `
+      <h3 style="color: #dc3545; margin-bottom: 20px;">💥 ELIMINAÇÃO EM PROGRESSO</h3>
+      <div id="progress-log" style="text-align: left; font-size: 12px; max-height: 200px; overflow: auto;"></div>
+      <div style="margin-top: 15px;">
+        <div id="progress-bar" style="width: 100%; height: 20px; background: #f0f0f0; border-radius: 10px; overflow: hidden;">
+          <div id="progress-fill" style="width: 0%; height: 100%; background: #dc3545; transition: width 0.3s;"></div>
+        </div>
+        <div id="progress-text" style="margin-top: 10px; font-weight: bold;">Iniciando...</div>
+      </div>
+    `;
+    document.body.appendChild(progressDiv);
+
+    const log = (message, isError = false) => {
+      console.log(message);
+      const logDiv = document.getElementById("progress-log");
+      if (logDiv) {
+        logDiv.innerHTML += `<div style="color: ${isError ? "#dc3545" : "#000"}; margin: 2px 0;">${message}</div>`;
+        logDiv.scrollTop = logDiv.scrollHeight;
+      }
+    };
+
+    const updateProgress = (percent, text) => {
+      const fillDiv = document.getElementById("progress-fill");
+      const textDiv = document.getElementById("progress-text");
+      if (fillDiv) fillDiv.style.width = percent + "%";
+      if (textDiv) textDiv.textContent = text;
+    };
+
+    // PASSO 1: localStorage (10%)
+    updateProgress(10, "Eliminando localStorage...");
+    log("🗑️ ELIMINANDO localStorage");
+    try {
+      const localKeys = Object.keys(localStorage);
+      log(`📦 Encontradas ${localKeys.length} chaves no localStorage`);
+      localKeys.forEach((key) => {
+        localStorage.removeItem(key);
+        log(`  ✅ Removido: ${key}`);
+      });
+      localStorage.clear();
+      log("✅ localStorage limpo");
+    } catch (e) {
+      log(`❌ Erro no localStorage: ${e.message}`, true);
+    }
+
+    setTimeout(() => {
+      // PASSO 2: sessionStorage (20%)
+      updateProgress(20, "Eliminando sessionStorage...");
+      log("🗑️ ELIMINANDO sessionStorage");
+      try {
+        const sessionKeys = Object.keys(sessionStorage);
+        log(`📦 Encontradas ${sessionKeys.length} chaves no sessionStorage`);
+        sessionKeys.forEach((key) => {
+          sessionStorage.removeItem(key);
+          log(`  ✅ Removido: ${key}`);
+        });
+        sessionStorage.clear();
+        log("✅ sessionStorage limpo");
+      } catch (e) {
+        log(`❌ Erro no sessionStorage: ${e.message}`, true);
+      }
+
+      setTimeout(() => {
+        // PASSO 3: Cookies (30%)
+        updateProgress(30, "Eliminando cookies...");
+        log("🗑️ ELIMINANDO cookies");
+        try {
+          const cookies = document.cookie.split(";");
+          log(`🍪 Encontrados ${cookies.length} cookies`);
+          cookies.forEach((cookie) => {
+            const eqPos = cookie.indexOf("=");
+            const name =
+              eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+            if (name) {
+              document.cookie =
+                name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+              document.cookie =
+                name +
+                "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=" +
+                window.location.hostname;
+              log(`  ✅ Cookie removido: ${name}`);
+            }
+          });
+          log("✅ Cookies limpos");
+        } catch (e) {
+          log(`❌ Erro nos cookies: ${e.message}`, true);
+        }
+
+        setTimeout(() => {
+          // PASSO 4: IndexedDB (50%)
+          updateProgress(50, "Eliminando IndexedDB...");
+          log("🗑️ ELIMINANDO IndexedDB");
+          try {
+            if ("indexedDB" in window) {
+              // Tentar eliminar databases conhecidos
+              const dbNames = [
+                "leirisonda",
+                "firebaseLocalStorageDb",
+                "firebase-storage",
+              ];
+
+              dbNames.forEach((dbName) => {
+                const deleteReq = indexedDB.deleteDatabase(dbName);
+                deleteReq.onsuccess = () =>
+                  log(`  ✅ IndexedDB eliminado: ${dbName}`);
+                deleteReq.onerror = () =>
+                  log(`  ❌ Erro ao eliminar IndexedDB: ${dbName}`, true);
+              });
+
+              log("✅ Comandos IndexedDB enviados");
+            } else {
+              log("ℹ️ IndexedDB não disponível");
+            }
+          } catch (e) {
+            log(`❌ Erro no IndexedDB: ${e.message}`, true);
+          }
+
+          setTimeout(() => {
+            // PASSO 5: Firebase (70%)
+            updateProgress(70, "Eliminando Firebase...");
+            log("🔥 ELIMINANDO dados Firebase");
+            try {
+              // Múltiplas tentativas Firebase
+              const firebaseMethods = [
+                () => {
+                  if (window.hr && window.hr.isFirebaseAvailable) {
+                    log("  🔥 Tentativa via window.hr");
+
+                    // Forçar eliminação através da instância
+                    if (typeof window.hr.deleteAllWorks === "function") {
+                      window.hr.deleteAllWorks();
+                      log("    ✅ deleteAllWorks() chamado");
+                    }
+
+                    // Tentar aceder ao Firestore diretamente
+                    if (window.hr.firestore) {
+                      log("    🔥 Acesso direto ao Firestore");
+                      ["works", "maintenances", "pools", "users"].forEach(
+                        (collection) => {
+                          window.hr.firestore
+                            .collection(collection)
+                            .get()
+                            .then((snapshot) => {
+                              snapshot.forEach((doc) => doc.ref.delete());
+                              log(`    ✅ Coleção ${collection} eliminada`);
+                            })
+                            .catch((e) =>
+                              log(
+                                `    ❌ Erro na coleção ${collection}: ${e.message}`,
+                                true,
+                              ),
+                            );
+                        },
+                      );
+                    }
+                  }
+                },
+                () => {
+                  log("  🔥 Tentativa via window.firebase");
+                  if (window.firebase && window.firebase.firestore) {
+                    const db = window.firebase.firestore();
+                    ["works", "maintenances", "pools", "users"].forEach(
+                      (collection) => {
+                        db.collection(collection)
+                          .get()
+                          .then((snapshot) => {
+                            snapshot.forEach((doc) => doc.ref.delete());
+                            log(
+                              `    ✅ Firebase coleção ${collection} eliminada`,
+                            );
+                          })
+                          .catch((e) =>
+                            log(
+                              `    ❌ Erro Firebase ${collection}: ${e.message}`,
+                              true,
+                            ),
+                          );
+                      },
+                    );
+                  }
+                },
+                () => {
+                  log("  🔥 Limpeza de autenticação Firebase");
+                  if (window.firebase && window.firebase.auth) {
+                    window.firebase
+                      .auth()
+                      .signOut()
+                      .then(() => {
+                        log("    ✅ Firebase auth signOut");
+                      })
+                      .catch((e) =>
+                        log(`    ❌ Erro signOut: ${e.message}`, true),
+                      );
+                  }
+                },
+              ];
+
+              firebaseMethods.forEach((method, index) => {
+                try {
+                  method();
+                } catch (e) {
+                  log(
+                    `  ❌ Método Firebase ${index + 1} falhou: ${e.message}`,
+                    true,
+                  );
+                }
+              });
+
+              log("✅ Todos os métodos Firebase executados");
+            } catch (e) {
+              log(`❌ Erro geral Firebase: ${e.message}`, true);
+            }
+
+            setTimeout(() => {
+              // PASSO 6: Cache APIs (90%)
+              updateProgress(90, "Eliminando cache...");
+              log("🗑️ ELIMINANDO cache");
+              try {
+                if ("caches" in window) {
+                  caches
+                    .keys()
+                    .then((cacheNames) => {
+                      log(`💾 Encontrados ${cacheNames.length} caches`);
+                      return Promise.all(
+                        cacheNames.map((cacheName) => {
+                          log(`  ✅ Eliminando cache: ${cacheName}`);
+                          return caches.delete(cacheName);
+                        }),
+                      );
+                    })
+                    .then(() => {
+                      log("✅ Todos os caches eliminados");
+                    })
+                    .catch((e) => {
+                      log(`❌ Erro nos caches: ${e.message}`, true);
+                    });
+                } else {
+                  log("ℹ️ Cache API não disponível");
+                }
+              } catch (e) {
+                log(`❌ Erro no cache: ${e.message}`, true);
+              }
+
+              setTimeout(() => {
+                // PASSO 7: Finalização (100%)
+                updateProgress(100, "Eliminação completa!");
+                log("🎉 ELIMINAÇÃO TOTAL CONCLUÍDA!");
+
+                setTimeout(() => {
+                  const progressDiv =
+                    document.getElementById("deletion-progress");
+                  if (progressDiv) {
+                    progressDiv.innerHTML = `
+                      <h3 style="color: #28a745;">🎉 ELIMINAÇÃO CONCLUÍDA!</h3>
+                      <p>Todos os tipos de armazenamento foram atacados.</p>
+                      <div style="margin-top: 20px;">
+                        <button onclick="window.location.reload()"
+                                style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                          🔄 RECARREGAR PÁGINA
+                        </button>
+                      </div>
+                    `;
+                  }
+
+                  showInfo(
+                    "delete-info",
+                    "🎉 ELIMINAÇÃO TOTAL CONCLUÍDA!",
+                    "green",
+                  );
+                }, 2000);
+              }, 1000);
+            }, 1000);
+          }, 1000);
+        }, 1000);
+      }, 1000);
+    }, 1000);
+  } catch (error) {
+    console.error("💥 ERRO CRÍTICO na eliminação total:", error);
+    showInfo("delete-info", `❌ ERRO: ${error.message}`, "red");
   }
 };
 
