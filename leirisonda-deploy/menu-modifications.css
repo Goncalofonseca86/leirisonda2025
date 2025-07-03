@@ -20,27 +20,19 @@ span:contains("DIAGNÓSTICO") {
   margin: 0 !important;
 }
 
-/* Destaca ADMINISTRAÇÃO */
+/* Esconde ADMINISTRAÇÃO - usando vários seletores para garantir */
 div:contains("ADMINISTRAÇÃO"),
 button:contains("ADMINISTRAÇÃO"),
 a:contains("ADMINISTRAÇÃO"),
-li:contains("ADMINISTRAÇÃO") {
-  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
-  border-radius: 12px !important;
-  padding: 16px !important;
-  margin: 8px 16px !important;
-  box-shadow: 0 4px 20px rgba(251, 191, 36, 0.3) !important;
-  color: #1f2937 !important;
-  font-weight: bold !important;
-  border: 2px solid #f59e0b !important;
-}
-
-/* Força cor do texto em ADMINISTRAÇÃO */
-div:contains("ADMINISTRAÇÃO") *,
-button:contains("ADMINISTRAÇÃO") *,
-a:contains("ADMINISTRAÇÃO") *,
-li:contains("ADMINISTRAÇÃO") * {
-  color: #1f2937 !important;
+li:contains("ADMINISTRAÇÃO"),
+span:contains("ADMINISTRAÇÃO") {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 /* Alternativa usando atributos de texto */
@@ -53,12 +45,5 @@ li:contains("ADMINISTRAÇÃO") * {
 [data-testid*="administracao"],
 [aria-label*="ADMINISTRAÇÃO"],
 [title*="ADMINISTRAÇÃO"] {
-  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
-  border-radius: 12px !important;
-  padding: 16px !important;
-  margin: 8px 16px !important;
-  box-shadow: 0 4px 20px rgba(251, 191, 36, 0.3) !important;
-  color: #1f2937 !important;
-  font-weight: bold !important;
-  border: 2px solid #f59e0b !important;
+  display: none !important;
 }

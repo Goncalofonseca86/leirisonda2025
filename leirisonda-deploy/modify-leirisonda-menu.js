@@ -79,7 +79,7 @@ function modifyLeirisondaMenu(menuElement) {
     }
   });
 
-  // 2. ENCONTRAR e DESTACAR ADMINISTRAÇÃO
+  // 2. ENCONTRAR e REMOVER ADMINISTRAÇÃO
   menuItems.forEach((item) => {
     const text = item.textContent || "";
     if (
@@ -100,65 +100,9 @@ function modifyLeirisondaMenu(menuElement) {
         container = container.parentElement;
       }
 
-      console.log("⭐ Destacando ADMINISTRAÇÃO:", container);
-
-      // Aplica estilo dourado ao container
-      container.style.background =
-        "linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)";
-      container.style.borderRadius = "12px";
-      container.style.padding = "16px";
-      container.style.margin = "8px 16px";
-      container.style.boxShadow = "0 4px 20px rgba(251, 191, 36, 0.3)";
-      container.style.color = "#1f2937";
-      container.style.fontWeight = "bold";
-      container.style.border = "2px solid #f59e0b";
-
-      // Muda a cor do ícone se existir
-      const icon = container.querySelector('svg, i, span[style*="font"]');
-      if (icon) {
-        icon.style.color = "#1f2937";
-      }
-
-      // Adiciona um indicador visual de expansão
-      if (!container.textContent.includes("Configurações")) {
-        const expandedContent = document.createElement("div");
-        expandedContent.style.marginTop = "12px";
-        expandedContent.style.fontSize = "14px";
-        expandedContent.style.paddingLeft = "20px";
-        expandedContent.innerHTML = `
-          <div style="padding: 6px 0; opacity: 0.9; cursor: pointer; border-radius: 6px;" 
-               onmouseover="this.style.backgroundColor='rgba(31, 41, 55, 0.1)'" 
-               onmouseout="this.style.backgroundColor='transparent'">
-            ⚙️ Configurações Gerais
-          </div>
-          <div style="padding: 6px 0; opacity: 0.9; cursor: pointer; border-radius: 6px;" 
-               onmouseover="this.style.backgroundColor='rgba(31, 41, 55, 0.1)'" 
-               onmouseout="this.style.backgroundColor='transparent'">
-            👤 Perfil de Utilizador
-          </div>
-          <div style="padding: 6px 0; opacity: 0.9; cursor: pointer; border-radius: 6px;" 
-               onmouseover="this.style.backgroundColor='rgba(31, 41, 55, 0.1)'" 
-               onmouseout="this.style.backgroundColor='transparent'">
-            🔒 Segurança & Privacidade
-          </div>
-          <div style="padding: 6px 0; opacity: 0.9; cursor: pointer; border-radius: 6px;" 
-               onmouseover="this.style.backgroundColor='rgba(31, 41, 55, 0.1)'" 
-               onmouseout="this.style.backgroundColor='transparent'">
-            📊 Relatórios & Analytics
-          </div>
-          <div style="padding: 6px 0; opacity: 0.9; cursor: pointer; border-radius: 6px;" 
-               onmouseover="this.style.backgroundColor='rgba(31, 41, 55, 0.1)'" 
-               onmouseout="this.style.backgroundColor='transparent'">
-            💾 Backup & Exportação
-          </div>
-          <div style="padding: 6px 0; opacity: 0.9; cursor: pointer; border-radius: 6px;" 
-               onmouseover="this.style.backgroundColor='rgba(31, 41, 55, 0.1)'" 
-               onmouseout="this.style.backgroundColor='transparent'">
-            🔔 Notificações
-          </div>
-        `;
-        container.appendChild(expandedContent);
-      }
+      console.log("🗑️ Removendo ADMINISTRAÇÃO:", container);
+      container.style.display = "none";
+      container.remove();
     }
   });
 
