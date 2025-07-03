@@ -22,8 +22,11 @@ function waitForRealSidebar() {
     attempts++;
 
     // Verificar se já não estamos na página de carregamento
-    const loadingText = document.querySelector(
-      'p[data-loc*="ProtectedRoute.tsx"]:contains("A carregar")',
+    const protectedRouteElements = document.querySelectorAll(
+      'p[data-loc*="ProtectedRoute.tsx"]',
+    );
+    const loadingText = Array.from(protectedRouteElements).find((el) =>
+      el.textContent?.includes("A carregar"),
     );
 
     if (!loadingText) {
