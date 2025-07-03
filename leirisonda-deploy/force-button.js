@@ -456,144 +456,298 @@ window.testNotification = function () {
   }
 };
 
-// Função para analisar dados armazenados
+// Função para analisar e encontrar EXATAMENTE onde estão os dados
 window.inspectData = function () {
   try {
-    console.log("🔍 ANÁLISE COMPLETA DOS DADOS");
+    console.log("🔍 ANÁLISE ULTRA DETALHADA");
 
+    // ANÁLISE 1: localStorage completo
     const allKeys = Object.keys(localStorage);
-    let report = "📊 RELATÓRIO DE DADOS:\n\n";
-    let foundData = [];
+    console.log("📦 TODAS as chaves localStorage:", allKeys);
+
+    let foundWorks = [];
+    let foundMaintenances = [];
+    let foundPools = [];
+    let otherData = [];
 
     allKeys.forEach((key) => {
       const value = localStorage.getItem(key);
-      let dataType = "unknown";
-      let count = 0;
+      console.log(`🔑 Analisando: ${key}`);
+      console.log(`📄 Valor completo:`, value);
 
       try {
-        if (value.startsWith("[")) {
+        if (value.startsWith("[") || value.startsWith("{")) {
           const parsed = JSON.parse(value);
-          if (Array.isArray(parsed)) {
-            count = parsed.length;
 
-            // Analisar conteúdo do array
-            if (parsed.length > 0) {
-              const sample = parsed[0];
-              if (typeof sample === "object") {
-                const keys = Object.keys(sample);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            const sample = parsed[0];
+            const itemKeys = Object.keys(sample || {});
 
-                // Detectar tipo de dados baseado nas propriedades
-                if (
-                  keys.some(
-                    (k) =>
-                      k.toLowerCase().includes("work") ||
-                      k.toLowerCase().includes("obra"),
-                  )
-                ) {
-                  dataType = "OBRAS";
-                } else if (
-                  keys.some(
-                    (k) =>
-                      k.toLowerCase().includes("maintenance") ||
-                      k.toLowerCase().includes("manutenc"),
-                  )
-                ) {
-                  dataType = "MANUTENÇÕES";
-                } else if (
-                  keys.some(
-                    (k) =>
-                      k.toLowerCase().includes("pool") ||
-                      k.toLowerCase().includes("piscina"),
-                  )
-                ) {
-                  dataType = "PISCINAS";
-                } else if (
-                  keys.includes("name") ||
-                  keys.includes("title") ||
-                  keys.includes("description")
-                ) {
-                  dataType = "DADOS DA APP";
-                }
+            console.log(`📋 Chaves do primeiro item:`, itemKeys);
+            console.log(`📋 Amostra completa:`, sample);
 
-                console.log(`📋 ${key} - Tipo: ${dataType}, Contém:`, keys);
-              }
+            // Análise mais rigorosa
+            const hasWorkKeywords = itemKeys.some(
+              (k) =>
+                k.toLowerCase().includes("work") ||
+                k.toLowerCase().includes("obra") ||
+                k.toLowerCase().includes("project") ||
+                k.toLowerCase().includes("job"),
+            );
+
+            const hasMaintenanceKeywords = itemKeys.some(
+              (k) =>
+                k.toLowerCase().includes("maintenance") ||
+                k.toLowerCase().includes("manutenc") ||
+                k.toLowerCase().includes("service") ||
+                k.toLowerCase().includes("repair"),
+            );
+
+            const hasPoolKeywords = itemKeys.some(
+              (k) =>
+                k.toLowerCase().includes("pool") ||
+                k.toLowerCase().includes("piscina") ||
+                k.toLowerCase().includes("swimming"),
+            );
+
+            if (hasWorkKeywords) {
+              foundWorks.push({
+                key,
+                count: parsed.length,
+                sample,
+                data: parsed,
+              });
+            } else if (hasMaintenanceKeywords) {
+              foundMaintenances.push({
+                key,
+                count: parsed.length,
+                sample,
+                data: parsed,
+              });
+            } else if (hasPoolKeywords) {
+              foundPools.push({
+                key,
+                count: parsed.length,
+                sample,
+                data: parsed,
+              });
+            } else if (parsed.length > 0) {
+              otherData.push({
+                key,
+                count: parsed.length,
+                sample,
+                data: parsed,
+              });
             }
-            dataType += ` (${count} items)`;
           }
-        } else if (value.startsWith("{")) {
-          const parsed = JSON.parse(value);
-          dataType = "Objeto";
-        } else {
-          dataType = "String/Outro";
         }
       } catch (e) {
-        dataType = "Não-JSON";
-      }
-
-      report += `🔑 ${key}\n`;
-      report += `   Tipo: ${dataType}\n`;
-      report += `   Tamanho: ${value.length} chars\n`;
-      if (count > 0) {
-        report += `   Itens: ${count}\n`;
-      }
-      report += `   Preview: ${value.substring(0, 50)}${value.length > 50 ? "..." : ""}\n\n`;
-
-      // Adicionar à lista se parecer dados da app
-      if (
-        count > 0 ||
-        dataType.includes("OBRAS") ||
-        dataType.includes("MANUTENÇÕES") ||
-        dataType.includes("PISCINAS")
-      ) {
-        foundData.push({
-          key,
-          type: dataType,
-          count,
-          value: value.substring(0, 200),
-        });
+        console.log(`❌ Erro ao analisar ${key}:`, e);
       }
     });
 
-    console.log("📊 Relatório completo:", report);
+    // ANÁLISE 2: Verificar contexto global da aplicação
+    console.log("🌐 Verificando contexto global...");
+    console.log("window.hr:", typeof window.hr);
+    console.log("window.firebase:", typeof window.firebase);
+    console.log("window.React:", typeof window.React);
 
-    // Mostrar relatório
+    // Preparar relatório detalhado
+    let report = "🎯 DADOS ENCONTRADOS:\n\n";
+
+    if (foundWorks.length > 0) {
+      report += "🏗️ OBRAS:\n";
+      foundWorks.forEach((item) => {
+        report += `   📦 ${item.key}: ${item.count} itens\n`;
+        report += `   📋 Estrutura: ${Object.keys(item.sample).join(", ")}\n\n`;
+      });
+    } else {
+      report += "🏗️ OBRAS: Nenhuma encontrada\n\n";
+    }
+
+    if (foundMaintenances.length > 0) {
+      report += "🔧 MANUTENÇÕES:\n";
+      foundMaintenances.forEach((item) => {
+        report += `   📦 ${item.key}: ${item.count} itens\n`;
+        report += `   📋 Estrutura: ${Object.keys(item.sample).join(", ")}\n\n`;
+      });
+    } else {
+      report += "🔧 MANUTENÇÕES: Nenhuma encontrada\n\n";
+    }
+
+    if (foundPools.length > 0) {
+      report += "🏊 PISCINAS:\n";
+      foundPools.forEach((item) => {
+        report += `   📦 ${item.key}: ${item.count} itens\n`;
+        report += `   📋 Estrutura: ${Object.keys(item.sample).join(", ")}\n\n`;
+      });
+    } else {
+      report += "🏊 PISCINAS: Nenhuma encontrada\n\n";
+    }
+
+    if (otherData.length > 0) {
+      report += "❓ OUTROS DADOS:\n";
+      otherData.forEach((item) => {
+        report += `   📦 ${item.key}: ${item.count} itens\n`;
+        report += `   📋 Estrutura: ${Object.keys(item.sample).join(", ")}\n\n`;
+      });
+    }
+
+    // Armazenar dados encontrados globalmente para eliminação direcionada
+    window.detectedData = {
+      works: foundWorks,
+      maintenances: foundMaintenances,
+      pools: foundPools,
+      other: otherData,
+    };
+
+    console.log("🎯 DADOS DETECTADOS E ARMAZENADOS:", window.detectedData);
+
+    // Mostrar relatório interativo
     const element = document.createElement("div");
     element.style.cssText = `
-      position: fixed; top: 50px; left: 50%; transform: translateX(-50%);
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
       background: white; padding: 20px; border-radius: 10px;
-      max-width: 80%; max-height: 70%; overflow: auto;
+      max-width: 90%; max-height: 80%; overflow: auto;
       z-index: 10000000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      font-family: monospace; font-size: 12px; line-height: 1.4;
+      font-family: monospace; font-size: 11px; line-height: 1.3;
       border: 2px solid #007784;
     `;
     element.innerHTML = `
-      <h3 style="color: #007784; text-align: center;">🔍 Análise de Dados</h3>
-      <pre style="white-space: pre-wrap; margin: 10px 0;">${report}</pre>
-      <div style="text-align: center; margin-top: 15px;">
+      <h3 style="color: #007784; text-align: center;">🔍 Análise Ultra Detalhada</h3>
+      <pre style="white-space: pre-wrap; margin: 10px 0; max-height: 300px; overflow: auto;">${report}</pre>
+      <div style="text-align: center; margin: 15px 0;">
+        <button onclick="deleteDetectedData()"
+                style="padding: 10px 20px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px; font-weight: bold;">
+          💣 ELIMINAR DADOS DETECTADOS
+        </button>
         <button onclick="this.parentElement.parentElement.remove()"
-                style="padding: 8px 16px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">
           Fechar
         </button>
+      </div>
+      <div style="font-size: 10px; color: #666; text-align: center;">
+        Os dados foram analisados e podem ser eliminados de forma direcionada.
       </div>
     `;
     document.body.appendChild(element);
 
-    // Logs específicos para dados encontrados
-    if (foundData.length > 0) {
-      console.log("🎯 DADOS DA APLICAÇÃO ENCONTRADOS:");
-      foundData.forEach((item) => {
-        console.log(`📦 ${item.key} (${item.type}):`, item.value);
-      });
-    }
-
+    const totalFound =
+      foundWorks.length +
+      foundMaintenances.length +
+      foundPools.length +
+      otherData.length;
     showInfo(
       "delete-info",
-      `🔍 Análise completa! ${foundData.length} tipos de dados encontrados.`,
-      "blue",
+      `🎯 ${totalFound} tipos de dados detectados!`,
+      "green",
     );
   } catch (error) {
     console.error("Erro na análise:", error);
     showInfo("delete-info", "❌ Erro na análise", "red");
+  }
+};
+
+// Função para eliminar dados detectados especificamente
+window.deleteDetectedData = function () {
+  try {
+    if (!window.detectedData) {
+      alert("❌ Nenhum dado foi detectado. Execute a análise primeiro!");
+      return;
+    }
+
+    const data = window.detectedData;
+    const totalItems =
+      data.works.reduce((sum, item) => sum + item.count, 0) +
+      data.maintenances.reduce((sum, item) => sum + item.count, 0) +
+      data.pools.reduce((sum, item) => sum + item.count, 0) +
+      data.other.reduce((sum, item) => sum + item.count, 0);
+
+    if (totalItems === 0) {
+      alert("ℹ️ Nenhum dado foi detectado para eliminar.");
+      return;
+    }
+
+    const summary = [
+      `🏗️ ${data.works.reduce((sum, item) => sum + item.count, 0)} obras`,
+      `🔧 ${data.maintenances.reduce((sum, item) => sum + item.count, 0)} manutenções`,
+      `🏊 ${data.pools.reduce((sum, item) => sum + item.count, 0)} piscinas`,
+      `❓ ${data.other.reduce((sum, item) => sum + item.count, 0)} outros itens`,
+    ].join("\n");
+
+    if (
+      !confirm(
+        `🎯 ELIMINAR DADOS DETECTADOS?\n\nTotal: ${totalItems} itens\n\n${summary}\n\n❌ Esta ação NÃO pode ser desfeita!`,
+      )
+    ) {
+      return;
+    }
+
+    if (
+      !confirm(
+        "🔥 CONFIRMAÇÃO FINAL!\n\nVou eliminar ESPECIFICAMENTE os dados detectados!\n\nTens certeza?",
+      )
+    ) {
+      return;
+    }
+
+    console.log("🗑️ Eliminando dados detectados...");
+    let eliminated = 0;
+    const eliminatedKeys = [];
+
+    // Eliminar chaves específicas detectadas
+    [...data.works, ...data.maintenances, ...data.pools, ...data.other].forEach(
+      (item) => {
+        console.log(`🗑️ Eliminando: ${item.key} (${item.count} itens)`);
+        localStorage.removeItem(item.key);
+        eliminated++;
+        eliminatedKeys.push(item.key);
+      },
+    );
+
+    console.log(
+      `✅ ${eliminated} chaves específicas eliminadas:`,
+      eliminatedKeys,
+    );
+
+    // Verificar se realmente foram eliminadas
+    setTimeout(() => {
+      const remaining = eliminatedKeys.filter(
+        (key) => localStorage.getItem(key) !== null,
+      );
+
+      if (remaining.length === 0) {
+        alert(
+          `🎉 SUCESSO TOTAL!\n\n✅ ${eliminated} tipos de dados eliminados:\n${eliminatedKeys.join("\n")}\n\n🔄 A página vai ser atualizada...`,
+        );
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } else {
+        alert(
+          `⚠️ ${remaining.length} chaves ainda existem:\n${remaining.join("\n")}\n\nTentando eliminar novamente...`,
+        );
+
+        // Segunda tentativa
+        remaining.forEach((key) => {
+          localStorage.removeItem(key);
+        });
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
+      }
+    }, 500);
+
+    showInfo(
+      "delete-info",
+      `🎯 ${eliminated} tipos eliminados especificamente!`,
+      "green",
+    );
+  } catch (error) {
+    console.error("Erro na eliminação direcionada:", error);
+    showInfo("delete-info", `❌ Erro: ${error.message}`, "red");
   }
 };
 
