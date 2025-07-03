@@ -340,9 +340,13 @@ console.log("🔍 ANÁLISE: Iniciando estudo da estrutura da aplicação");
       hasClientField: !!document.querySelector(
         'input[name*="client"], input[name*="cliente"]',
       ),
-      hasSaveButton: !!document.querySelector(
-        'button[type="submit"], button:contains("Guardar"), button:contains("Save")',
-      ),
+      hasSaveButton:
+        !!document.querySelector('button[type="submit"]') ||
+        Array.from(document.querySelectorAll("button")).some(
+          (btn) =>
+            btn.textContent.toLowerCase().includes("guardar") ||
+            btn.textContent.toLowerCase().includes("save"),
+        ),
       hasForm: !!document.querySelector("form"),
     };
 
