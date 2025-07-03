@@ -164,41 +164,27 @@ console.log("🚀 LEIRISONDA: Integração SPA React iniciada");
     console.log("URL:", currentPath);
     console.log("Conteúdo relevante:", pageContent.substring(0, 200));
 
-    // Detectar página de criação de obra - baseado na estrutura real
+    // Detectar página de criação de obra - baseado na estrutura REAL
     const isWorkCreationPage =
-      // URLs de criação de obra
-      currentPath.includes("/create") ||
-      currentPath.includes("/work") ||
-      currentPath.includes("/obra") ||
-      currentPath.includes("/nova") ||
-      currentPath.includes("/new") ||
-      // Componentes React específicos
-      document.querySelector('[data-loc*="CreateWork"]') ||
-      document.querySelector('[data-loc*="WorkForm"]') ||
-      document.querySelector('[data-loc*="NovaObra"]') ||
-      // Conteúdo da página
-      pageContent.includes("Tipo de Trabalho") ||
-      pageContent.includes("Criar Obra") ||
-      pageContent.includes("Nova Obra") ||
-      pageContent.includes("Tipo de Serviço") ||
-      pageContent.includes("Descrição do Trabalho") ||
-      // Estrutura de formulário
+      // URL exata
+      currentPath === "/create-work" ||
+      // Componente React real
+      document.querySelector('[data-loc*="CreateWork.tsx"]') ||
+      // Campo específico real (id="type" com label "Tipo de Trabalho *")
+      (document.querySelector('select[id="type"]') &&
+        document
+          .querySelector('label[for="type"]')
+          ?.textContent?.includes("Tipo de Trabalho")) ||
+      // Texto específico da p��gina
+      (pageContent.includes("Nova Obra") &&
+        pageContent.includes("Criar uma nova obra no sistema Leirisonda")) ||
+      // Estrutura específica do formulário real com opções corretas
       (document.querySelector("form") &&
-        (document.querySelector('select[name*="type"]') ||
-          document.querySelector('select[name*="tipo"]') ||
-          document.querySelector('select[name*="categoria"]') ||
-          document.querySelector('textarea[name*="description"]') ||
-          document.querySelector('textarea[name*="descricao"]') ||
-          document.querySelector('input[name*="cliente"]') ||
-          document.querySelector('input[name*="client"]'))) ||
-      // Botões específicos
-      (document.querySelector("form") &&
-        Array.from(document.querySelectorAll("button")).some(
-          (btn) =>
-            btn.textContent.toLowerCase().includes("guardar obra") ||
-            btn.textContent.toLowerCase().includes("criar obra") ||
-            btn.textContent.toLowerCase().includes("save work"),
-        ));
+        pageContent.includes("Tipo de Trabalho *") &&
+        pageContent.includes("Piscina") &&
+        pageContent.includes("Manutenção") &&
+        pageContent.includes("Avaria") &&
+        pageContent.includes("Montagem"));
 
     // Detectar qualquer página de login
     const isLoginPage =
