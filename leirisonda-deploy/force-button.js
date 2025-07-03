@@ -102,6 +102,9 @@ function showModal() {
 
       <div style="margin-bottom: 20px; text-align: left;">
         <h3 style="color: #333; margin-bottom: 10px;">📱 Notificações</h3>
+        <div id="browser-info" style="font-size: 12px; padding: 8px; background: #f8f9fa; border-radius: 4px; margin-bottom: 8px; color: #666;">
+          🔍 A verificar suporte do browser...
+        </div>
         <button onclick="activateNotifications()" style="width: 100%; padding: 10px; background: #007784; color: white; border: none; border-radius: 6px; margin-bottom: 8px; cursor: pointer;">
           🔔 Ativar Notificações
         </button>
@@ -155,8 +158,9 @@ function showModal() {
       }
     });
 
-    // Carregar dados imediatamente
+    // Carregar dados e verificar compatibilidade
     loadCounts();
+    checkBrowserCompatibility();
 
     console.log("✅ Modal aberto");
   } catch (error) {
@@ -168,10 +172,28 @@ function showModal() {
 window.activateNotifications = function () {
   try {
     console.log("🔔 Ativando notificações...");
+    console.log("User Agent:", navigator.userAgent);
+    console.log("Notification in window:", "Notification" in window);
+    console.log("Service Worker:", "serviceWorker" in navigator);
 
-    if (!("Notification" in window)) {
+    // Verificar múltiplas formas de suporte
+    const hasNotificationAPI = "Notification" in window;
+    const hasServiceWorker = "serviceWorker" in navigator;
+    const isPWA =
+      window.matchMedia &&
+      window.matchMedia("(display-mode: standalone)").matches;
+
+    console.log("PWA mode:", isPWA);
+
+    if (!hasNotificationAPI && !hasServiceWorker) {
       console.log("❌ Notificações não suportadas");
-      showInfo("notif-info", "❌ Dispositivo não suporta notificações", "red");
+      showInfo("notif-info", "❌ Browser não suporta notificações", "red");
+      return;
+    }
+
+    if (!hasNotificationAPI && hasServiceWorker) {
+      console.log("⚠️ Usando Service Worker para notificações");
+      showInfo("notif-info", "ℹ️ Notificações via Service Worker", "orange");
       return;
     }
 
@@ -218,11 +240,23 @@ window.activateNotifications = function () {
 window.testNotification = function () {
   try {
     console.log("🧪 Testando notificação...");
+    console.log("Browser:", navigator.userAgent);
 
-    // Verificar suporte
+    // Verificar múltiplas formas de suporte
     if (!("Notification" in window)) {
-      showInfo("notif-info", "❌ Notificações não suportadas", "red");
-      return;
+      if ("serviceWorker" in navigator) {
+        showInfo(
+          "notif-info",
+          "ℹ️ Use Service Worker para notificações",
+          "orange",
+        );
+        // Tentar via service worker
+        tryServiceWorkerNotification();
+        return;
+      } else {
+        showInfo("notif-info", "❌ Browser não suporta notificações", "red");
+        return;
+      }
     }
 
     // Verificar permissão
@@ -269,6 +303,30 @@ window.testNotification = function () {
     showInfo("notif-info", `❌ Erro: ${error.message}`, "red");
   }
 };
+
+// Tentar notificação via Service Worker
+function tryServiceWorkerNotification() {
+  try {
+    if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
+      const msgEl = document.getElementById("test-message");
+      const msg = msgEl ? msgEl.value || "Teste via SW" : "Teste via SW";
+
+      navigator.serviceWorker.controller.postMessage({
+        type: "SHOW_NOTIFICATION",
+        title: "Leirisonda",
+        body: msg,
+        icon: "/leirisonda-logo.svg",
+      });
+
+      showInfo("notif-info", "📡 Tentativa via Service Worker", "blue");
+    } else {
+      showInfo("notif-info", "❌ Service Worker não disponível", "red");
+    }
+  } catch (error) {
+    console.error("Erro Service Worker notification:", error);
+    showInfo("notif-info", "❌ Erro no Service Worker", "red");
+  }
+}
 
 window.deleteAllData = function () {
   try {
@@ -369,6 +427,52 @@ function loadCounts() {
     if (poolsEl) poolsEl.textContent = pools;
   } catch (error) {
     console.error("Erro ao carregar contadores:", error);
+  }
+}
+
+// Verificar compatibilidade do browser
+function checkBrowserCompatibility() {
+  try {
+    const infoEl = document.getElementById("browser-info");
+    if (!infoEl) return;
+
+    const hasNotifications = "Notification" in window;
+    const hasServiceWorker = "serviceWorker" in navigator;
+    const isPWA =
+      window.matchMedia &&
+      window.matchMedia("(display-mode: standalone)").matches;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isAndroid = /Android/.test(navigator.userAgent);
+
+    let info = "";
+    let color = "#666";
+
+    if (hasNotifications) {
+      info = "✅ Notificações suportadas";
+      color = "#28a745";
+    } else if (hasServiceWorker) {
+      info = "⚠️ Notificações via Service Worker";
+      color = "#ffc107";
+    } else if (isIOS) {
+      info = "📱 iOS: Adicione à tela inicial primeiro";
+      color = "#007AFF";
+    } else if (isAndroid) {
+      info = "🤖 Android: Verifique permissões do browser";
+      color = "#FF9800";
+    } else {
+      info = "❌ Browser não suporta notificações";
+      color = "#dc3545";
+    }
+
+    if (isPWA) {
+      info = "📲 PWA: " + info;
+    }
+
+    infoEl.textContent = info;
+    infoEl.style.color = color;
+    infoEl.style.display = "block";
+  } catch (error) {
+    console.error("Erro ao verificar compatibilidade:", error);
   }
 }
 
