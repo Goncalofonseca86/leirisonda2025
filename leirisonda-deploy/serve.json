@@ -1,18 +1,22 @@
 {
-  "rewrites": [
-    { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/admin.html", "destination": "/admin.html" },
-    { "source": "/test-admin", "destination": "/test-admin.html" },
-    { "source": "/test-admin.html", "destination": "/test-admin.html" },
-    { "source": "**", "destination": "/index.html" }
-  ],
+  "public": ".",
+  "rewrites": [{ "source": "**", "destination": "/index.html" }],
   "headers": [
     {
       "source": "**/*.html",
       "headers": [
         {
           "key": "Cache-Control",
-          "value": "no-cache"
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "**/*.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000"
         }
       ]
     }
