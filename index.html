@@ -106,31 +106,38 @@
       if (window.location.pathname !== "/login") {
         console.log("📦 Carregando scripts essenciais...");
 
-        // Scripts essenciais apenas
-        const essentialScripts = [
-          "/leirisonda-deploy/force-button.js",
-          "/leirisonda-deploy/hide-menu-items.js",
-          "/leirisonda-deploy/add-yuri-user.js",
-          "/leirisonda-deploy/fix-work-issues.js",
-        ];
-
-        // Carregar cada script de forma segura
-        essentialScripts.forEach(function (src) {
-          try {
-            const script = document.createElement("script");
-            script.src = src;
-            script.async = true;
-            script.onload = function () {
-              console.log("✅ Script carregado:", src);
-            };
-            script.onerror = function () {
-              console.log("⚠️ Script não carregado:", src);
-            };
-            document.head.appendChild(script);
-          } catch (e) {
-            console.log("⚠️ Erro ao carregar script:", src);
-          }
-        });
+        // Script principal com todas as funcionalidades
+        try {
+          const script = document.createElement("script");
+          script.src = "/leirisonda-deploy/inject-all-features.js";
+          script.async = true;
+          script.onload = function () {
+            console.log("✅ Funcionalidades Leirisonda carregadas com sucesso");
+          };
+          script.onerror = function () {
+            console.log(
+              "⚠️ Erro ao carregar funcionalidades - tentando fallback",
+            );
+            // Fallback inline se o script não carregar
+            setTimeout(function () {
+              if (!window.leirisondaDebug) {
+                console.log(
+                  "���� Executando funcionalidades inline como fallback",
+                );
+                // Criar pelo menos o botão de configurações
+                const btn = document.createElement("div");
+                btn.innerHTML = "⚙️";
+                btn.style.cssText =
+                  "position:fixed;bottom:25px;left:25px;width:40px;height:40px;background:rgba(0,119,132,0.8);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:99999;";
+                btn.onclick = () => alert("Funcionalidades em carregamento...");
+                document.body.appendChild(btn);
+              }
+            }, 2000);
+          };
+          document.head.appendChild(script);
+        } catch (e) {
+          console.log("⚠️ Erro crítico ao carregar funcionalidades:", e);
+        }
 
         // FUNCIONALIDADE INLINE APENAS PARA FUROS DE ÁGUA
         setTimeout(function () {
@@ -141,7 +148,7 @@
                 !document.getElementById("secção-furo-agua") &&
                 document.body.textContent.includes("Tipo de Trabalho")
               ) {
-                console.log("💧 Criando secção furo como fallback...");
+                console.log("💧 Criando secç��o furo como fallback...");
 
                 const form =
                   document.querySelector("form") ||
