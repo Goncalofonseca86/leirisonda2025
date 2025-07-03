@@ -148,9 +148,6 @@ function requestPassword() {
   } catch (error) {
     console.error("Erro ao solicitar senha:", error);
   }
-  } catch (error) {
-    console.error("Erro ao criar botão:", error);
-  }
 }
 
 // Modal ultra simples
