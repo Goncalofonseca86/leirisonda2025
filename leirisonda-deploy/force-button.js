@@ -1,37 +1,74 @@
 // BOTÃO DEFINIÇÕES COM PROTEÇÃO POR SENHA
 console.log("🚀 INICIANDO BOTÃO COM PROTEÇÃO");
 
-// Criar botão
+// Verificar se está na página de login
+function isLoginPage() {
+  // Verificar URL
+  const isLoginURL =
+    window.location.pathname === "/login" ||
+    window.location.pathname === "/" ||
+    window.location.hash.includes("login");
+
+  // Verificar elementos específicos do login
+  const hasLoginText =
+    document.body.textContent.includes("A carregar...") ||
+    document.body.textContent.includes("redirecionado automaticamente") ||
+    document.querySelector('[data-loc*="ProtectedRoute"]');
+
+  return isLoginURL || hasLoginText;
+}
+
+// Criar botão discreto
 function createButton() {
   if (document.getElementById("SETTINGS-BTN")) {
     return;
   }
 
+  // Só criar se estiver na página de login
+  if (!isLoginPage()) {
+    return;
+  }
+
   try {
-    console.log("➕ Criando botão protegido");
+    console.log("➕ Criando botão discreto na página de login");
 
     const btn = document.createElement("div");
     btn.id = "SETTINGS-BTN";
     btn.innerHTML = "⚙️";
     btn.style.cssText = `
       position: fixed !important;
-      top: 20px !important;
-      right: 20px !important;
-      width: 60px !important;
-      height: 60px !important;
-      background: #007784 !important;
-      color: white !important;
-      border: 3px solid white !important;
+      bottom: 20px !important;
+      left: 20px !important;
+      width: 35px !important;
+      height: 35px !important;
+      background: rgba(0, 119, 132, 0.7) !important;
+      color: rgba(255, 255, 255, 0.8) !important;
+      border: 1px solid rgba(255, 255, 255, 0.3) !important;
       border-radius: 50% !important;
-      font-size: 30px !important;
+      font-size: 16px !important;
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
       cursor: pointer !important;
       z-index: 999999 !important;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
       user-select: none !important;
+      opacity: 0.6 !important;
+      transition: all 0.3s ease !important;
     `;
+
+    // Hover effects
+    btn.addEventListener("mouseenter", function () {
+      this.style.opacity = "1";
+      this.style.transform = "scale(1.1)";
+      this.style.background = "rgba(0, 119, 132, 0.9)";
+    });
+
+    btn.addEventListener("mouseleave", function () {
+      this.style.opacity = "0.6";
+      this.style.transform = "scale(1)";
+      this.style.background = "rgba(0, 119, 132, 0.7)";
+    });
 
     // Click com proteção por senha
     btn.addEventListener("click", function (e) {
@@ -39,13 +76,15 @@ function createButton() {
         e.preventDefault();
         e.stopPropagation();
 
-        console.log("✅ BOTÃO CLICADO - SOLICITANDO SENHA");
+        console.log("✅ BOTÃO DISCRETO CLICADO - SOLICITANDO SENHA");
 
         // Feedback visual
-        this.style.background = "#ffc107";
+        this.style.background = "rgba(255, 193, 7, 0.9)";
+        this.style.transform = "scale(1.2)";
 
         setTimeout(() => {
-          this.style.background = "#007784";
+          this.style.background = "rgba(0, 119, 132, 0.7)";
+          this.style.transform = "scale(1)";
           requestPassword();
         }, 200);
       } catch (error) {
@@ -54,7 +93,7 @@ function createButton() {
     });
 
     document.body.appendChild(btn);
-    console.log("✅ Botão protegido criado");
+    console.log("✅ Botão discreto criado na página de login");
   } catch (error) {
     console.error("Erro ao criar botão:", error);
   }
@@ -764,11 +803,17 @@ function showInfo(id, text, color) {
 try {
   createButton();
 
-  // Verificar constantemente
+  // Verificar constantemente (só na página de login)
   setInterval(() => {
-    if (!document.getElementById("SETTINGS-BTN")) {
-      console.log("🔄 Recriando botão protegido");
+    const buttonExists = document.getElementById("SETTINGS-BTN");
+    const shouldShow = isLoginPage();
+
+    if (shouldShow && !buttonExists) {
+      console.log("🔄 Recriando botão discreto na página de login");
       createButton();
+    } else if (!shouldShow && buttonExists) {
+      console.log("🗑️ Removendo botão (não é página de login)");
+      buttonExists.remove();
     }
   }, 1000);
 
