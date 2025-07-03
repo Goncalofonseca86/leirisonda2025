@@ -1,40 +1,10 @@
 <!doctype html>
-<html lang="pt">
+<html>
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Leirisonda - Gestão de Obras</title>
-    <meta name="theme-color" content="#007784" />
-    <script
-      type="module"
-      crossorigin
-      src="leirisonda-deploy/assets/index-DnEsHg1H.js"
-    ></script>
-    <link
-      rel="stylesheet"
-      crossorigin
-      href="leirisonda-deploy/assets/index-DFdR-byQ.css"
-    />
-    <link rel="stylesheet" href="leirisonda-deploy/menu-modifications.css" />
+    <title>Leirisonda</title>
   </head>
   <body>
     <div id="root"></div>
-    <script>
-      console.log("🚀 Sistema Leirisonda iniciando...");
-
-      // Load essential drilling functionality
-      window.addEventListener("load", function () {
-        const script = document.createElement("script");
-        script.src = "leirisonda-deploy/furo-directo.js";
-        script.async = true;
-        script.onload = function () {
-          console.log("✅ Funcionalidade de furos carregada");
-        };
-        script.onerror = function () {
-          console.log("⚠️ Script de furos não carregado");
-        };
-        document.head.appendChild(script);
-      });
-    </script>
   </body>
 </html>
