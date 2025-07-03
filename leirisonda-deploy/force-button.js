@@ -167,21 +167,51 @@ function showModal() {
 // Funções globais simples
 window.activateNotifications = function () {
   try {
+    console.log("🔔 Ativando notificações...");
+
     if (!("Notification" in window)) {
-      showInfo("notif-info", "Dispositivo não suporta notificações", "red");
+      console.log("❌ Notificações não suportadas");
+      showInfo("notif-info", "❌ Dispositivo não suporta notificações", "red");
       return;
     }
 
-    Notification.requestPermission().then((permission) => {
-      if (permission === "granted") {
-        showInfo("notif-info", "✅ Notificações ativadas!", "green");
-      } else {
-        showInfo("notif-info", "❌ Permissão negada", "red");
-      }
-    });
+    console.log("Permissão atual:", Notification.permission);
+
+    if (Notification.permission === "granted") {
+      showInfo("notif-info", "✅ Já estão ativadas!", "green");
+      return;
+    }
+
+    if (Notification.permission === "denied") {
+      showInfo(
+        "notif-info",
+        "❌ Permissão bloqueada. Ative nas definições do browser.",
+        "red",
+      );
+      return;
+    }
+
+    // Solicitar permissão
+    if (Notification.requestPermission) {
+      Notification.requestPermission()
+        .then((permission) => {
+          console.log("Nova permissão:", permission);
+          if (permission === "granted") {
+            showInfo("notif-info", "✅ Notificações ativadas!", "green");
+          } else {
+            showInfo("notif-info", "❌ Permissão negada", "red");
+          }
+        })
+        .catch((error) => {
+          console.error("Erro ao solicitar permissão:", error);
+          showInfo("notif-info", "❌ Erro ao solicitar permissão", "red");
+        });
+    } else {
+      showInfo("notif-info", "❌ API não suportada", "red");
+    }
   } catch (error) {
     console.error("Erro ao ativar notificações:", error);
-    showInfo("notif-info", "❌ Erro ao ativar", "red");
+    showInfo("notif-info", `❌ Erro: ${error.message}`, "red");
   }
 };
 
