@@ -89,153 +89,204 @@
     </style>
 
     <script>
-      // Script super agressivo para interceptar React
-      console.log("🚀 Script interceptor do React iniciado");
+      // Script específico para detectar abertura do menu lateral
+      console.log("🎯 Detectando abertura do menu lateral...");
 
-      // Intercepta createElement do React
-      let originalCreateElement;
-      let isReactReady = false;
+      let menuModified = false;
+      let checkCount = 0;
 
-      function interceptReact() {
-        if (
-          window.React &&
-          window.React.createElement &&
-          !originalCreateElement
-        ) {
-          originalCreateElement = window.React.createElement;
+      function detectAndModifyMenu() {
+        checkCount++;
+        console.log(`🔍 Verificação #${checkCount}`);
 
-          window.React.createElement = function (type, props, ...children) {
-            // Intercepta elementos que contenham DIAGNÓSTICO
-            if (
-              children &&
-              children.some &&
-              children.some(
-                (child) =>
-                  typeof child === "string" && child.includes("DIAGNÓSTICO"),
-              )
-            ) {
-              console.log("🗑️ Bloqueando criação de elemento DIAGNÓSTICO");
-              return null; // Não cria o elemento
+        // Procura por elementos específicos do menu
+        const allElements = document.querySelectorAll("*");
+        let menuDetected = false;
+
+        for (let element of allElements) {
+          const text = element.textContent || "";
+
+          // Verifica se o menu está visível e contém os itens esperados
+          if (
+            text.includes("Dashboard") &&
+            text.includes("DIAGNÓSTICO") &&
+            text.includes("ADMINISTRAÇÃO") &&
+            text.includes("Utilizadores")
+          ) {
+            menuDetected = true;
+            console.log("📋 Menu lateral detectado!", element);
+
+            if (!menuModified) {
+              modifyMenuNow(element);
+              menuModified = true;
             }
+            break;
+          }
+        }
 
-            // Intercepta elementos que contenham ADMINISTRAÇÃO e modifica
-            if (
-              children &&
-              children.some &&
-              children.some(
-                (child) =>
-                  typeof child === "string" && child.includes("ADMINISTRAÇÃO"),
-              )
-            ) {
-              console.log("⭐ Modificando elemento ADMINISTRAÇÃO");
-
-              // Adiciona estilos ao props
-              const newProps = {
-                ...props,
-                style: {
-                  ...((props && props.style) || {}),
-                  background:
-                    "linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)",
-                  borderRadius: "12px",
-                  padding: "16px",
-                  margin: "8px",
-                  color: "#1f2937",
-                  fontWeight: "bold",
-                  boxShadow: "0 4px 20px rgba(251, 191, 36, 0.3)",
-                },
-              };
-
-              return originalCreateElement.call(
-                this,
-                type,
-                newProps,
-                ...children,
-              );
-            }
-
-            return originalCreateElement.call(this, type, props, ...children);
-          };
-
-          console.log("✅ React.createElement interceptado");
-          isReactReady = true;
+        // Se não detectou o menu, continua a procurar
+        if (!menuDetected && checkCount < 100) {
+          setTimeout(detectAndModifyMenu, 500);
         }
       }
 
-      // Função de modificação DOM tradicional
-      function modificarDOM() {
-        const elementos = document.querySelectorAll("*");
-        let modificacoes = 0;
+      function modifyMenuNow(menuContainer) {
+        console.log("⚡ Aplicando modificações agora!");
 
-        elementos.forEach((elemento) => {
-          const texto = elemento.textContent || "";
+        // Encontra e modifica todos os elementos dentro do menu
+        const menuElements = menuContainer.querySelectorAll("*");
+        let changes = 0;
 
-          // Esconde DIAGNÓSTICO
-          if (texto.trim() === "DIAGNÓSTICO" && !elemento.dataset.hidden) {
-            elemento.style.setProperty("display", "none", "important");
-            elemento.style.setProperty("visibility", "hidden", "important");
-            elemento.style.setProperty("opacity", "0", "important");
-            elemento.style.setProperty("height", "0", "important");
-            elemento.style.setProperty("overflow", "hidden", "important");
-            elemento.dataset.hidden = "true";
-            modificacoes++;
-            console.log("🗑️ DIAGNÓSTICO escondido");
+        menuElements.forEach((element) => {
+          const text = element.textContent || "";
+
+          // Remove DIAGNÓSTICO
+          if (
+            text.trim() === "DIAGNÓSTICO" ||
+            (text.includes("DIAGNÓSTICO") && text.length < 50)
+          ) {
+            // Encontra o elemento clicável/container
+            let target = element;
+            while (
+              target.parentElement &&
+              target.parentElement !== menuContainer &&
+              target.parentElement.children.length <= 2
+            ) {
+              target = target.parentElement;
+            }
+
+            target.style.setProperty("display", "none", "important");
+            target.style.setProperty("visibility", "hidden", "important");
+            target.style.setProperty("opacity", "0", "important");
+            target.style.setProperty("height", "0px", "important");
+            target.style.setProperty("overflow", "hidden", "important");
+            target.style.setProperty("padding", "0", "important");
+            target.style.setProperty("margin", "0", "important");
+
+            console.log("🗑️ DIAGNÓSTICO removido:", target);
+            changes++;
           }
 
           // Destaca ADMINISTRAÇÃO
           if (
-            texto.trim() === "ADMINISTRAÇÃO" &&
-            !elemento.dataset.highlighted
+            text.trim() === "ADMINISTRAÇÃO" ||
+            (text.includes("ADMINISTRAÇÃO") && text.length < 50)
           ) {
-            elemento.style.setProperty(
+            // Encontra o elemento clicável/container
+            let target = element;
+            while (
+              target.parentElement &&
+              target.parentElement !== menuContainer &&
+              target.parentElement.children.length <= 2
+            ) {
+              target = target.parentElement;
+            }
+
+            target.style.setProperty(
               "background",
               "linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)",
               "important",
             );
-            elemento.style.setProperty("border-radius", "12px", "important");
-            elemento.style.setProperty("padding", "16px", "important");
-            elemento.style.setProperty("margin", "8px", "important");
-            elemento.style.setProperty("color", "#1f2937", "important");
-            elemento.style.setProperty("font-weight", "bold", "important");
-            elemento.style.setProperty(
+            target.style.setProperty("border-radius", "12px", "important");
+            target.style.setProperty("padding", "16px", "important");
+            target.style.setProperty("margin", "8px", "important");
+            target.style.setProperty("color", "#1f2937", "important");
+            target.style.setProperty("font-weight", "bold", "important");
+            target.style.setProperty(
               "box-shadow",
               "0 4px 20px rgba(251, 191, 36, 0.3)",
               "important",
             );
-            elemento.dataset.highlighted = "true";
-            modificacoes++;
-            console.log("⭐ ADMINISTRAÇÃO destacada");
+            target.style.setProperty(
+              "border",
+              "2px solid #f59e0b",
+              "important",
+            );
+
+            // Força cor dos filhos
+            const children = target.querySelectorAll("*");
+            children.forEach((child) => {
+              child.style.setProperty("color", "#1f2937", "important");
+            });
+
+            console.log("⭐ ADMINISTRAÇÃO destacada:", target);
+            changes++;
           }
         });
 
-        if (modificacoes > 0) {
-          console.log(`✅ ${modificacoes} modificações aplicadas`);
+        // Mostra notificação de sucesso
+        if (changes > 0) {
+          showSuccessMessage(changes);
         }
       }
 
-      // Observer para mudanças no DOM
-      const observer = new MutationObserver((mutations) => {
-        let shouldModify = false;
+      function showSuccessMessage(changes) {
+        // Remove mensagem anterior
+        const existing = document.getElementById("menu-success");
+        if (existing) existing.remove();
 
+        const message = document.createElement("div");
+        message.id = "menu-success";
+        message.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: #10b981;
+          color: white;
+          padding: 12px 20px;
+          border-radius: 8px;
+          z-index: 99999;
+          font-size: 14px;
+          font-weight: bold;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        `;
+        message.textContent = `✅ Menu modificado! (${changes} alterações)`;
+
+        document.body.appendChild(message);
+
+        setTimeout(() => {
+          if (message.parentElement) {
+            message.remove();
+          }
+        }, 5000);
+      }
+
+      // Detecta cliques no botão do menu (3 traços)
+      document.addEventListener("click", (event) => {
+        const target = event.target;
+
+        // Se clicou num botão que pode ser o menu hamburger
+        if (target.tagName === "BUTTON" || target.closest("button")) {
+          console.log("🔘 Clique detectado, verificando se é o menu...");
+          setTimeout(() => {
+            menuModified = false; // Reset para permitir nova detecção
+            detectAndModifyMenu();
+          }, 200);
+        }
+      });
+
+      // Observer para mudanças no DOM (quando menu aparece)
+      const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
-          if (mutation.type === "childList") {
+          if (mutation.type === "childList" && mutation.addedNodes.length > 0) {
             mutation.addedNodes.forEach((node) => {
               if (node.nodeType === 1) {
                 // Element node
                 const text = node.textContent || "";
                 if (
-                  text.includes("DIAGNÓSTICO") ||
+                  text.includes("DIAGNÓSTICO") &&
                   text.includes("ADMINISTRAÇÃO")
                 ) {
-                  shouldModify = true;
+                  console.log("📋 Menu apareceu via MutationObserver");
+                  setTimeout(() => {
+                    menuModified = false;
+                    detectAndModifyMenu();
+                  }, 100);
                 }
               }
             });
           }
         });
-
-        if (shouldModify) {
-          setTimeout(modificarDOM, 100);
-        }
       });
 
       // Inicia observação
@@ -246,32 +297,19 @@
         });
       }
 
-      // Tenta interceptar React constantemente
-      const reactInterval = setInterval(() => {
-        if (!isReactReady) {
-          interceptReact();
-        } else {
-          clearInterval(reactInterval);
+      // Tenta detectar o menu periodicamente
+      const interval = setInterval(() => {
+        if (!menuModified) {
+          detectAndModifyMenu();
         }
-      }, 100);
+      }, 2000);
 
-      // Modificação DOM constante
-      setInterval(modificarDOM, 1000);
+      // Para o interval após 2 minutos
+      setTimeout(() => {
+        clearInterval(interval);
+      }, 120000);
 
-      // Execuções iniciais
-      setTimeout(interceptReact, 100);
-      setTimeout(modificarDOM, 500);
-      setTimeout(modificarDOM, 2000);
-      setTimeout(modificarDOM, 5000);
-
-      document.addEventListener("DOMContentLoaded", () => {
-        interceptReact();
-        modificarDOM();
-        observer.observe(document.body, {
-          childList: true,
-          subtree: true,
-        });
-      });
+      console.log("🚀 Script de detecção do menu iniciado");
     </script>
 
     <script type="module" crossorigin src="/assets/index-DnEsHg1H.js"></script>
