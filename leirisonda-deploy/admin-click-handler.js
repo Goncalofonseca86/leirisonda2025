@@ -24,13 +24,9 @@ function forceAdminClickable() {
         element.style.setProperty("position", "relative", "important");
         element.style.setProperty("z-index", "9999", "important");
 
-        // Adicionar border para debug (remover depois)
-        element.style.setProperty("border", "2px dashed #ff0000", "important");
-        element.style.setProperty(
-          "background-color",
-          "rgba(255, 255, 0, 0.3)",
-          "important",
-        );
+        // Remover quaisquer borders de debug anteriores
+        element.style.removeProperty("border");
+        element.style.removeProperty("background-color");
 
         // Função de clique robusta
         const robustClickHandler = function (e) {
@@ -39,10 +35,11 @@ function forceAdminClickable() {
           e.stopPropagation();
           e.stopImmediatePropagation();
 
-          // Feedback visual imediato
+          // Feedback visual discreto
+          const originalBackground = element.style.backgroundColor;
           element.style.setProperty(
             "background-color",
-            "rgba(0, 255, 0, 0.8)",
+            "rgba(0, 255, 0, 0.2)",
             "important",
           );
 
@@ -82,14 +79,10 @@ function forceAdminClickable() {
             window.location.href = urls[0];
           }
 
-          // Restaurar cor após delay
+          // Restaurar cor original após delay
           setTimeout(() => {
-            element.style.setProperty(
-              "background-color",
-              "rgba(255, 255, 0, 0.3)",
-              "important",
-            );
-          }, 500);
+            element.style.removeProperty("background-color");
+          }, 300);
 
           return false;
         };
