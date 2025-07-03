@@ -45,9 +45,9 @@ function forceAdminClickable() {
 
           // Tentar múltiplas abordagens para abrir admin
           const urls = [
+            `${window.location.protocol}//${window.location.host}/admin`,
+            `${window.location.protocol}//${window.location.host}/test-admin`,
             `${window.location.protocol}//${window.location.host}/admin.html`,
-            `${window.location.protocol}//${window.location.host}/test-admin.html`,
-            `${window.location.protocol}//${window.location.host}/#/admin`,
           ];
 
           let opened = false;
