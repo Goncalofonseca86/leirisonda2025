@@ -596,153 +596,143 @@ window.inspectData = function () {
 
 window.deleteAllData = function () {
   try {
-    console.log("🗑️ Iniciando análise completa do localStorage...");
+    console.log("🗑️ ELIMINAÇÃO ULTRA AGRESSIVA INICIADA");
 
-    // PRIMEIRO: Mostrar TODOS os dados existentes
+    if (
+      !confirm(
+        "💣 ELIMINAR TODAS AS OBRAS, MANUTENÇÕES E PISCINAS?\n\nEsta ação vai apagar TUDO!\n\nNÃO pode ser desfeito!",
+      )
+    ) {
+      return;
+    }
+
+    if (
+      !confirm(
+        "🔥 ÚLTIMA CONFIRMAÇÃO!\n\nVou eliminar COMPLETAMENTE o localStorage!\n\nTens a certeza?",
+      )
+    ) {
+      return;
+    }
+
+    // MÉTODO 1: Backup das chaves antes de eliminar
     const allKeys = Object.keys(localStorage);
-    console.log("📋 TODAS as chaves no localStorage:", allKeys);
+    console.log("📦 Chaves antes da eliminação:", allKeys);
 
-    let debugInfo = "🔍 DADOS ENCONTRADOS:\n\n";
-    allKeys.forEach((key) => {
-      const value = localStorage.getItem(key);
-      const preview =
-        value.length > 100 ? value.substring(0, 100) + "..." : value;
-      debugInfo += `${key}: ${preview}\n`;
-      console.log(`📦 ${key}:`, value);
-    });
+    let eliminated = 0;
+    const eliminatedKeys = [];
 
-    // Mostrar numa caixa de diálogo
-    alert(debugInfo);
-
-    if (
-      !confirm(
-        "⚠️ ELIMINAR TODOS OS DADOS?\n\nViu a lista acima. Quer continuar?\n\nNÃO pode ser desfeito!",
-      )
-    ) {
-      return;
-    }
-
-    if (
-      !confirm(
-        "🔥 CONFIRMAÇÃO FINAL!\n\nEsta ação elimina TUDO do localStorage!\n\nClique OK para ELIMINAR TUDO!",
-      )
-    ) {
-      return;
-    }
-
-    // ELIMINAÇÃO AGRESSIVA: Todas as chaves que possam ser da aplicação
-    let deleted = 0;
-    let foundKeys = [];
-    const keysToDelete = [];
-
-    allKeys.forEach((key) => {
-      const value = localStorage.getItem(key);
-      const shouldDelete =
-        // Palavras-chave relacionadas com a aplicação
-        key.toLowerCase().includes("work") ||
-        key.toLowerCase().includes("maintenance") ||
-        key.toLowerCase().includes("pool") ||
-        key.toLowerCase().includes("leirisonda") ||
-        key.toLowerCase().includes("obra") ||
-        key.toLowerCase().includes("piscina") ||
-        key.toLowerCase().includes("user") ||
-        key.toLowerCase().includes("auth") ||
-        key.toLowerCase().includes("login") ||
-        key.toLowerCase().includes("session") ||
-        // Valores que parecem arrays de dados
-        (value && value.startsWith("[") && value.includes("{")) ||
-        // Valores que parecem objetos de configuração
-        (value &&
-          value.startsWith("{") &&
-          (value.includes("name") ||
-            value.includes("email") ||
-            value.includes("id") ||
-            value.includes("data")));
-
-      if (shouldDelete) {
-        keysToDelete.push(key);
-      }
-    });
-
-    console.log("🎯 Chaves identificadas para eliminação:", keysToDelete);
-
-    // Confirmar chaves específicas
-    if (keysToDelete.length > 0) {
-      const keysList = keysToDelete.join("\n");
-      if (
-        !confirm(
-          `🔍 Encontradas ${keysToDelete.length} chaves para eliminar:\n\n${keysList}\n\nContinuar?`,
-        )
-      ) {
-        return;
-      }
-    }
-
-    // Eliminar cada chave identificada
-    keysToDelete.forEach((key) => {
-      console.log(`🗑️ Eliminando: ${key}`);
-      localStorage.removeItem(key);
-      deleted++;
-      foundKeys.push(key);
-    });
-
-    // Se não encontrou nada específico, oferecer para limpar TUDO
-    if (deleted === 0) {
-      if (
-        confirm(
-          "❓ Não foram encontrados dados específicos.\n\nLimpar COMPLETAMENTE o localStorage?\n\n⚠️ Isto remove TUDO, incluindo outras aplicações!",
-        )
-      ) {
-        localStorage.clear();
-        deleted = allKeys.length;
-        foundKeys = [...allKeys];
-        console.log("🧹 localStorage completamente limpo!");
-      }
-    }
-
-    console.log(`✅ Total eliminado: ${deleted} chaves`);
-    console.log("🗑️ Chaves eliminadas:", foundKeys);
-
-    if (deleted > 0) {
-      showInfo("delete-info", `✅ ${deleted} chaves eliminadas!`, "green");
-
-      // Mostrar resultado detalhado
-      setTimeout(() => {
-        alert(
-          `✅ ELIMINAÇÃO CONCLUÍDA!\n\n📊 ${deleted} chaves eliminadas:\n${foundKeys.join("\n")}`,
-        );
-      }, 1000);
-    } else {
-      showInfo("delete-info", "ℹ️ Nenhum dado foi eliminado", "orange");
-    }
-
-    // Recarregar contadores
-    loadCounts();
-
-    // Tentar notificação se suportada
+    // MÉTODO 2: Eliminação TOTAL - Limpar TUDO
     try {
-      if ("Notification" in window && Notification.permission === "granted") {
-        new Notification("Leirisonda", {
-          body: `${deleted} chaves eliminadas do localStorage!`,
-          icon: "/leirisonda-logo.svg",
-          tag: "delete-notification",
+      console.log("🧹 LIMPANDO COMPLETAMENTE O localStorage...");
+
+      // Guardar lista das chaves para log
+      allKeys.forEach((key) => {
+        eliminatedKeys.push(key);
+        eliminated++;
+      });
+
+      // LIMPAR TUDO
+      localStorage.clear();
+
+      console.log("✅ localStorage.clear() executado");
+
+      // Verificar se realmente limpou
+      const remainingKeys = Object.keys(localStorage);
+      console.log("🔍 Chaves restantes após clear():", remainingKeys);
+
+      if (remainingKeys.length === 0) {
+        console.log("🎉 SUCCESS! localStorage completamente limpo!");
+      } else {
+        console.log("⚠️ Ainda restam chaves, tentando eliminação manual...");
+
+        // Se ainda restam, eliminar manualmente
+        remainingKeys.forEach((key) => {
+          try {
+            localStorage.removeItem(key);
+            console.log(`🗑️ Removido manualmente: ${key}`);
+          } catch (e) {
+            console.error(`❌ Erro ao remover ${key}:`, e);
+          }
         });
       }
-    } catch (notifError) {
-      console.log("Notificação não enviada:", notifError.message);
+    } catch (error) {
+      console.error("❌ Erro no localStorage.clear():", error);
+
+      // Fallback: eliminar uma por uma
+      allKeys.forEach((key) => {
+        try {
+          localStorage.removeItem(key);
+          eliminatedKeys.push(key);
+          eliminated++;
+          console.log(`🗑️ Eliminado: ${key}`);
+        } catch (e) {
+          console.error(`❌ Erro ao eliminar ${key}:`, e);
+        }
+      });
     }
 
-    // Forçar refresh da página
-    if (deleted > 0) {
-      setTimeout(() => {
-        if (confirm("🔄 Dados eliminados! Atualizar página agora?")) {
+    // MÉTODO 3: Verificação final
+    setTimeout(() => {
+      const finalKeys = Object.keys(localStorage);
+      console.log("🔍 VERIFICAÇÃO FINAL - Chaves restantes:", finalKeys);
+
+      if (finalKeys.length === 0) {
+        console.log("🎉 SUCESSO TOTAL! Todos os dados eliminados!");
+        showInfo("delete-info", "🎉 TUDO ELIMINADO COM SUCESSO!", "green");
+
+        alert(
+          "🎉 ELIMINAÇÃO CONCLUÍDA!\n\n✅ TODOS os dados foram removidos!\n✅ localStorage completamente limpo!\n\n🔄 A página vai ser atualizada...",
+        );
+
+        // Forçar refresh imediato
+        setTimeout(() => {
           window.location.reload();
+        }, 1000);
+      } else {
+        console.log("⚠️ Ainda restam alguns dados:", finalKeys);
+        showInfo(
+          "delete-info",
+          `⚠️ ${finalKeys.length} chaves ainda restam`,
+          "orange",
+        );
+
+        if (
+          confirm(
+            `⚠️ Ainda restam ${finalKeys.length} chaves:\n${finalKeys.join("\n")}\n\nTentar eliminar novamente?`,
+          )
+        ) {
+          // Tentar eliminar as restantes uma vez mais
+          finalKeys.forEach((key) => {
+            localStorage.removeItem(key);
+          });
+
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
         }
-      }, 2000);
-    }
+      }
+    }, 500);
+
+    console.log(`📊 RELATÓRIO: ${eliminated} chaves processadas`);
+    console.log("🗑️ Chaves eliminadas:", eliminatedKeys);
   } catch (error) {
-    console.error("Erro ao eliminar:", error);
-    showInfo("delete-info", `❌ Erro: ${error.message}`, "red");
+    console.error("💥 ERRO CRÍTICO na eliminação:", error);
+    showInfo("delete-info", `❌ ERRO: ${error.message}`, "red");
+
+    // Em caso de erro, tentar limpeza básica
+    try {
+      localStorage.clear();
+      alert(
+        "⚠️ Erro durante eliminação, mas localStorage.clear() foi executado!\n\nA página vai ser atualizada...",
+      );
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (clearError) {
+      alert(
+        "❌ ERRO TOTAL! Não foi possível limpar o localStorage.\n\nTenta recarregar a página manualmente.",
+      );
+    }
   }
 };
 
