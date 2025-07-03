@@ -171,39 +171,97 @@
     <!-- CSS para modificações do menu -->
     <link rel="stylesheet" href="/menu-modifications.css" />
 
-    <!-- CARREGAR SCRIPTS CONDICIONALMENTE - NÃO NA PÁGINA DE LOGIN -->
+    <!-- CARREGAR SCRIPTS SELETIVAMENTE BASEADO NA PÁGINA -->
     <script>
-      // SÓ CARREGAR SCRIPTS SE NÃO ESTIVER NA PÁGINA DE LOGIN
-      if (window.location.pathname !== "/login") {
-        console.log("📦 Carregando scripts (não-login)");
+      function carregarScripts() {
+        const path = window.location.pathname;
+        console.log("📍 Página detectada:", path);
 
-        // Lista de scripts para carregar
-        const scripts = [
+        // Scripts básicos que carregam em todas as páginas (exceto login)
+        const scriptsBasicos = [];
+
+        // Scripts para páginas de obra (criar, editar, listar)
+        const scriptsObras = [
           "/nuclear-error-suppressor.js",
           "/block-error-screen.js",
+          "/prevent-login-redirect.js",
+          "/stay-on-work-page.js",
+          "/water-drilling-details.js",
+          "/furo-directo.js",
+        ];
+
+        // Scripts para todas as páginas autenticadas (depois do login)
+        const scriptsAutenticados = [
           "/force-button.js",
           "/simple-work-delete.js",
-          "/water-drilling-details.js",
           "/sync-fix.js",
           "/hide-menu-items.js",
           "/emergency-sync-fix.js",
-          "/furo-directo.js",
           "/error-recovery.js",
           "/loading-fix.js",
-          "/prevent-login-redirect.js",
-          "/stay-on-work-page.js",
         ];
 
-        // Carregar cada script dinamicamente
-        scripts.forEach(function (src) {
+        let scriptsParaCarregar = [];
+
+        if (path === "/login") {
+          console.log("🔓 Página de login - nenhum script carregado");
+          return; // Não carregar nada no login
+        }
+
+        // Se é página de obra, carregar scripts específicos
+        if (
+          path.includes("/work") ||
+          path.includes("/create") ||
+          path === "/works"
+        ) {
+          console.log("📋 Página de obras detectada");
+          scriptsParaCarregar = [
+            ...scriptsBasicos,
+            ...scriptsObras,
+            ...scriptsAutenticados,
+          ];
+        } else {
+          // Outras páginas autenticadas
+          console.log("🔐 Página autenticada detectada");
+          scriptsParaCarregar = [...scriptsBasicos, ...scriptsAutenticados];
+        }
+
+        // Carregar scripts
+        scriptsParaCarregar.forEach(function (src) {
           const script = document.createElement("script");
           script.src = src;
           script.async = true;
+          script.onload = function () {
+            console.log("✅ Script carregado:", src);
+          };
+          script.onerror = function () {
+            console.log("❌ Erro ao carregar script:", src);
+          };
           document.head.appendChild(script);
         });
-      } else {
-        console.log("🔓 Página de login - scripts desativados");
+
+        console.log(
+          "📦 Total de scripts carregados:",
+          scriptsParaCarregar.length,
+        );
       }
+
+      // Carregar scripts quando a página estiver pronta
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", carregarScripts);
+      } else {
+        carregarScripts();
+      }
+
+      // Recarregar scripts quando a URL mudar (SPAs)
+      let currentUrl = window.location.href;
+      setInterval(function () {
+        if (window.location.href !== currentUrl) {
+          currentUrl = window.location.href;
+          console.log("🔄 URL mudou, recarregando scripts...");
+          setTimeout(carregarScripts, 500);
+        }
+      }, 1000);
     </script>
 
     <script>
