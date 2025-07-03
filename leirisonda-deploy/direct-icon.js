@@ -1,6 +1,68 @@
 // Script DIRETO - Cria ícone IMEDIATAMENTE
 console.log("🚀 CRIANDO ÍCONE DIRETO - SEM CONDIÇÕES");
 
+// BLOQUEAR ABSOLUTAMENTE TODOS OS REDIRECIONAMENTOS
+console.log("🚫 BLOQUEANDO todos os redirecionamentos");
+
+// Salvar originais
+const originalOpen = window.open;
+const originalAssign = window.location.assign;
+const originalReplace = window.location.replace;
+
+// Bloquear window.open
+window.open = function (...args) {
+  console.log("🚫 BLOQUEADO: window.open", args);
+  return null;
+};
+
+// Bloquear window.location.href
+let originalHref = window.location.href;
+Object.defineProperty(window.location, "href", {
+  set: function (url) {
+    console.log("🚫 BLOQUEADO: window.location.href =", url);
+    // Não fazer nada
+  },
+  get: function () {
+    return originalHref;
+  },
+});
+
+// Bloquear assign e replace
+window.location.assign = function (...args) {
+  console.log("🚫 BLOQUEADO: window.location.assign", args);
+};
+
+window.location.replace = function (...args) {
+  console.log("🚫 BLOQUEADO: window.location.replace", args);
+};
+
+// Interceptar TODOS os clicks
+document.addEventListener(
+  "click",
+  function (e) {
+    // Se for um link, bloquear
+    const link = e.target.closest("a");
+    if (link && link.href) {
+      console.log("🚫 BLOQUEADO: Click em link", link.href);
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      return false;
+    }
+  },
+  true,
+);
+
+// Interceptar mudanças de URL
+let currentUrl = window.location.href;
+setInterval(() => {
+  if (window.location.href !== currentUrl) {
+    console.log("🚫 DETECTADO: Mudança de URL");
+    // Tentar voltar
+    history.back();
+  }
+}, 100);
+
 // Criar ícone AGORA MESMO
 function forceCreateIcon() {
   console.log("➕ FORÇANDO criação de ícone");
@@ -50,13 +112,26 @@ function forceCreateIcon() {
   `;
   document.head.appendChild(style);
 
-  // Click handler
-  icon.addEventListener("click", function (e) {
+  // Click handler ULTRA ROBUSTO
+  const clickHandler = function (e) {
+    // PARAR TUDO
     e.preventDefault();
     e.stopPropagation();
     e.stopImmediatePropagation();
 
-    console.log("✅ ÍCONE CLICADO - Abrindo modal");
+    // Bloquear qualquer navegação
+    const originalPushState = history.pushState;
+    const originalReplaceState = history.replaceState;
+
+    history.pushState = function () {
+      console.log("🚫 BLOQUEADO: history.pushState");
+    };
+
+    history.replaceState = function () {
+      console.log("🚫 BLOQUEADO: history.replaceState");
+    };
+
+    console.log("✅ ÍCONE CLICADO - Abrindo modal INTERNO");
 
     this.style.background = "#00ff00";
     this.innerHTML = "✅ CLICADO!";
@@ -66,8 +141,19 @@ function forceCreateIcon() {
       this.innerHTML = "⚙️ DEFINIÇÕES";
     }, 1000);
 
-    openSettingsModal();
-  });
+    // Abrir modal IMEDIATAMENTE
+    setTimeout(() => {
+      openSettingsModal();
+    }, 10);
+
+    return false;
+  };
+
+  // Adicionar multiple event listeners
+  icon.addEventListener("click", clickHandler, true);
+  icon.addEventListener("mousedown", clickHandler, true);
+  icon.addEventListener("mouseup", clickHandler, true);
+  icon.onclick = clickHandler;
 
   // Adicionar ao body FORÇADAMENTE
   document.body.appendChild(icon);
@@ -87,6 +173,11 @@ function forceCreateIcon() {
 
 // Modal simples
 function openSettingsModal() {
+  console.log("📱 ABRINDO MODAL INTERNO - SEM REDIRECIONAMENTO");
+
+  // GARANTIR que não há redirecionamento
+  window.modalOpen = true;
+
   // Remover modal existente
   const existing = document.getElementById("FORCE-MODAL");
   if (existing) existing.remove();
@@ -118,7 +209,7 @@ function openSettingsModal() {
 
   content.innerHTML = `
     <h2 style="color: #007784; margin-bottom: 20px;">⚙️ Definições da Aplicação</h2>
-    
+
     <div style="margin-bottom: 20px; text-align: left;">
       <h3 style="color: #333; margin-bottom: 10px;">📱 Notificações Push</h3>
       <button onclick="enableNotifications()" style="width: 100%; padding: 10px; background: #007784; color: white; border: none; border-radius: 5px; margin-bottom: 8px; cursor: pointer;">
@@ -134,7 +225,7 @@ function openSettingsModal() {
     <div style="background: #fff3cd; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
       <h3 style="color: #856404; margin-bottom: 10px;">🗑️ Limpeza de Dados</h3>
       <p style="color: #856404; margin-bottom: 10px; font-size: 14px;">⚠️ ATENÇÃO: Elimina TODOS os dados!</p>
-      
+
       <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 15px;">
         <div style="text-align: center; padding: 8px; background: white; border-radius: 5px;">
           <div style="font-size: 20px;">🏗️</div>
@@ -152,7 +243,7 @@ function openSettingsModal() {
           <div id="pools-count" style="color: #007784; font-weight: bold;">0</div>
         </div>
       </div>
-      
+
       <button onclick="deleteAllData()" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
         💣 ELIMINAR TODOS OS DADOS
       </button>
@@ -285,8 +376,10 @@ window.deleteAllData = function () {
 };
 
 window.closeModal = function () {
+  console.log("❌ FECHANDO MODAL");
   const modal = document.getElementById("FORCE-MODAL");
   if (modal) modal.remove();
+  window.modalOpen = false;
 };
 
 function loadDataCounts() {
