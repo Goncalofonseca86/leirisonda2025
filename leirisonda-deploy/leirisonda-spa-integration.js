@@ -442,30 +442,30 @@ console.log("🚀 LEIRISONDA: Integração SPA React iniciada");
         <div style="background: rgba(255, 255, 255, 0.8); padding: 15px; border-radius: 10px;">
           <h4 style="color: #0c4a6e; margin: 0 0 12px 0; font-size: 16px;">🔧 Coluna</h4>
 
-          <div style="margin-bottom: 12px;">
-            <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 6px; font-size: 14px;">
-              Tipo de Coluna
-            </label>
-            <select name="furo_tipo_coluna" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box; background: white;">
-              <option value="">Selecionar...</option>
-              <option value="PEAD">PEAD</option>
-              <option value="HIDROROSCADO">HIDROROSCADO</option>
-            </select>
-          </div>
+            <div style="margin-bottom: 12px;">
+              <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 6px; font-size: 14px;">
+                Tipo de Coluna
+              </label>
+              <select name="leirisonda_furo_tipo_coluna" data-leirisonda-field="true" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box; background: white;">
+                <option value="">Selecionar...</option>
+                <option value="PEAD">PEAD</option>
+                <option value="HIDROROSCADO">HIDROROSCADO</option>
+              </select>
+            </div>
 
-          <div>
-            <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 6px; font-size: 14px;">
-              Diâmetro (mm)
-            </label>
-            <select name="furo_diametro" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box; background: white;">
-              <option value="">Selecionar...</option>
-              <option value="50">50mm</option>
-              <option value="63">63mm</option>
-              <option value="75">75mm</option>
-              <option value="90">90mm</option>
-              <option value="110">110mm</option>
-            </select>
-          </div>
+            <div>
+              <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 6px; font-size: 14px;">
+                Diâmetro (mm)
+              </label>
+              <select name="leirisonda_furo_diametro" data-leirisonda-field="true" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box; background: white;">
+                <option value="">Selecionar...</option>
+                <option value="50">50mm</option>
+                <option value="63">63mm</option>
+                <option value="75">75mm</option>
+                <option value="90">90mm</option>
+                <option value="110">110mm</option>
+              </select>
+            </div>
         </div>
 
         <!-- Bomba -->
