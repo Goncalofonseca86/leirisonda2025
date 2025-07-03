@@ -30,7 +30,7 @@ console.log("🚀 LEIRISONDA: Integração SPA React iniciada");
     // 1. Aguardar React estar totalmente carregado
     waitForReactApp();
 
-    // 2. Configurar monitorização de rotas
+    // 2. Configurar monitorizaç��o de rotas
     setupSPARouteMonitoring();
 
     // 3. Configurar utilizador Yuri
@@ -623,9 +623,9 @@ console.log("🚀 LEIRISONDA: Integração SPA React iniciada");
     console.log("📤 Formulário sendo submetido...");
 
     // Verificar se o tipo de trabalho selecionado é furo de água
-    const workTypeSelect = document.querySelector(
-      'select[data-leirisonda-processed="true"]',
-    );
+    const workTypeSelect =
+      document.querySelector('select[id="type"]') ||
+      document.querySelector('select[data-leirisonda-processed="true"]');
     const isFuroSelected =
       workTypeSelect && workTypeSelect.value === "furo_agua";
 
