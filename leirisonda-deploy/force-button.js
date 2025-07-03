@@ -333,8 +333,8 @@ function showModal() {
         <button onclick="deleteLocalData()" style="width: 100%; padding: 10px; background: #fd7e14; color: white; border: none; border-radius: 6px; cursor: pointer; margin-bottom: 8px; font-weight: bold;">
           🗑️ ELIMINAR LOCAIS
         </button>
-        <button onclick="deleteAllDataIncludingFirebase()" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
-          💣 ELIMINAR TUDO (LOCAL + FIREBASE)
+        <button onclick="debugAndDelete()" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+          🔍 DEBUG + ELIMINAR FORÇADO
         </button>
         <div id="delete-info" style="margin-top: 8px; font-size: 13px; display: none;"></div>
       </div>
@@ -959,7 +959,7 @@ window.deleteAllDataIncludingFirebase = function () {
   }
 };
 
-// Função para eliminar dados do Firebase através da API da aplicação
+// Fun��ão para eliminar dados do Firebase através da API da aplicação
 function deleteFirebaseDataThroughAPI() {
   try {
     console.log("🎯 Tentando eliminar através da API da aplicação...");
@@ -1089,6 +1089,268 @@ ${firebaseScript}
     console.error("❌ Erro na eliminação direta:", error);
   }
 }
+
+// Função ultra detalhada para debug e eliminação forçada
+window.debugAndDelete = function () {
+  try {
+    console.log("🔍 INICIANDO DEBUG ULTRA DETALHADO");
+
+    if (
+      !confirm(
+        "🔍 DEBUG + ELIMINAÇÃO FORÇADA\n\nVou mostrar TUDO o que está acontecendo e forçar eliminação.\n\nContinuar?",
+      )
+    ) {
+      return;
+    }
+
+    // PASSO 1: Mostrar estado ANTES
+    console.log("📊 PASSO 1: Estado ANTES da eliminação");
+    const beforeKeys = Object.keys(localStorage);
+    console.log("🔑 Chaves ANTES:", beforeKeys);
+
+    beforeKeys.forEach((key) => {
+      const value = localStorage.getItem(key);
+      console.log(`📦 ${key}:`, value);
+    });
+
+    // PASSO 2: Eliminar TUDO com logs detalhados
+    console.log("🗑️ PASSO 2: Eliminação FORÇADA");
+
+    let eliminationAttempts = [];
+
+    // Método 1: removeItem individual
+    console.log("🔄 Método 1: removeItem individual");
+    beforeKeys.forEach((key) => {
+      try {
+        console.log(`🗑️ Eliminando: ${key}`);
+        localStorage.removeItem(key);
+
+        // Verificar imediatamente
+        const stillExists = localStorage.getItem(key);
+        if (stillExists === null) {
+          console.log(`✅ ${key} eliminado com sucesso`);
+          eliminationAttempts.push({
+            key,
+            method: "removeItem",
+            success: true,
+          });
+        } else {
+          console.log(`❌ ${key} ainda existe!`, stillExists);
+          eliminationAttempts.push({
+            key,
+            method: "removeItem",
+            success: false,
+            remaining: stillExists,
+          });
+        }
+      } catch (error) {
+        console.error(`💥 Erro ao eliminar ${key}:`, error);
+        eliminationAttempts.push({
+          key,
+          method: "removeItem",
+          success: false,
+          error: error.message,
+        });
+      }
+    });
+
+    // Método 2: clear() completo
+    console.log("🔄 Método 2: localStorage.clear()");
+    try {
+      localStorage.clear();
+      console.log("✅ localStorage.clear() executado");
+      eliminationAttempts.push({ method: "clear", success: true });
+    } catch (error) {
+      console.error("💥 Erro no clear():", error);
+      eliminationAttempts.push({
+        method: "clear",
+        success: false,
+        error: error.message,
+      });
+    }
+
+    // PASSO 3: Verificar estado DEPOIS
+    console.log("📊 PASSO 3: Estado DEPOIS da eliminação");
+    const afterKeys = Object.keys(localStorage);
+    console.log("🔑 Chaves DEPOIS:", afterKeys);
+
+    afterKeys.forEach((key) => {
+      const value = localStorage.getItem(key);
+      console.log(`📦 RESTANTE ${key}:`, value);
+    });
+
+    // PASSO 4: Análise dos resultados
+    console.log("📊 PASSO 4: Análise dos resultados");
+    console.log("🔍 Tentativas de eliminação:", eliminationAttempts);
+
+    const beforeCount = beforeKeys.length;
+    const afterCount = afterKeys.length;
+    const eliminated = beforeCount - afterCount;
+
+    console.log(`📊 Estatísticas:`);
+    console.log(`   Antes: ${beforeCount} chaves`);
+    console.log(`   Depois: ${afterCount} chaves`);
+    console.log(`   Eliminadas: ${eliminated} chaves`);
+
+    // PASSO 5: Relatório visual
+    let report = `🔍 RELATÓRIO DE DEBUG\n\n`;
+    report += `📊 ANTES: ${beforeCount} chaves\n`;
+    report += `📊 DEPOIS: ${afterCount} chaves\n`;
+    report += `📊 ELIMINADAS: ${eliminated} chaves\n\n`;
+
+    if (afterCount > 0) {
+      report += `❌ CHAVES QUE RESISTIRAM:\n`;
+      afterKeys.forEach((key) => {
+        report += `   🔑 ${key}\n`;
+      });
+      report += `\n`;
+    }
+
+    report += `🔍 TENTATIVAS:\n`;
+    eliminationAttempts.forEach((attempt) => {
+      if (attempt.key) {
+        report += `   ${attempt.success ? "✅" : "❌"} ${attempt.key} (${attempt.method})\n`;
+      } else {
+        report += `   ${attempt.success ? "✅" : "❌"} ${attempt.method}\n`;
+      }
+    });
+
+    // Mostrar relatório
+    const element = document.createElement("div");
+    element.style.cssText = `
+      position: fixed; top: 10px; left: 10px; right: 10px;
+      background: white; padding: 20px; border-radius: 10px;
+      max-height: 90%; overflow: auto;
+      z-index: 10000000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      font-family: monospace; font-size: 11px; line-height: 1.3;
+      border: 3px solid #dc3545;
+    `;
+    element.innerHTML = `
+      <h3 style="color: #dc3545; text-align: center;">🔍 Relatório de Debug</h3>
+      <pre style="white-space: pre-wrap; margin: 10px 0;">${report}</pre>
+      <div style="text-align: center; margin-top: 15px;">
+        ${
+          afterCount > 0
+            ? `<button onclick="forceDeleteRemaining()"
+                  style="padding: 10px 20px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px; font-weight: bold;">
+            💀 FORÇAR ELIMINAÇÃO DAS RESTANTES
+          </button>`
+            : `<div style="color: green; font-weight: bold; margin-bottom: 10px;">🎉 TUDO ELIMINADO COM SUCESSO!</div>`
+        }
+        <button onclick="this.parentElement.parentElement.remove()"
+                style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">
+          Fechar
+        </button>
+      </div>
+    `;
+    document.body.appendChild(element);
+
+    // Armazenar chaves restantes para tentativa adicional
+    window.remainingKeys = afterKeys;
+
+    if (afterCount === 0) {
+      showInfo("delete-info", "🎉 TUDO ELIMINADO!", "green");
+
+      setTimeout(() => {
+        if (confirm("🎉 Eliminação completa! Recarregar página?")) {
+          window.location.reload();
+        }
+      }, 2000);
+    } else {
+      showInfo("delete-info", `⚠️ ${afterCount} chaves resistiram`, "orange");
+    }
+  } catch (error) {
+    console.error("💥 ERRO CRÍTICO no debug:", error);
+    showInfo("delete-info", `❌ ERRO: ${error.message}`, "red");
+  }
+};
+
+// Função para forçar eliminação das chaves restantes
+window.forceDeleteRemaining = function () {
+  try {
+    if (!window.remainingKeys || window.remainingKeys.length === 0) {
+      alert("✅ Nenhuma chave restante para eliminar!");
+      return;
+    }
+
+    console.log(
+      "💀 FORÇANDO eliminação das chaves restantes:",
+      window.remainingKeys,
+    );
+
+    // Tentar múltiplas abordagens agressivas
+    const approaches = [
+      () => {
+        console.log("💀 Abordagem 1: delete localStorage[key]");
+        window.remainingKeys.forEach((key) => {
+          try {
+            delete localStorage[key];
+            console.log(`💀 delete localStorage['${key}']`);
+          } catch (e) {
+            console.error(`❌ Erro no delete ${key}:`, e);
+          }
+        });
+      },
+      () => {
+        console.log("💀 Abordagem 2: setItem com null");
+        window.remainingKeys.forEach((key) => {
+          try {
+            localStorage.setItem(key, null);
+            console.log(`💀 setItem('${key}', null)`);
+          } catch (e) {
+            console.error(`❌ Erro no setItem null ${key}:`, e);
+          }
+        });
+      },
+      () => {
+        console.log("💀 Abordagem 3: setItem com string vazia");
+        window.remainingKeys.forEach((key) => {
+          try {
+            localStorage.setItem(key, "");
+            console.log(`💀 setItem('${key}', '')`);
+          } catch (e) {
+            console.error(`❌ Erro no setItem vazio ${key}:`, e);
+          }
+        });
+      },
+      () => {
+        console.log("💀 Abordagem 4: clear() múltiplo");
+        for (let i = 0; i < 5; i++) {
+          localStorage.clear();
+          console.log(`💀 clear() tentativa ${i + 1}`);
+        }
+      },
+    ];
+
+    // Executar todas as abordagens
+    approaches.forEach((approach, index) => {
+      console.log(`💀 Executando abordagem ${index + 1}...`);
+      approach();
+
+      // Verificar após cada abordagem
+      const remaining = Object.keys(localStorage);
+      console.log(`💀 Após abordagem ${index + 1}, restam:`, remaining);
+    });
+
+    // Verificação final
+    const finalRemaining = Object.keys(localStorage);
+    console.log("💀 VERIFICAÇÃO FINAL:", finalRemaining);
+
+    if (finalRemaining.length === 0) {
+      alert("🎉 SUCESSO! Todas as chaves foram eliminadas!");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } else {
+      alert(
+        `⚠️ Ainda restam ${finalRemaining.length} chaves:\n${finalRemaining.join("\n")}\n\nVerifica o console para mais detalhes.`,
+      );
+    }
+  } catch (error) {
+    console.error("💥 Erro na eliminação forçada:", error);
+    alert(`❌ Erro: ${error.message}`);
+  }
+};
 
 window.closeModal = function () {
   try {
