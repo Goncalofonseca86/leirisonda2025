@@ -46,27 +46,40 @@ function forceAdminClickable() {
             "important",
           );
 
-          // Abrir admin
-          const adminUrl = `${window.location.protocol}//${window.location.host}/admin.html`;
-          console.log("🔗 Abrindo URL:", adminUrl);
+          // Tentar múltiplas abordagens para abrir admin
+          const urls = [
+            `${window.location.protocol}//${window.location.host}/admin.html`,
+            `${window.location.protocol}//${window.location.host}/test-admin.html`,
+            `${window.location.protocol}//${window.location.host}/#/admin`,
+          ];
 
-          try {
-            const newWindow = window.open(
-              adminUrl,
-              "_blank",
-              "noopener,noreferrer",
-            );
-            if (newWindow) {
-              console.log("✅ Nova janela aberta com sucesso");
-            } else {
-              console.log("⚠️ Popup bloqueado, tentando navegação direta");
-              window.location.href = adminUrl;
+          let opened = false;
+
+          for (const adminUrl of urls) {
+            console.log("🔗 Tentando URL:", adminUrl);
+
+            try {
+              const newWindow = window.open(
+                adminUrl,
+                "_blank",
+                "noopener,noreferrer",
+              );
+              if (newWindow) {
+                console.log(
+                  "✅ Nova janela aberta com sucesso para:",
+                  adminUrl,
+                );
+                opened = true;
+                break;
+              }
+            } catch (error) {
+              console.error("❌ Erro ao abrir:", adminUrl, error);
             }
-          } catch (error) {
-            console.error("❌ Erro ao abrir:", error);
-            alert(
-              `Erro ao abrir administração. Aceda manualmente a: ${adminUrl}`,
-            );
+          }
+
+          if (!opened) {
+            console.log("⚠️ Tentando navegação direta...");
+            window.location.href = urls[0];
           }
 
           // Restaurar cor após delay
