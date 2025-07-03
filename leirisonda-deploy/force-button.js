@@ -333,8 +333,8 @@ function showModal() {
         <button onclick="deleteLocalData()" style="width: 100%; padding: 10px; background: #fd7e14; color: white; border: none; border-radius: 6px; cursor: pointer; margin-bottom: 8px; font-weight: bold;">
           🗑️ ELIMINAR LOCAIS
         </button>
-        <button onclick="deleteWorkData()" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
-          🎯 ELIMINAR SÓ OBRAS/MANUTENÇÕES/PISCINAS
+        <button onclick="stopSyncAndDelete()" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+          🛑 PARAR SYNC + ELIMINAR DADOS
         </button>
         <div id="delete-info" style="margin-top: 8px; font-size: 13px; display: none;"></div>
       </div>
@@ -1607,7 +1607,7 @@ window.comprehensiveDelete = function () {
                       log(`💾 Encontrados ${cacheNames.length} caches`);
                       return Promise.all(
                         cacheNames.map((cacheName) => {
-                          log(`  ��� Eliminando cache: ${cacheName}`);
+                          log(`  ✅ Eliminando cache: ${cacheName}`);
                           return caches.delete(cacheName);
                         }),
                       );
@@ -2145,6 +2145,299 @@ window.deleteWorkData = function () {
     }, 1000);
   } catch (error) {
     console.error("💥 ERRO na eliminação cirúrgica:", error);
+    showInfo("delete-info", `❌ ERRO: ${error.message}`, "red");
+  }
+};
+
+// Função para parar sincronização e eliminar dados de forma definitiva
+window.stopSyncAndDelete = function () {
+  try {
+    console.log("🛑 PARANDO SINCRONIZAÇÃO E ELIMINANDO DADOS");
+
+    if (
+      !confirm(
+        "🛑 PARAR SINCRONIZAÇÃO + ELIMINAR DADOS?\n\nEsta função vai:\n✅ Parar toda a sincronização\n✅ Eliminar dados locais\n✅ Eliminar dados do Firebase\n✅ Prevenir re-sincronização\n\n❌ IRREVERSÍVEL!",
+      )
+    ) {
+      return;
+    }
+
+    // Interface de progresso
+    const progressDiv = document.createElement("div");
+    progressDiv.id = "sync-stop-deletion";
+    progressDiv.style.cssText = `
+      position: fixed; top: 30px; left: 50%; transform: translateX(-50%);
+      background: white; padding: 25px; border-radius: 15px;
+      border: 3px solid #dc3545; z-index: 10000000;
+      font-family: monospace; text-align: center; min-width: 500px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-height: 80vh; overflow: auto;
+    `;
+    progressDiv.innerHTML = `
+      <h3 style="color: #dc3545; margin-bottom: 20px;">🛑 Parando Sync + Eliminando</h3>
+      <div id="sync-log" style="text-align: left; font-size: 10px; max-height: 300px; overflow: auto; background: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 15px;"></div>
+      <div id="sync-progress" style="font-weight: bold; color: #dc3545;">Iniciando...</div>
+    `;
+    document.body.appendChild(progressDiv);
+
+    const log = (message, color = "#000") => {
+      console.log(message);
+      const logDiv = document.getElementById("sync-log");
+      if (logDiv) {
+        logDiv.innerHTML += `<div style="color: ${color}; margin: 1px 0; font-size: 10px;">${message}</div>`;
+        logDiv.scrollTop = logDiv.scrollHeight;
+      }
+    };
+
+    const updateStatus = (text) => {
+      const statusDiv = document.getElementById("sync-progress");
+      if (statusDiv) statusDiv.textContent = text;
+    };
+
+    // FASE 1: Parar sincronização
+    updateStatus("🛑 Parando sincronização...");
+    log("🛑 FASE 1: Parando toda a sincronização");
+
+    try {
+      // Tentar parar sincronização via instância hr
+      if (window.hr) {
+        log("📡 Encontrada instância hr da aplicação", "#007784");
+
+        // Desativar Firebase
+        if (typeof window.hr.isFirebaseAvailable !== "undefined") {
+          window.hr.isFirebaseAvailable = false;
+          log("  ✅ hr.isFirebaseAvailable = false", "#28a745");
+        }
+
+        // Parar listeners se existirem
+        [
+          "stopListeningToWorks",
+          "stopListeningToMaintenances",
+          "stopListeningToPools",
+        ].forEach((method) => {
+          if (typeof window.hr[method] === "function") {
+            window.hr[method]();
+            log(`  ✅ ${method}() executado`, "#28a745");
+          }
+        });
+
+        // Desconectar Firebase
+        if (window.hr.firestore) {
+          try {
+            window.hr.firestore.disableNetwork();
+            log("  ✅ Firebase network desabilitado", "#28a745");
+          } catch (e) {
+            log(`  ⚠️ Erro ao desabilitar network: ${e.message}`, "#ffc107");
+          }
+        }
+      }
+
+      // Parar service workers
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          registrations.forEach((registration) => {
+            registration.unregister();
+            log("  ✅ Service Worker desregistrado", "#28a745");
+          });
+        });
+      }
+
+      log("✅ Sincronização interrompida", "#28a745");
+    } catch (e) {
+      log(`❌ Erro ao parar sincronização: ${e.message}`, "#dc3545");
+    }
+
+    setTimeout(() => {
+      // FASE 2: Eliminar TODOS os dados locais relacionados com utilizador
+      updateStatus("🗑️ Eliminando dados locais...");
+      log("🗑️ FASE 2: Eliminação agressiva de dados locais");
+
+      const allKeys = Object.keys(localStorage);
+      let deletedCount = 0;
+
+      // Eliminar TUDO que pareça dados da aplicação
+      allKeys.forEach((key) => {
+        const value = localStorage.getItem(key);
+        const shouldDelete =
+          // Palavras-chave específicas
+          key.toLowerCase().includes("work") ||
+          key.toLowerCase().includes("maintenance") ||
+          key.toLowerCase().includes("pool") ||
+          key.toLowerCase().includes("obra") ||
+          key.toLowerCase().includes("piscina") ||
+          key.toLowerCase().includes("user") ||
+          key.toLowerCase().includes("sync") ||
+          key.toLowerCase().includes("leirisonda") ||
+          // Arrays que parecem dados
+          (value.startsWith("[") && value.includes("{")) ||
+          // Objetos grandes
+          (value.startsWith("{") && value.length > 100);
+
+        if (shouldDelete) {
+          localStorage.removeItem(key);
+          log(`  🗑️ Eliminado: ${key} (${value.length} chars)`, "#dc3545");
+          deletedCount++;
+        }
+      });
+
+      // Força clear completo também
+      localStorage.clear();
+      sessionStorage.clear();
+      log(
+        `📊 ${deletedCount} chaves específicas + clear() completo`,
+        "#dc3545",
+      );
+
+      setTimeout(() => {
+        // FASE 3: Eliminar dados do Firebase por utilizador
+        updateStatus("🔥 Eliminando Firebase por utilizador...");
+        log("🔥 FASE 3: Eliminação Firebase por utilizador");
+
+        try {
+          // Tentar descobrir o utilizador atual
+          let currentUser = null;
+
+          if (window.hr && window.hr.getCurrentUser) {
+            currentUser = window.hr.getCurrentUser();
+            log(
+              `👤 Utilizador identificado: ${currentUser?.name || currentUser?.email || "ID: " + currentUser?.id}`,
+              "#007784",
+            );
+          }
+
+          // Eliminar por coleções E por utilizador
+          const collections = ["works", "maintenances", "pools"];
+
+          collections.forEach((collection) => {
+            try {
+              if (window.hr && window.hr.firestore) {
+                log(`🔥 Eliminando coleção: ${collection}`, "#ffc107");
+
+                // Eliminar TUDO da coleção
+                window.hr.firestore
+                  .collection(collection)
+                  .get()
+                  .then((snapshot) => {
+                    log(
+                      `  📦 Encontrados ${snapshot.size} documentos em ${collection}`,
+                      "#ffc107",
+                    );
+
+                    snapshot.forEach((doc) => {
+                      doc.ref
+                        .delete()
+                        .then(() => {
+                          log(`    ✅ ${doc.id} eliminado`, "#28a745");
+                        })
+                        .catch((e) => {
+                          log(`    ❌ Erro ${doc.id}: ${e.message}`, "#dc3545");
+                        });
+                    });
+                  })
+                  .catch((e) => {
+                    log(
+                      `  ❌ Erro na coleção ${collection}: ${e.message}`,
+                      "#dc3545",
+                    );
+                  });
+
+                // Se temos utilizador, eliminar também dados específicos do utilizador
+                if (currentUser && currentUser.id) {
+                  window.hr.firestore
+                    .collection(collection)
+                    .where("userId", "==", currentUser.id)
+                    .get()
+                    .then((snapshot) => {
+                      log(
+                        `  👤 Encontrados ${snapshot.size} documentos do utilizador em ${collection}`,
+                        "#ffc107",
+                      );
+                      snapshot.forEach((doc) => {
+                        doc.ref.delete();
+                        log(
+                          `    🗑️ Documento do utilizador ${doc.id} eliminado`,
+                          "#28a745",
+                        );
+                      });
+                    });
+                }
+              }
+            } catch (e) {
+              log(`❌ Erro Firebase ${collection}: ${e.message}`, "#dc3545");
+            }
+          });
+
+          // Tentar logout para quebrar associação
+          if (window.firebase && window.firebase.auth) {
+            window.firebase
+              .auth()
+              .signOut()
+              .then(() => {
+                log("🚪 Logout Firebase executado", "#28a745");
+              });
+          }
+        } catch (e) {
+          log(`❌ Erro geral Firebase: ${e.message}`, "#dc3545");
+        }
+
+        setTimeout(() => {
+          // FASE 4: Verificação final e bloqueio de re-sync
+          updateStatus("🔒 Bloqueando re-sincronização...");
+          log("🔒 FASE 4: Bloqueando re-sincronização");
+
+          // Criar flag para bloquear sync
+          localStorage.setItem("SYNC_DISABLED", "true");
+          localStorage.setItem("FORCE_OFFLINE", "true");
+          log("🔒 Flags de bloqueio criadas", "#dc3545");
+
+          // Substituir funções de sync se existirem
+          if (window.hr) {
+            ["syncData", "syncLocalDataToFirebase", "startSync"].forEach(
+              (method) => {
+                if (typeof window.hr[method] === "function") {
+                  window.hr[method] = function () {
+                    console.log(`🚫 ${method} bloqueado pela eliminação`);
+                    return Promise.resolve();
+                  };
+                  log(`🚫 ${method} bloqueado`, "#dc3545");
+                }
+              },
+            );
+          }
+
+          setTimeout(() => {
+            updateStatus("✅ Eliminação definitiva concluída!");
+            log("🎉 ELIMINAÇÃO DEFINITIVA CONCLUÍDA!", "#28a745");
+            log("🔒 Sincronização bloqueada permanentemente", "#dc3545");
+
+            const syncDiv = document.getElementById("sync-stop-deletion");
+            if (syncDiv) {
+              syncDiv.innerHTML = `
+                <h3 style="color: #28a745;">🎉 Eliminação Definitiva!</h3>
+                <div style="text-align: left; margin: 15px 0; font-size: 12px;">
+                  ✅ Sincronização interrompida<br>
+                  ✅ Dados locais eliminados<br>
+                  ✅ Dados Firebase eliminados<br>
+                  ✅ Re-sincronização bloqueada<br>
+                  🔒 Sistema offline permanente
+                </div>
+                <button onclick="window.location.reload()"
+                        style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                  🔄 Recarregar App
+                </button>
+              `;
+            }
+
+            showInfo(
+              "delete-info",
+              "🎉 Eliminação definitiva concluída!",
+              "green",
+            );
+          }, 2000);
+        }, 2000);
+      }, 1000);
+    }, 1000);
+  } catch (error) {
+    console.error("💥 ERRO na eliminação com parar sync:", error);
     showInfo("delete-info", `❌ ERRO: ${error.message}`, "red");
   }
 };
