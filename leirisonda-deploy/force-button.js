@@ -363,11 +363,17 @@ window.deleteAllData = function () {
     showInfo("delete-info", `✅ ${deleted} tipos eliminados!`, "green");
     loadCounts();
 
-    if (Notification.permission === "granted") {
-      new Notification("Leirisonda", {
-        body: "Dados eliminados!",
-        icon: "/leirisonda-logo.svg",
-      });
+    // Tentar notificação se suportada
+    try {
+      if ("Notification" in window && Notification.permission === "granted") {
+        new Notification("Leirisonda", {
+          body: "Dados eliminados!",
+          icon: "/leirisonda-logo.svg",
+          tag: "delete-notification",
+        });
+      }
+    } catch (notifError) {
+      console.log("Notificação não enviada:", notifError.message);
     }
   } catch (error) {
     console.error("Erro ao eliminar:", error);
