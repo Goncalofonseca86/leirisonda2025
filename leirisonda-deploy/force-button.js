@@ -99,7 +99,7 @@ function showModal() {
 
     content.innerHTML = `
       <h2 style="color: #007784; margin-bottom: 20px;">⚙️ Definições</h2>
-      
+
       <div style="margin-bottom: 20px; text-align: left;">
         <h3 style="color: #333; margin-bottom: 10px;">📱 Notificações</h3>
         <button onclick="activateNotifications()" style="width: 100%; padding: 10px; background: #007784; color: white; border: none; border-radius: 6px; margin-bottom: 8px; cursor: pointer;">
@@ -115,7 +115,7 @@ function showModal() {
       <div style="background: #fff3cd; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
         <h3 style="color: #856404; margin-bottom: 8px;">🗑️ Eliminar Dados</h3>
         <p style="color: #856404; margin-bottom: 12px; font-size: 13px;">⚠️ Remove TODOS os dados!</p>
-        
+
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 15px;">
           <div style="text-align: center; padding: 8px; background: white; border-radius: 6px; font-size: 12px;">
             <div style="font-size: 18px;">🏗️</div>
@@ -133,7 +133,7 @@ function showModal() {
             <div id="pools-count" style="color: #007784; font-weight: bold;">-</div>
           </div>
         </div>
-        
+
         <button onclick="deleteAllData()" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
           💣 ELIMINAR TUDO
         </button>
@@ -187,21 +187,56 @@ window.activateNotifications = function () {
 
 window.testNotification = function () {
   try {
+    console.log("🧪 Testando notificação...");
+
+    // Verificar suporte
+    if (!("Notification" in window)) {
+      showInfo("notif-info", "❌ Notificações não suportadas", "red");
+      return;
+    }
+
+    // Verificar permissão
+    console.log("Permissão atual:", Notification.permission);
+
+    if (Notification.permission !== "granted") {
+      showInfo("notif-info", "❌ Ative notificações primeiro", "red");
+      return;
+    }
+
     const msgEl = document.getElementById("test-message");
     const msg = msgEl ? msgEl.value || "Teste" : "Teste";
 
-    if (Notification.permission === "granted") {
-      new Notification("Leirisonda", {
-        body: msg,
-        icon: "/leirisonda-logo.svg",
-      });
+    console.log("Criando notificação com mensagem:", msg);
+
+    // Criar notificação com configuração mínima
+    const notification = new Notification("Leirisonda", {
+      body: msg,
+      icon: "/leirisonda-logo.svg",
+      tag: "test-notification",
+      requireInteraction: false,
+    });
+
+    // Listener para sucesso
+    notification.onshow = function () {
+      console.log("✅ Notificação mostrada");
       showInfo("notif-info", "✅ Notificação enviada!", "green");
-    } else {
-      showInfo("notif-info", "❌ Ative notificações primeiro", "red");
-    }
+    };
+
+    // Listener para erro
+    notification.onerror = function (error) {
+      console.error("Erro na notificação:", error);
+      showInfo("notif-info", "❌ Erro ao enviar", "red");
+    };
+
+    // Fechar automaticamente após 3 segundos
+    setTimeout(() => {
+      if (notification) {
+        notification.close();
+      }
+    }, 3000);
   } catch (error) {
-    console.error("Erro no teste:", error);
-    showInfo("notif-info", "❌ Erro no teste", "red");
+    console.error("Erro no teste de notificação:", error);
+    showInfo("notif-info", `❌ Erro: ${error.message}`, "red");
   }
 };
 
