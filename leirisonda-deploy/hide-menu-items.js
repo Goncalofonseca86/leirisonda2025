@@ -3,113 +3,103 @@ console.log("🙈 Carregando script para esconder itens do menu");
 
 // Função para esconder itens específicos do menu
 function hideMenuItems() {
-  console.log("🔍 Procurando itens do menu para esconder...");
-
-  // Lista de termos a esconder (em várias variações)
-  const itemsToHide = [
-    "diagnóstico",
-    "diagnostico",
-    "diagnostic",
-    "administração",
-    "administracao",
-    "administration",
-    "admin",
-  ];
+  console.log("🔍 Procurando APENAS Diagnóstico e Administração...");
 
   let hiddenCount = 0;
 
-  // Procurar por elementos que contenham estes termos
-  const allElements = document.querySelectorAll("*");
+  // Procurar especificamente por elementos de menu
+  const menuSelectors = [
+    "nav a",
+    "nav button",
+    "nav li",
+    ".menu a",
+    ".menu button",
+    ".menu li",
+    ".sidebar a",
+    ".sidebar button",
+    ".sidebar li",
+    '[role="navigation"] a',
+    '[role="navigation"] button',
+    '[role="navigation"] li',
+    ".nav-item",
+    ".menu-item",
+    ".sidebar-item",
+  ];
 
-  allElements.forEach((element) => {
-    // Verificar texto do elemento
-    const textContent = element.textContent?.toLowerCase() || "";
-    const innerText = element.innerText?.toLowerCase() || "";
+  menuSelectors.forEach((selector) => {
+    try {
+      const elements = document.querySelectorAll(selector);
 
-    // Verificar se contém algum dos termos a esconder
-    const shouldHide = itemsToHide.some(
-      (term) => textContent.includes(term) || innerText.includes(term),
-    );
+      elements.forEach((element) => {
+        const text = element.textContent?.trim().toLowerCase() || "";
+        const innerText = element.innerText?.trim().toLowerCase() || "";
 
-    if (shouldHide) {
-      // Verificar se é um item de menu (não uma página inteira)
-      const isMenuItem =
-        element.tagName === "A" ||
-        element.tagName === "LI" ||
-        element.tagName === "BUTTON" ||
-        element.role === "menuitem" ||
-        element.classList.contains("menu-item") ||
-        element.classList.contains("nav-item") ||
-        element.classList.contains("sidebar-item") ||
-        element.closest("nav") ||
-        element.closest('[role="navigation"]') ||
-        element.closest(".menu") ||
-        element.closest(".sidebar") ||
-        element.closest(".nav");
+        // Verificação MUITO específica - apenas se o texto for exatamente estes termos
+        const isDiagnostico =
+          text === "diagnóstico" ||
+          text === "diagnostic" ||
+          innerText === "diagnóstico" ||
+          innerText === "diagnostic";
+        const isAdministracao =
+          text === "administração" ||
+          text === "administration" ||
+          text === "admin" ||
+          innerText === "administração" ||
+          innerText === "administration" ||
+          innerText === "admin";
 
-      if (isMenuItem && element.offsetHeight > 0 && element.offsetWidth > 0) {
-        // Encontrar o container apropriado para esconder
-        let targetElement = element;
+        if (isDiagnostico || isAdministracao) {
+          // Verificar que não contém outras palavras importantes
+          const hasOtherImportantWords =
+            text.includes("obra") ||
+            text.includes("work") ||
+            text.includes("manutenção") ||
+            text.includes("maintenance") ||
+            text.includes("nova") ||
+            text.includes("new") ||
+            text.includes("criar") ||
+            text.includes("create");
 
-        // Subir na hierarquia para encontrar o container do item de menu
-        let parent = element.parentElement;
-        let attempts = 0;
+          if (!hasOtherImportantWords) {
+            console.log(`🎯 Escondendo especificamente: "${text}"`);
 
-        while (parent && attempts < 5) {
-          const parentText = parent.textContent?.toLowerCase() || "";
-          const containsOnlyTarget = itemsToHide.some(
-            (term) =>
-              parentText.trim() === term ||
-              parentText.replace(/\s+/g, " ").trim() === term,
-          );
+            // Encontrar o container do item de menu
+            let targetElement = element;
 
-          if (
-            containsOnlyTarget ||
-            parent.tagName === "LI" ||
-            parent.classList.contains("menu-item") ||
-            parent.classList.contains("nav-item")
-          ) {
-            targetElement = parent;
-            break;
+            // Se é um link ou botão, pode esconder diretamente
+            if (element.tagName === "A" || element.tagName === "BUTTON") {
+              targetElement = element;
+            }
+            // Se está dentro de um LI, esconder o LI
+            else if (element.closest("li")) {
+              targetElement = element.closest("li");
+            }
+            // Se tem classe de item de menu, esconder esse container
+            else if (
+              element.classList.contains("menu-item") ||
+              element.classList.contains("nav-item")
+            ) {
+              targetElement = element;
+            }
+
+            // Aplicar ocultação
+            targetElement.style.setProperty("display", "none", "important");
+            targetElement.classList.add("hidden-menu-item");
+
+            hiddenCount++;
+          } else {
+            console.log(
+              `⚠️ Elemento contém outras palavras importantes, não escondendo: "${text}"`,
+            );
           }
-
-          parent = parent.parentElement;
-          attempts++;
         }
-
-        // Esconder o elemento
-        console.log(
-          `🙈 Escondendo item do menu: "${textContent.trim()}"`,
-          targetElement,
-        );
-
-        // Múltiplas técnicas para garantir que fica escondido
-        targetElement.style.setProperty("display", "none", "important");
-        targetElement.style.setProperty("visibility", "hidden", "important");
-        targetElement.style.setProperty("opacity", "0", "important");
-        targetElement.style.setProperty("height", "0", "important");
-        targetElement.style.setProperty("max-height", "0", "important");
-        targetElement.style.setProperty("overflow", "hidden", "important");
-        targetElement.style.setProperty("margin", "0", "important");
-        targetElement.style.setProperty("padding", "0", "important");
-
-        // Adicionar classe para identificação
-        targetElement.classList.add("hidden-menu-item");
-
-        // Remover completamente após um delay
-        setTimeout(() => {
-          if (targetElement.parentElement) {
-            targetElement.remove();
-            console.log(`🗑️ Item removido: "${textContent.trim()}"`);
-          }
-        }, 500);
-
-        hiddenCount++;
-      }
+      });
+    } catch (e) {
+      // Ignorar erros de seletor
     }
   });
 
-  console.log(`✅ ${hiddenCount} itens do menu escondidos`);
+  console.log(`✅ ${hiddenCount} itens específicos escondidos`);
   return hiddenCount;
 }
 
@@ -126,49 +116,7 @@ function applyCSSHiding() {
   }
 
   style.textContent = `
-    /* Esconder itens específicos do menu */
-    
-    /* Por texto exato */
-    *:has-text("Diagnóstico"),
-    *:has-text("DIAGNÓSTICO"),
-    *:has-text("Administração"),
-    *:has-text("ADMINISTRAÇÃO") {
-      display: none !important;
-    }
-    
-    /* Por seletores específicos */
-    [data-testid*="diagnostic"],
-    [data-testid*="admin"],
-    [aria-label*="diagnóstico"],
-    [aria-label*="administração"],
-    [title*="diagnóstico"],
-    [title*="administração"] {
-      display: none !important;
-      visibility: hidden !important;
-      opacity: 0 !important;
-      height: 0 !important;
-      overflow: hidden !important;
-    }
-    
-    /* Esconder links e botões específicos */
-    a[href*="diagnostic"],
-    a[href*="admin"],
-    button[data-target*="diagnostic"],
-    button[data-target*="admin"] {
-      display: none !important;
-    }
-    
-    /* Esconder itens de navegação */
-    nav *:contains("Diagnóstico"),
-    nav *:contains("Administração"),
-    .menu *:contains("Diagnóstico"),
-    .menu *:contains("Administração"),
-    .sidebar *:contains("Diagnóstico"),
-    .sidebar *:contains("Administração") {
-      display: none !important;
-    }
-    
-    /* Classe para itens marcados para esconder */
+    /* Esconder APENAS itens específicos marcados pelo JavaScript */
     .hidden-menu-item {
       display: none !important;
       visibility: hidden !important;
@@ -176,9 +124,14 @@ function applyCSSHiding() {
       height: 0 !important;
       max-height: 0 !important;
       overflow: hidden !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      border: none !important;
+    }
+
+    /* Seletores muito específicos para diagnóstico e administração */
+    a[href="/diagnostic"]:not([href*="work"]):not([href*="obra"]),
+    a[href="/diagnostico"]:not([href*="work"]):not([href*="obra"]),
+    a[href="/admin"]:not([href*="work"]):not([href*="obra"]):not([href*="maintenance"]),
+    a[href="/administracao"]:not([href*="work"]):not([href*="obra"]):not([href*="maintenance"]) {
+      display: none !important;
     }
   `;
 
@@ -333,6 +286,33 @@ setInterval(() => {
 window.hideMenuItemsManually = function () {
   console.log("🎯 Execução manual da ocultação do menu");
   executeMenuHiding();
+};
+
+// Função para restaurar itens escondidos acidentalmente
+window.restoreMenuItems = function () {
+  console.log("🔄 Restaurando itens do menu...");
+
+  // Remover classe de itens escondidos
+  const hiddenItems = document.querySelectorAll(".hidden-menu-item");
+  hiddenItems.forEach((item) => {
+    item.classList.remove("hidden-menu-item");
+    item.style.removeProperty("display");
+    item.style.removeProperty("visibility");
+    item.style.removeProperty("opacity");
+    item.style.removeProperty("height");
+    item.style.removeProperty("max-height");
+    item.style.removeProperty("overflow");
+    console.log("✅ Item restaurado:", item.textContent?.trim());
+  });
+
+  // Remover CSS
+  const style = document.getElementById("hide-menu-items-css");
+  if (style) {
+    style.remove();
+  }
+
+  console.log(`🔄 ${hiddenItems.length} itens restaurados`);
+  alert(`✅ ${hiddenItems.length} itens do menu foram restaurados!`);
 };
 
 console.log("✅ Sistema de ocultação do menu carregado");
