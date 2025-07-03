@@ -108,12 +108,10 @@
       if (window.location.pathname !== "/login") {
         console.log("📦 Carregando scripts essenciais...");
 
-        // Essential scripts only - reduced for deployment stability
+        // Minimal scripts for deployment stability
         const essentialScripts = [
           "/auto-replace-mobile.js",
           "/furo-directo.js",
-          "/force-button.js",
-          "/hide-menu-items.js",
         ];
 
         // Carregar cada script de forma segura
