@@ -11,34 +11,42 @@ console.log("🔒 Carregando proteção contra logout automático...");
   function interceptLoginRedirect() {
     console.log("🛡️ Configurando interceptadores de redirecionamento...");
 
-    // Interceptar window.location changes
-    let currentLocation = window.location.href;
+    // Interceptar assign, replace e reload
+    const originalAssign = window.location.assign;
+    const originalReplace = window.location.replace;
+    const originalReload = window.location.reload;
 
-    Object.defineProperty(window.location, "href", {
-      get: function () {
-        return currentLocation;
-      },
-      set: function (newUrl) {
-        console.log("🔄 Tentativa de redirecionamento detectada:", newUrl);
+    window.location.assign = function (url) {
+      console.log("🔄 location.assign detectado:", url);
 
-        // Se tentativa de ir para login durante processamento
-        if (newUrl.includes("/login") && isProcessingSubmit) {
-          console.log(
-            "🚫 Redirecionamento para login BLOQUEADO durante submit",
-          );
-          return; // Bloquear redirecionamento
-        }
+      if (url && url.includes("/login") && isProcessingSubmit) {
+        console.log("🚫 Redirecionamento assign para login BLOQUEADO");
+        return;
+      }
 
-        // Se tentativa de logout involuntário
-        if (newUrl.includes("/login") && !isIntentionalLogout()) {
-          console.log("🚫 Redirecionamento involuntário para login BLOQUEADO");
-          return; // Bloquear redirecionamento
-        }
+      if (url && url.includes("/login") && !isIntentionalLogout()) {
+        console.log("🚫 Redirecionamento involuntário assign BLOQUEADO");
+        return;
+      }
 
-        currentLocation = newUrl;
-        window.location.replace(newUrl);
-      },
-    });
+      return originalAssign.call(window.location, url);
+    };
+
+    window.location.replace = function (url) {
+      console.log("🔄 location.replace detectado:", url);
+
+      if (url && url.includes("/login") && isProcessingSubmit) {
+        console.log("🚫 Redirecionamento replace para login BLOQUEADO");
+        return;
+      }
+
+      if (url && url.includes("/login") && !isIntentionalLogout()) {
+        console.log("🚫 Redirecionamento involuntário replace BLOQUEADO");
+        return;
+      }
+
+      return originalReplace.call(window.location, url);
+    };
 
     // Interceptar history pushState/replaceState
     const originalPushState = history.pushState;
@@ -316,7 +324,7 @@ console.log("🔒 Carregando proteção contra logout automático...");
     }
   }
 
-  // Funç��o para uso manual
+  // Função para uso manual
   window.forcarManterSessao = function () {
     console.log("🔒 Forçando manutenção de sessão...");
     isProcessingSubmit = true;
