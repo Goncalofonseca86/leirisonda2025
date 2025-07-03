@@ -5,139 +5,39 @@
     <link rel="icon" type="image/svg+xml" href="/leirisonda-logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- SUPRESSOR NUCLEAR - PRIMEIRA COISA A CARREGAR -->
+    <!-- PROTEÇÃO MÍNIMA - SÓ PARA LOGIN -->
     <script>
-      // SUPRESSOR INLINE IMEDIATO
-      console.log("🔥 Supressor nuclear inline ativo");
-
-      // PROTEÇÃO ESPECIAL PARA PÁGINA DE LOGIN - NÃO INTERFERIR
+      // SÓ EXECUTAR SE FOR PÁGINA DE LOGIN
       if (window.location.pathname === "/login") {
-        console.log(
-          "🔓 Página de login detectada - desativando interferências",
-        );
-        // Na página de login, não fazer NADA que possa interferir
-        console.log("✅ Scripts desativados para login");
-        return; // Parar execução de qualquer script
-      }
+        console.log("🔓 Página de login - sem interferências");
+      } else {
+        console.log("📄 Página normal carregando...");
 
-      // Silenciar TODOS os console.error imediatamente (APENAS fora do login)
-      const origError = console.error;
-      console.error = function () {
-        return;
-      };
-
-      // Silenciar TODOS os console.warn
-      console.warn = function () {
-        return;
-      };
-
-      // Interceptar erros globais
-      window.addEventListener("error", function (e) {
-        e.preventDefault();
-        return false;
-      });
-      window.addEventListener("unhandledrejection", function (e) {
-        e.preventDefault();
-        return false;
-      });
-
-      // Override alert para erros
-      const origAlert = window.alert;
-      window.alert = function (msg) {
-        if (
-          !msg ||
-          msg.toLowerCase().includes("erro") ||
-          msg.toLowerCase().includes("error")
-        )
-          return;
-        return origAlert(msg);
-      };
-
-      console.log("✅ Erros silenciados inline");
-
-      // SOLUÇÃO ESPECÍFICA PARA OBRAS - NÃO INTERFERIR COM LOGIN
-      setTimeout(function () {
-        setInterval(function () {
-          try {
-            // SÓ EXECUTAR SE NÃO ESTIVER NA PÁGINA DE LOGIN
-            if (window.location.pathname === "/login") {
-              return; // Não fazer nada na página de login
-            }
-
-            // SÓ INTERFERIR SE ESTIVER EM PÁGINAS DE OBRA OU COM ERRO DE OBRA
-            const isWorkRelated =
-              window.location.pathname.includes("/work") ||
-              window.location.pathname.includes("/create") ||
-              (document.body &&
-                document.body.textContent.includes("guardada com sucesso"));
-
-            if (!isWorkRelated) {
-              return; // Não interferir com outras páginas
-            }
-
-            // Procurar mensagem de sucesso APENAS em contexto de obras
-            const allElements = document.querySelectorAll("*");
-            allElements.forEach(function (el) {
-              if (
-                el.textContent &&
-                el.textContent.includes("guardada com sucesso")
-              ) {
-                // Procurar X para fechar
-                const xButton =
-                  el.querySelector("button") ||
-                  el.parentElement.querySelector("button") ||
-                  document.querySelector(
-                    'button[style*="✕"], button:contains("×"), button:contains("✕")',
-                  );
-
-                if (xButton) {
-                  console.log("🔄 Clicando automaticamente no X...");
-                  xButton.click();
-
-                  // Aguardar 1 segundo e redirecionar
-                  setTimeout(function () {
-                    if (window.location.pathname !== "/works") {
-                      console.log("📍 Redirecionando para /works...");
-                      window.location.href = "/works";
-                    }
-                  }, 1000);
-                }
-              }
-            });
-
-            // APENAS SUBSTITUIR ERRO APÓS SUBMISSÃO REAL
-            if (
-              document.body &&
-              document.body.textContent.includes("Oops!") &&
-              document.body.textContent.includes("guardada com sucesso") &&
-              sessionStorage.getItem("form_submitted") === "true"
-            ) {
-              console.log(
-                "🔄 Substituindo tela de erro por sucesso APÓS submissão...",
-              );
-              sessionStorage.removeItem("form_submitted");
-
-              document.body.innerHTML = `
-              <div style="display: flex; justify-content: center; align-items: center; height: 100vh; background: linear-gradient(135deg, #22c55e, #16a34a);">
-                <div style="text-align: center; padding: 40px; background: white; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); max-width: 400px;">
-                  <div style="font-size: 48px; margin-bottom: 20px;">✅</div>
-                  <h2 style="color: #22c55e; margin-bottom: 15px;">Obra Guardada!</h2>
-                  <p style="color: #64748b; margin-bottom: 25px;">A obra foi criada com sucesso.</p>
-                  <button onclick="window.location.href='/works'" style="background: #22c55e; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 16px;">
-                    Ver Lista de Obras
-                  </button>
-                </div>
-              </div>
-            `;
-            }
-          } catch (e) {
-            // Ignorar erros
+        // Silenciar alguns erros para reduzir ruído no console
+        const origError = console.error;
+        console.error = function (...args) {
+          const msg = args.join(" ");
+          if (msg.includes("Firebase") || msg.includes("SYNC")) {
+            return; // Silenciar apenas estes erros específicos
           }
-        }, 500); // Menos frequente para não interferir
-      }, 2000);
+          return origError.apply(console, args);
+        };
+
+        // Interceptar erros críticos apenas
+        window.addEventListener("error", function (e) {
+          if (
+            e.message &&
+            (e.message.includes("Load failed") ||
+              e.message.includes("Script error"))
+          ) {
+            e.preventDefault();
+            return false;
+          }
+        });
+      }
     </script>
 
-    <!-- PWA Meta Tags - Force iOS app behavior -->
+    <!-- PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta
       name="apple-mobile-web-app-status-bar-style"
@@ -159,11 +59,7 @@
     <link rel="manifest" href="/manifest.json" crossorigin="use-credentials" />
 
     <!-- iOS Splash Screens -->
-    <link
-      rel="apple-touch-startup-image"
-      media="screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"
-      href="/apple-splash-2796-1290.jpg"
-    />
+    <link rel="apple-touch-startup-image" href="/apple-splash-2796-1290.jpg" />
 
     <title>Leirisonda - Gestão de Obras</title>
 
@@ -176,37 +72,20 @@
     <!-- CSS para modificações do menu -->
     <link rel="stylesheet" href="/menu-modifications.css" />
 
-    <!-- CARREGAR SCRIPTS SELETIVAMENTE BASEADO NA PÁGINA -->
+    <!-- CARREGAR SCRIPTS APENAS SE NÃO FOR LOGIN -->
     <script>
-      function carregarScripts() {
-        const path = window.location.pathname;
-        console.log("📍 Página detectada:", path);
+      if (window.location.pathname !== "/login") {
+        console.log("📦 Carregando scripts essenciais...");
 
-        if (path === "/login") {
-          console.log("🔓 Página de login - nenhum script carregado");
-          return; // Não carregar nada no login
-        }
-
-        // TODOS OS SCRIPTS ESSENCIAIS (excepto login)
-        console.log("📋 Carregando todos os scripts essenciais");
-        const scriptsParaCarregar = [
-          "/nuclear-error-suppressor.js",
-          "/block-error-screen.js",
-          "/prevent-login-redirect.js",
-          "/stay-on-work-page.js",
-          "/water-drilling-details.js",
-          "/furo-directo.js",
+        // Scripts essenciais apenas
+        const essentialScripts = [
           "/force-button.js",
-          "/simple-work-delete.js",
-          "/sync-fix.js",
+          "/water-drilling-details.js",
           "/hide-menu-items.js",
-          "/emergency-sync-fix.js",
-          "/error-recovery.js",
-          "/loading-fix.js",
         ];
 
-        // Carregar scripts de forma simples e segura
-        scriptsParaCarregar.forEach(function (src) {
+        // Carregar cada script de forma segura
+        essentialScripts.forEach(function (src) {
           try {
             const script = document.createElement("script");
             script.src = src;
@@ -215,60 +94,25 @@
               console.log("✅ Script carregado:", src);
             };
             script.onerror = function () {
-              console.log("⚠️ Script não carregado (ignorando):", src);
-              // Não fazer nada - continuar normalmente
+              console.log("⚠️ Script não carregado:", src);
             };
             document.head.appendChild(script);
           } catch (e) {
-            console.log("⚠️ Erro ao criar script (ignorando):", src);
+            console.log("⚠️ Erro ao carregar script:", src);
           }
         });
 
-        console.log(
-          "📦 Total de scripts para carregar:",
-          scriptsParaCarregar.length,
-        );
-
-        // FUNCIONALIDADES ESSENCIAIS INLINE - Garantir que funcionam mesmo sem scripts externos
+        // FUNCIONALIDADE INLINE APENAS PARA FUROS DE ÁGUA
         setTimeout(function () {
-          // 1. SUPRESSOR DE ERROS INLINE
-          if (typeof console !== "undefined") {
-            const origError = console.error;
-            console.error = function () {
-              // Silenciar erros
-              return;
-            };
-          }
-
-          // 2. INTERCEPTAR ERROS GLOBAIS
-          window.addEventListener(
-            "error",
-            function (e) {
-              e.preventDefault();
-              return false;
-            },
-            true,
-          );
-
-          window.addEventListener(
-            "unhandledrejection",
-            function (e) {
-              e.preventDefault();
-              return false;
-            },
-            true,
-          );
-
-          // 3. CRIAR SECÇÃO FURO SE NECESSÁRIO
           if (window.location.pathname.includes("/create-work")) {
+            // Aguardar a página carregar e verificar se precisa da secção furo
             setTimeout(function () {
               if (
                 !document.getElementById("secção-furo-agua") &&
                 document.body.textContent.includes("Tipo de Trabalho")
               ) {
-                console.log("💧 Criando secção furo inline...");
+                console.log("💧 Criando secção furo como fallback...");
 
-                // Encontrar formulário
                 const form =
                   document.querySelector("form") ||
                   document.querySelector("main") ||
@@ -282,224 +126,49 @@
                   border-radius: 12px;
                   padding: 20px;
                   margin: 20px 0;
-                  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
                 `;
 
                 furoDiv.innerHTML = `
-                  <h3 style="color: #0c4a6e; margin-bottom: 15px; display: flex; align-items: center;">
-                    💧 Detalhes do Furo de Água
-                  </h3>
-
+                  <h3 style="color: #0c4a6e; margin-bottom: 15px;">💧 Detalhes do Furo de Água</h3>
+                  
                   <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
                     <div>
-                      <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px;">Profundidade Total (metros)</label>
-                      <input type="number" name="furo_profundidade" step="0.1" placeholder="Ex: 45.5"
-                             style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;">
+                      <label style="display: block; font-weight: 500; margin-bottom: 4px;">Profundidade Total (metros)</label>
+                      <input type="number" step="0.1" placeholder="Ex: 45.5" 
+                             style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px;">
                     </div>
-
                     <div>
-                      <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px;">Nível da Água (metros)</label>
-                      <input type="number" name="furo_nivel_agua" step="0.1" placeholder="Ex: 12.3"
-                             style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;">
+                      <label style="display: block; font-weight: 500; margin-bottom: 4px;">Nível da Água (metros)</label>
+                      <input type="number" step="0.1" placeholder="Ex: 12.3"
+                             style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px;">
                     </div>
-
                     <div>
-                      <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px;">Profundidade da Bomba (metros)</label>
-                      <input type="number" name="furo_profundidade_bomba" step="0.1" placeholder="Ex: 38.0"
-                             style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;">
-                    </div>
-
-                    <div>
-                      <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px;">Tipo de Coluna</label>
-                      <select name="furo_tipo_coluna" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; background: white;">
-                        <option value="">Selecionar tipo...</option>
+                      <label style="display: block; font-weight: 500; margin-bottom: 4px;">Tipo de Coluna</label>
+                      <select style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; background: white;">
+                        <option value="">Selecionar...</option>
                         <option value="PEAD">PEAD</option>
                         <option value="HIDROROSCADO">HIDROROSCADO</option>
                       </select>
                     </div>
-
-                    <div>
-                      <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px;">Modelo da Bomba</label>
-                      <input type="text" name="furo_modelo_bomba" placeholder="Ex: Grundfos SQ3-105"
-                             style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;">
-                    </div>
-
-                    <div>
-                      <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px;">Potência Motor (HP)</label>
-                      <select name="furo_potencia" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; background: white;">
-                        <option value="">Selecionar potência...</option>
-                        <option value="0.5">0.5 HP</option>
-                        <option value="1">1 HP</option>
-                        <option value="1.5">1.5 HP</option>
-                        <option value="2">2 HP</option>
-                        <option value="3">3 HP</option>
-                        <option value="5">5 HP</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #cbd5e1; font-size: 12px; color: #64748b; text-align: center;">
-                    💡 Dados técnicos do furo de água
                   </div>
                 `;
 
                 form.appendChild(furoDiv);
-                console.log("✅ Secção furo criada inline");
+                console.log("✅ Secção furo criada");
               }
-            }, 2000);
+            }, 3000);
           }
-        }, 500);
-
-        // FALLBACK INLINE - Funcionalidades essenciais se scripts externos falharem
-        if (path !== "/login") {
-          // FALLBACK: Criar secção furo de água se não existir
-          setTimeout(function () {
-            if (window.location.pathname.includes("/create-work")) {
-              console.log("🔧 Verificando secção furo de água...");
-
-              // Se não há secção de furo e há tipo de trabalho, criar
-              if (
-                !document.getElementById("secção-furo-agua") &&
-                document.body.textContent.includes("Tipo de Trabalho")
-              ) {
-                // Procurar onde inserir
-                const tipoElements = document.querySelectorAll("*");
-                for (let el of tipoElements) {
-                  if (
-                    el.textContent &&
-                    el.textContent.includes("Tipo de Trabalho")
-                  ) {
-                    const container = el.closest("form") || el.parentElement;
-                    if (container) {
-                      // Criar secção simplificada do furo
-                      const furoSection = document.createElement("div");
-                      furoSection.id = "secção-furo-agua";
-                      furoSection.style.cssText = `
-                        background: #e0f2fe;
-                        border: 2px solid #0ea5e9;
-                        border-radius: 12px;
-                        padding: 20px;
-                        margin: 20px 0;
-                      `;
-
-                      furoSection.innerHTML = `
-                        <h3 style="color: #0c4a6e; margin-bottom: 15px;">💧 Detalhes do Furo de Água</h3>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                          <div>
-                            <label style="display: block; font-weight: 500; margin-bottom: 4px;">Profundidade Total (m)</label>
-                            <input type="number" step="0.1" placeholder="Ex: 45.5" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-                          </div>
-                          <div>
-                            <label style="display: block; font-weight: 500; margin-bottom: 4px;">Nível da Água (m)</label>
-                            <input type="number" step="0.1" placeholder="Ex: 12.3" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-                          </div>
-                          <div>
-                            <label style="display: block; font-weight: 500; margin-bottom: 4px;">Tipo de Coluna</label>
-                            <select style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-                              <option value="">Selecionar...</option>
-                              <option value="PEAD">PEAD</option>
-                              <option value="HIDROROSCADO">HIDROROSCADO</option>
-                            </select>
-                          </div>
-                        </div>
-                      `;
-
-                      container.appendChild(furoSection);
-                      console.log("✅ Secção furo criada como fallback");
-                      break;
-                    }
-                  }
-                }
-              }
-            }
-          }, 3000);
-        }
-
-        if (
-          path.includes("/work") ||
-          path.includes("/create") ||
-          path === "/works"
-        ) {
-          setTimeout(function () {
-            // Auto-clique no X da mensagem de sucesso
-            setInterval(function () {
-              try {
-                if (
-                  document.body &&
-                  document.body.textContent.includes("guardada com sucesso")
-                ) {
-                  const buttons = document.querySelectorAll("button");
-                  buttons.forEach(function (btn) {
-                    if (
-                      btn.textContent &&
-                      (btn.textContent.includes("×") ||
-                        btn.textContent.includes("✕"))
-                    ) {
-                      console.log("🔄 Auto-fechando mensagem (fallback)");
-                      btn.click();
-                      setTimeout(function () {
-                        if (window.location.pathname !== "/works") {
-                          window.location.href = "/works";
-                        }
-                      }, 1000);
-                    }
-                  });
-                }
-
-                // Substituir tela de erro por sucesso
-                if (
-                  document.body &&
-                  document.body.textContent.includes("Oops!") &&
-                  document.body.textContent.includes("guardada com sucesso")
-                ) {
-                  console.log("🔄 Substituindo erro por sucesso (fallback)");
-                  document.body.innerHTML = `
-                    <div style="display: flex; justify-content: center; align-items: center; height: 100vh; background: #22c55e;">
-                      <div style="text-align: center; padding: 40px; background: white; border-radius: 16px; max-width: 400px;">
-                        <div style="font-size: 48px; margin-bottom: 20px;">✅</div>
-                        <h2 style="color: #22c55e; margin-bottom: 15px;">Obra Guardada!</h2>
-                        <p style="color: #64748b; margin-bottom: 25px;">A obra foi criada com sucesso.</p>
-                        <button onclick="window.location.href='/works'"
-                                style="background: #22c55e; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;">
-                          Ver Lista de Obras
-                        </button>
-                      </div>
-                    </div>
-                  `;
-                }
-              } catch (e) {
-                // Ignorar erros
-              }
-            }, 500);
-          }, 1000);
-        }
-      }
-
-      // Carregar scripts quando a página estiver pronta
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", carregarScripts);
+        }, 1000);
       } else {
-        carregarScripts();
+        console.log("🔓 Scripts desativados para login");
       }
-
-      // Recarregar scripts quando a URL mudar (SPAs)
-      let currentUrl = window.location.href;
-      setInterval(function () {
-        if (window.location.href !== currentUrl) {
-          currentUrl = window.location.href;
-          console.log("🔄 URL mudou, recarregando scripts...");
-          setTimeout(carregarScripts, 500);
-        }
-      }, 1000);
     </script>
 
     <script>
-      // Essential protection and service worker
+      // Service worker apenas
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("/sw.js");
       }
-
-      // Auto-redirect removed to prevent 404 errors
     </script>
   </body>
 </html>
