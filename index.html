@@ -30,7 +30,8 @@
             (e.message.includes("Load failed") ||
               e.message.includes("Script error") ||
               e.message.includes("Loading chunk") ||
-              e.message.includes("Failed to fetch"))
+              e.message.includes("Failed to fetch") ||
+              e.message.includes("SYNC"))
           ) {
             console.log("🔧 Erro suprimido automaticamente:", e.message);
             e.preventDefault();
@@ -45,7 +46,8 @@
             e.reason.message &&
             (e.reason.message.includes("Load failed") ||
               e.reason.message.includes("Loading chunk") ||
-              e.reason.message.includes("Failed to fetch"))
+              e.reason.message.includes("Failed to fetch") ||
+              e.reason.message.includes("SYNC"))
           ) {
             console.log("🔧 Promise rejection suprimida:", e.reason.message);
             e.preventDefault();
