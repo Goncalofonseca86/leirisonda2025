@@ -140,7 +140,7 @@ function modifyMenuItems() {
       }
 
       if (elementToEnhance && elementToEnhance.tagName !== "BODY") {
-        console.log(`⭐ Destacando elemento administração:`, elementToEnhance);
+        console.log(`�� Destacando elemento administração:`, elementToEnhance);
 
         // Aplicar estilo destacado
         elementToEnhance.style.setProperty(
@@ -174,59 +174,30 @@ function modifyMenuItems() {
           child.style.setProperty("color", "#1f2937", "important");
         });
 
-        // Adicionar conteúdo das definições se não existir
-        if (!elementToEnhance.querySelector(".definicoes-content")) {
-          const settingsDiv = document.createElement("div");
-          settingsDiv.className = "definicoes-content";
-          settingsDiv.style.marginTop = "12px";
-          settingsDiv.style.fontSize = "14px";
-          settingsDiv.style.paddingLeft = "16px";
+        // Adicionar click handler para redirecionar para página de administração
+        elementToEnhance.style.cursor = "pointer";
+        elementToEnhance.onclick = function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log("🔄 Redirecionando para página de administração...");
+          window.location.href = "/admin.html";
+        };
 
-          settingsDiv.innerHTML = `
-            <div style="padding: 8px 0; color: #1f2937 !important; cursor: pointer; border-radius: 6px; font-weight: normal;"
-                 onmouseover="this.style.backgroundColor='rgba(31, 41, 55, 0.1)'"
-                 onmouseout="this.style.backgroundColor='transparent'">
-              ⚙️ Configurações Gerais
-            </div>
-            <div style="padding: 8px 0; color: #1f2937 !important; cursor: pointer; border-radius: 6px; font-weight: normal;"
-                 onmouseover="this.style.backgroundColor='rgba(31, 41, 55, 0.1)'"
-                 onmouseout="this.style.backgroundColor='transparent'">
-              👤 Perfil de Utilizador
-            </div>
-            <div style="padding: 8px 0; color: #1f2937 !important; cursor: pointer; border-radius: 6px; font-weight: normal;"
-                 onmouseover="this.style.backgroundColor='rgba(31, 41, 55, 0.1)'"
-                 onmouseout="this.style.backgroundColor='transparent'">
-              🔒 Segurança & Privacidade
-            </div>
-            <div style="padding: 8px 0; color: #1f2937 !important; cursor: pointer; border-radius: 6px; font-weight: normal;"
-                 onmouseover="this.style.backgroundColor='rgba(31, 41, 55, 0.1)'"
-                 onmouseout="this.style.backgroundColor='transparent'">
-              📊 Relatórios & Analytics
-            </div>
-            <div style="padding: 8px 0; color: #1f2937 !important; cursor: pointer; border-radius: 6px; font-weight: normal;"
-                 onmouseover="this.style.backgroundColor='rgba(31, 41, 55, 0.1)'"
-                 onmouseout="this.style.backgroundColor='transparent'">
-              💾 Backup & Exportação
-            </div>
-            <div style="padding: 8px 0; color: #1f2937 !important; cursor: pointer; border-radius: 6px; font-weight: normal;"
-                 onmouseover="this.style.backgroundColor='rgba(31, 41, 55, 0.1)'"
-                 onmouseout="this.style.backgroundColor='transparent'">
-              🔔 Notificações
-            </div>
-            <div style="padding: 8px 0; color: #1f2937 !important; cursor: pointer; border-radius: 6px; font-weight: normal;"
-                 onmouseover="this.style.backgroundColor='rgba(31, 41, 55, 0.1)'"
-                 onmouseout="this.style.backgroundColor='transparent'">
-              🎨 Personalização
-            </div>
-            <div style="padding: 8px 0; color: #1f2937 !important; cursor: pointer; border-radius: 6px; font-weight: normal;"
-                 onmouseover="this.style.backgroundColor='rgba(31, 41, 55, 0.1)'"
-                 onmouseout="this.style.backgroundColor='transparent'">
-              🗂️ Gestão de Dados
-            </div>
-          `;
+        // Adicionar indicador visual de que é clicável
+        elementToEnhance.title = "Clique para aceder à administração";
 
-          elementToEnhance.appendChild(settingsDiv);
-          console.log("➕ Conteúdo das definições adicionado à administração");
+        // Adicionar pequeno texto explicativo se não existir
+        if (!elementToEnhance.querySelector(".admin-hint")) {
+          const hintDiv = document.createElement("div");
+          hintDiv.className = "admin-hint";
+          hintDiv.style.marginTop = "8px";
+          hintDiv.style.fontSize = "12px";
+          hintDiv.style.color = "#1f2937";
+          hintDiv.style.opacity = "0.8";
+          hintDiv.style.fontStyle = "italic";
+          hintDiv.textContent = "Clique para aceder às definições avançadas";
+
+          elementToEnhance.appendChild(hintDiv);
         }
 
         itemsModified++;
