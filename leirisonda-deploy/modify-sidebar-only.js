@@ -61,61 +61,29 @@ function modifySidebar() {
     }
   });
 
-  // 2. ENCONTRAR secção ADMINISTRAÇÃO e DEFINIÇÕES
-  let adminSection = null;
-  let settingsSection = null;
-
-  const allElements = sidebar.querySelectorAll("*");
-  allElements.forEach((element) => {
+  // 2. REMOVER secção ADMINISTRAÇÃO completamente
+  const administracaoElements = sidebar.querySelectorAll("*");
+  administracaoElements.forEach((element) => {
     const text = element.textContent || "";
-    if (text.includes("ADMINISTRAÇÃO")) {
-      adminSection = element;
-    }
-    if (text.includes("Definições")) {
-      settingsSection = element;
+    if (
+      text.includes("ADMINISTRAÇÃO") &&
+      element.tagName !== "BODY" &&
+      element.tagName !== "HTML"
+    ) {
+      // Remove o elemento pai que contém ADMINISTRAÇÃO
+      let parentToRemove = element;
+      while (
+        parentToRemove.parentElement &&
+        parentToRemove.parentElement !== sidebar
+      ) {
+        parentToRemove = parentToRemove.parentElement;
+      }
+      console.log("🗑️ Removendo secção ADMINISTRAÇÃO");
+      parentToRemove.remove();
     }
   });
 
-  if (adminSection && settingsSection) {
-    console.log("⭐ Movendo Definições para ADMINISTRAÇÃO...");
-
-    // 3. DESTACAR secção ADMINISTRAÇÃO com fundo dourado
-    let adminContainer = adminSection;
-    while (
-      adminContainer.parentElement &&
-      adminContainer.parentElement !== sidebar
-    ) {
-      adminContainer = adminContainer.parentElement;
-    }
-
-    // Aplicar estilo dourado ao container da ADMINISTRAÇÃO
-    adminContainer.style.background =
-      "linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)";
-    adminContainer.style.borderRadius = "12px";
-    adminContainer.style.padding = "16px";
-    adminContainer.style.margin = "8px";
-    adminContainer.style.boxShadow = "0 4px 20px rgba(251, 191, 36, 0.3)";
-
-    // 4. MOVER conteúdo das Definições para dentro da ADMINISTRAÇÃO
-    let settingsContainer = settingsSection;
-    while (
-      settingsContainer.parentElement &&
-      settingsContainer.parentElement !== sidebar
-    ) {
-      settingsContainer = settingsContainer.parentElement;
-    }
-
-    // Clone o conteúdo das definições e adiciona à administração
-    const settingsContent = settingsContainer.cloneNode(true);
-    adminContainer.appendChild(settingsContent);
-
-    // Remove a secção original das definições
-    settingsContainer.remove();
-
-    console.log("✅ Modificações do sidebar aplicadas com sucesso!");
-  } else {
-    console.log("⚠️ Secções ADMINISTRAÇÃO ou Definições não encontradas");
-  }
+  console.log("✅ Modificações do sidebar aplicadas com sucesso!");
 
   return true;
 }
