@@ -156,56 +156,20 @@
 
     <title>Leirisonda - Gestão de Obras</title>
 
-    <!-- KILLER ABSOLUTO - EXECUTA ANTES DE QUALQUER COISA -->
+    <!-- Basic error suppression for production -->
     <script>
-      // MORTE INSTANTÂNEA ANTES DO BUNDLE
-      window.console = {
-        log: () => {},
-        error: () => {},
-        warn: () => {},
-        info: () => {},
-        debug: () => {},
-        trace: () => {},
-        group: () => {},
-        groupEnd: () => {},
-        time: () => {},
-        timeEnd: () => {},
-      };
-
-      // OVERRIDE TOTAL DE ERROR
-      window.Error = function () {
-        return {};
-      };
-
-      // INTERCEPTAR FETCH PARA EVITAR SYNC CALLS
-      window.fetch = () =>
-        Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve({}),
-        });
-
-      // NEUTRALIZAR PROMISES
-      const OrigPromise = Promise;
-      window.Promise = function (exec) {
-        return new OrigPromise((res) => {
-          try {
-            exec(res, res);
-          } catch (e) {
-            res();
+      // Minimal error suppression for deployment
+      if (typeof console !== "undefined") {
+        const originalError = console.error;
+        console.error = function (...args) {
+          const msg = args.join(" ");
+          if (msg.includes("SYNC") || msg.includes("Firebase")) {
+            return;
           }
-        });
-      };
-      Object.setPrototypeOf(Promise, OrigPromise);
-      Promise.resolve = OrigPromise.resolve.bind(OrigPromise);
-      Promise.reject = () => OrigPromise.resolve();
-      Promise.all = OrigPromise.all.bind(OrigPromise);
+          return originalError.apply(console, args);
+        };
+      }
     </script>
-
-    <!-- DESTRUIDOR FINAL - MODIFICA O BUNDLE -->
-    <script src="/ultimate-sync-destroyer.js"></script>
-
-    <!-- CARREGAR DESATIVADOR ANTES DO BUNDLE PRINCIPAL -->
-    <script src="/immediate-sync-killer.js"></script>
 
     <script type="module" crossorigin src="/assets/index-DnEsHg1H.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-DFdR-byQ.css" />
