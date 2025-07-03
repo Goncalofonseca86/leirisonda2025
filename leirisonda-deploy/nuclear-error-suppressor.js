@@ -36,6 +36,26 @@ console.log("🔥 Carregando supressor nuclear de erros...");
     return;
   };
 
+  // SILENCIAR CONSOLE.LOG QUE CONTENHAM ERROS
+  const originalConsoleLog = console.log;
+  console.log = function (...args) {
+    const message = args.join(" ").toLowerCase();
+
+    // Se contém termos de erro, silenciar
+    if (
+      message.includes("erro") ||
+      message.includes("error") ||
+      message.includes("firebase") ||
+      message.includes("sync") ||
+      message.includes("application error")
+    ) {
+      return;
+    }
+
+    // Outros logs passam normalmente
+    return originalConsoleLog.apply(console, args);
+  };
+
   // INTERCEPTAR ERROS GLOBAIS
   window.addEventListener("error", function (event) {
     console.log(
