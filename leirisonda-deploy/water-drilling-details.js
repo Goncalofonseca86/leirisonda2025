@@ -279,7 +279,7 @@ window.saveWaterDrillingData = function () {
     // Mostrar resumo
     showWaterDrillingSummary(data);
 
-    console.log("💾 Dados do furo de água guardados:", data);
+    console.log("���� Dados do furo de água guardados:", data);
     alert("✅ Dados do Furo de Água guardados com sucesso!");
 
     // Tentar sincronizar com Firebase se disponível
@@ -733,7 +733,7 @@ function createWaterDrillingInlineSection() {
 
       <div>
         <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px; font-size: 13px;">
-          Diâmetro Coluna (mm)
+          Di��metro Coluna (mm)
         </label>
         <select
           name="furo_diametro_coluna"
@@ -1143,4 +1143,118 @@ setInterval(() => {
   }
 }, 1000);
 
+// Função de debug melhorada em português
+window.debugFuroAgua = function () {
+  console.log("🔍 === DEBUG FURO DE ÁGUA ===");
+  console.log("📍 URL atual:", window.location.href);
+  console.log("📄 Título:", document.title);
+  console.log(
+    "🔧 Número de formulários:",
+    document.querySelectorAll("form").length,
+  );
+
+  // Verificar todos os selects
+  const selects = document.querySelectorAll("select");
+  console.log(`📋 Total de campos select: ${selects.length}`);
+
+  selects.forEach((select, i) => {
+    console.log(`Select ${i}:`, {
+      name: select.name,
+      id: select.id,
+      value: select.value,
+      options: Array.from(select.options)
+        .map((opt) => `${opt.value}:"${opt.text}"`)
+        .join(", "),
+    });
+  });
+
+  // Verificar estado das secções
+  console.log(
+    "🔧 Secção inline existe:",
+    !!document.getElementById("inline-water-drilling"),
+  );
+  console.log(
+    "🔧 Secção standalone existe:",
+    !!document.getElementById("water-drilling-section"),
+  );
+
+  // Forçar criação para teste
+  console.log("🧪 Forçando criação da secção...");
+  createWaterDrillingInlineSection();
+
+  return "Debug completo - verifique o console!";
+};
+
+// Função para forçar aparição em qualquer página
+window.forcarFuroAgua = function () {
+  console.log("💪 FORÇANDO criação da secção Furo de Água!");
+
+  // Remover secção existente se houver
+  const existing = document.getElementById("inline-water-drilling");
+  if (existing) existing.remove();
+
+  // Encontrar ou criar um local para inserir
+  let target =
+    document.querySelector("main") ||
+    document.querySelector(".container") ||
+    document.querySelector("#root") ||
+    document.body;
+
+  if (target.children.length > 0) {
+    target = target.children[0];
+  }
+
+  // Criar secção forçada
+  const section = document.createElement("div");
+  section.id = "inline-water-drilling";
+  section.style.cssText = `
+    background: #e0f2fe;
+    border: 3px solid #0ea5e9;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px;
+    position: relative;
+    z-index: 9999;
+  `;
+
+  section.innerHTML = `
+    <h3 style="color: #0c4a6e; margin: 0 0 15px 0;">💧 TESTE - Detalhes do Furo de Água</h3>
+    <p style="margin: 0 0 15px 0; color: #64748b;">Esta secção deveria aparecer quando seleciona "furo" no tipo de trabalho.</p>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+      <div>
+        <label style="display: block; font-weight: 500; margin-bottom: 4px;">Profundidade Total (m)</label>
+        <input type="number" step="0.1" placeholder="Ex: 45.5" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 500; margin-bottom: 4px;">Nível da Água (m)</label>
+        <input type="number" step="0.1" placeholder="Ex: 12.3" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 500; margin-bottom: 4px;">Tipo de Coluna</label>
+        <select style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+          <option value="">Selecionar...</option>
+          <option value="PEAD">PEAD</option>
+          <option value="HIDROROSCADO">HIDROROSCADO</option>
+        </select>
+      </div>
+    </div>
+
+    <button onclick="this.parentElement.remove()" style="margin-top: 15px; padding: 8px 16px; background: #dc2626; color: white; border: none; border-radius: 6px; cursor: pointer;">
+      🗑️ Remover Teste
+    </button>
+  `;
+
+  target.appendChild(section);
+
+  alert(
+    "✅ Secção de teste criada! Agora deve conseguir ver a parte dos furos.",
+  );
+  return section;
+};
+
 console.log("✅ Sistema Furo de Água carregado com monitoramento universal");
+console.log("🔧 Para debug: debugFuroAgua()");
+console.log("💪 Para forçar: forcarFuroAgua()");
