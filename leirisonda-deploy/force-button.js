@@ -333,8 +333,8 @@ function showModal() {
         <button onclick="deleteLocalData()" style="width: 100%; padding: 10px; background: #fd7e14; color: white; border: none; border-radius: 6px; cursor: pointer; margin-bottom: 8px; font-weight: bold;">
           🗑️ ELIMINAR LOCAIS
         </button>
-        <button onclick="cleanDataKeepSync()" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
-          🧹 LIMPAR DADOS (MANTER SYNC)
+        <button onclick="emergencyShowAndDelete()" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+          🆘 EMERGÊNCIA: MOSTRAR + ELIMINAR TUDO
         </button>
         <div id="delete-info" style="margin-top: 8px; font-size: 13px; display: none;"></div>
       </div>
@@ -994,7 +994,7 @@ function deleteFirebaseDataThroughAPI() {
         window.hr
           .deleteAllMaintenances()
           .then(() => {
-            console.log("✅ Manuten��ões do Firebase eliminadas");
+            console.log("✅ Manutenções do Firebase eliminadas");
           })
           .catch((e) => {
             console.error("❌ Erro ao eliminar manutenções:", e);
@@ -2683,5 +2683,279 @@ window.cleanDataKeepSync = function () {
   } catch (error) {
     console.error("💥 ERRO na limpeza de dados:", error);
     showInfo("delete-info", `❌ ERRO: ${error.message}`, "red");
+  }
+};
+
+// FUNÇÃO DE EMERGÊNCIA - Mostra TUDO e elimina TUDO
+window.emergencyShowAndDelete = function () {
+  try {
+    console.log("🆘 FUNÇÃO DE EMERGÊNCIA ATIVADA");
+
+    if (
+      !confirm(
+        "🆘 FUNÇÃO DE EMERGÊNCIA!\n\nVou mostrar ABSOLUTAMENTE TUDO que está armazenado e depois ELIMINAR TUDO!\n\nISTO É IRREVERSÍVEL!\n\nContinuar?",
+      )
+    ) {
+      return;
+    }
+
+    // Criar interface full-screen
+    const emergencyDiv = document.createElement("div");
+    emergencyDiv.id = "emergency-interface";
+    emergencyDiv.style.cssText = `
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.95); z-index: 10000000;
+      color: white; font-family: monospace; font-size: 10px;
+      overflow: auto; padding: 20px;
+    `;
+    emergencyDiv.innerHTML = `
+      <h2 style="color: #ff4444; text-align: center; margin-bottom: 20px;">🆘 INTERFACE DE EMERGÊNCIA</h2>
+      <div id="emergency-log" style="background: #111; padding: 15px; border-radius: 5px; max-height: 60vh; overflow: auto; white-space: pre-wrap; font-size: 9px;"></div>
+      <div style="text-align: center; margin-top: 20px;">
+        <button id="nuke-everything"
+                style="padding: 15px 30px; background: #ff0000; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-right: 15px; font-size: 14px;">
+          💣 ELIMINAR TUDO AGORA
+        </button>
+        <button onclick="this.parentElement.parentElement.remove()"
+                style="padding: 15px 30px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px;">
+          Cancelar
+        </button>
+      </div>
+    `;
+    document.body.appendChild(emergencyDiv);
+
+    const logDiv = document.getElementById("emergency-log");
+    const emergencyLog = (text) => {
+      console.log(text);
+      if (logDiv) {
+        logDiv.textContent += text + "\n";
+        logDiv.scrollTop = logDiv.scrollHeight;
+      }
+    };
+
+    emergencyLog("🆘 ANÁLISE COMPLETA DE EMERGÊNCIA\n");
+    emergencyLog("=".repeat(80));
+
+    // ANÁLISE 1: localStorage COMPLETO
+    emergencyLog("\n📦 LOCALSTORAGE COMPLETO:");
+    emergencyLog("-".repeat(40));
+    const localKeys = Object.keys(localStorage);
+    emergencyLog(`Total de chaves: ${localKeys.length}\n`);
+
+    localKeys.forEach((key) => {
+      const value = localStorage.getItem(key);
+      emergencyLog(`🔑 ${key}`);
+      emergencyLog(`   Tamanho: ${value.length} caracteres`);
+      emergencyLog(
+        `   Tipo: ${value.startsWith("[") ? "Array" : value.startsWith("{") ? "Objeto" : "String"}`,
+      );
+      emergencyLog(
+        `   Preview: ${value.substring(0, 100)}${value.length > 100 ? "..." : ""}`,
+      );
+      emergencyLog("");
+    });
+
+    // ANÁLISE 2: sessionStorage
+    emergencyLog("\n💾 SESSIONSTORAGE:");
+    emergencyLog("-".repeat(40));
+    const sessionKeys = Object.keys(sessionStorage);
+    emergencyLog(`Total de chaves: ${sessionKeys.length}\n`);
+
+    sessionKeys.forEach((key) => {
+      const value = sessionStorage.getItem(key);
+      emergencyLog(
+        `🔑 ${key}: ${value.substring(0, 50)}${value.length > 50 ? "..." : ""}`,
+      );
+    });
+
+    // ANÁLISE 3: Cookies
+    emergencyLog("\n🍪 COOKIES:");
+    emergencyLog("-".repeat(40));
+    const cookies = document.cookie.split(";");
+    emergencyLog(`Total de cookies: ${cookies.length}\n`);
+    cookies.forEach((cookie) => {
+      emergencyLog(`🍪 ${cookie.trim()}`);
+    });
+
+    // ANÁLISE 4: IndexedDB
+    emergencyLog("\n💽 INDEXEDDB:");
+    emergencyLog("-".repeat(40));
+    if ("indexedDB" in window) {
+      emergencyLog("IndexedDB disponível - tentando listar databases...");
+      try {
+        indexedDB
+          .databases()
+          .then((databases) => {
+            emergencyLog(`Databases encontradas: ${databases.length}`);
+            databases.forEach((db) => {
+              emergencyLog(`  📁 ${db.name} (versão ${db.version})`);
+            });
+          })
+          .catch((e) => {
+            emergencyLog(`Erro ao listar databases: ${e.message}`);
+          });
+      } catch (e) {
+        emergencyLog(`Erro IndexedDB: ${e.message}`);
+      }
+    } else {
+      emergencyLog("IndexedDB não disponível");
+    }
+
+    // ANÁLISE 5: Firebase Status
+    emergencyLog("\n🔥 FIREBASE STATUS:");
+    emergencyLog("-".repeat(40));
+    emergencyLog(`window.hr: ${typeof window.hr}`);
+    emergencyLog(`window.firebase: ${typeof window.firebase}`);
+
+    if (window.hr) {
+      emergencyLog(`hr.isFirebaseAvailable: ${window.hr.isFirebaseAvailable}`);
+      emergencyLog(`hr.firestore: ${typeof window.hr.firestore}`);
+
+      // Tentar contar documentos Firebase
+      if (window.hr.firestore) {
+        ["works", "maintenances", "pools", "users"].forEach((collection) => {
+          try {
+            window.hr.firestore
+              .collection(collection)
+              .get()
+              .then((snapshot) => {
+                emergencyLog(
+                  `Firebase ${collection}: ${snapshot.size} documentos`,
+                );
+              })
+              .catch((e) => {
+                emergencyLog(`Erro Firebase ${collection}: ${e.message}`);
+              });
+          } catch (e) {
+            emergencyLog(`Erro ao verificar ${collection}: ${e.message}`);
+          }
+        });
+      }
+    }
+
+    emergencyLog("\n" + "=".repeat(80));
+    emergencyLog(
+      "ANÁLISE COMPLETA! Clica 'ELIMINAR TUDO AGORA' para eliminar ABSOLUTAMENTE TUDO!",
+    );
+
+    // Configurar botão nuclear
+    document.getElementById("nuke-everything").onclick = function () {
+      if (
+        !confirm(
+          "💣 ÚLTIMA CONFIRMAÇÃO!\n\nVou eliminar ABSOLUTAMENTE TUDO!\n\nTens certeza?",
+        )
+      ) {
+        return;
+      }
+
+      emergencyLog("\n💣 INICIANDO ELIMINAÇÃO NUCLEAR...");
+      emergencyLog("=".repeat(50));
+
+      // NUKE 1: localStorage
+      emergencyLog("\n💣 NUKEANDO localStorage...");
+      localKeys.forEach((key) => {
+        localStorage.removeItem(key);
+        emergencyLog(`  💥 ${key} eliminado`);
+      });
+      localStorage.clear();
+      emergencyLog("  🧹 localStorage.clear() executado");
+
+      // NUKE 2: sessionStorage
+      emergencyLog("\n💣 NUKEANDO sessionStorage...");
+      sessionKeys.forEach((key) => {
+        sessionStorage.removeItem(key);
+        emergencyLog(`  💥 ${key} eliminado`);
+      });
+      sessionStorage.clear();
+      emergencyLog("  🧹 sessionStorage.clear() executado");
+
+      // NUKE 3: Cookies
+      emergencyLog("\n💣 NUKEANDO cookies...");
+      cookies.forEach((cookie) => {
+        const name = cookie.split("=")[0].trim();
+        if (name) {
+          document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+          document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=${window.location.hostname}`;
+          emergencyLog(`  💥 Cookie ${name} eliminado`);
+        }
+      });
+
+      // NUKE 4: IndexedDB
+      emergencyLog("\n💣 NUKEANDO IndexedDB...");
+      if ("indexedDB" in window) {
+        const dbsToDelete = [
+          "leirisonda",
+          "firebaseLocalStorageDb",
+          "firebase-storage",
+          "firebase-app-check-database",
+        ];
+        dbsToDelete.forEach((dbName) => {
+          const deleteReq = indexedDB.deleteDatabase(dbName);
+          deleteReq.onsuccess = () =>
+            emergencyLog(`  💥 Database ${dbName} eliminada`);
+          deleteReq.onerror = () =>
+            emergencyLog(`  ❌ Erro ao eliminar ${dbName}`);
+        });
+      }
+
+      // NUKE 5: Firebase
+      emergencyLog("\n💣 NUKEANDO Firebase...");
+      if (window.hr && window.hr.firestore) {
+        ["works", "maintenances", "pools"].forEach((collection) => {
+          window.hr.firestore
+            .collection(collection)
+            .get()
+            .then((snapshot) => {
+              emergencyLog(
+                `  💥 Eliminando ${snapshot.size} documentos de ${collection}`,
+              );
+              snapshot.forEach((doc) => {
+                doc.ref.delete().then(() => {
+                  emergencyLog(`    ✅ ${doc.id} eliminado`);
+                });
+              });
+            });
+        });
+      }
+
+      // NUKE 6: Limpar tudo do DOM relacionado com dados
+      emergencyLog("\n💣 LIMPANDO DOM...");
+      try {
+        // Limpar qualquer cache no window
+        Object.keys(window).forEach((key) => {
+          if (
+            key.toLowerCase().includes("work") ||
+            key.toLowerCase().includes("maintenance") ||
+            key.toLowerCase().includes("pool") ||
+            key.toLowerCase().includes("data")
+          ) {
+            try {
+              delete window[key];
+              emergencyLog(`  💥 window.${key} eliminado`);
+            } catch (e) {
+              emergencyLog(`  ❌ Erro ao eliminar window.${key}`);
+            }
+          }
+        });
+      } catch (e) {
+        emergencyLog(`Erro na limpeza DOM: ${e.message}`);
+      }
+
+      emergencyLog("\n🎉 ELIMINAÇÃO NUCLEAR CONCLUÍDA!");
+      emergencyLog("💥 TUDO FOI DESTRUÍDO!");
+
+      setTimeout(() => {
+        if (
+          confirm(
+            "💥 ELIMINAÇÃO NUCLEAR CONCLUÍDA!\n\nRecarregar página agora?",
+          )
+        ) {
+          window.location.reload();
+        }
+      }, 3000);
+    };
+  } catch (error) {
+    console.error("💥 ERRO na função de emergência:", error);
+    alert(`❌ ERRO: ${error.message}`);
   }
 };
