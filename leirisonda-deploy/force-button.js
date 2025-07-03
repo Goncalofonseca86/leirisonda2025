@@ -333,8 +333,8 @@ function showModal() {
         <button onclick="deleteLocalData()" style="width: 100%; padding: 10px; background: #fd7e14; color: white; border: none; border-radius: 6px; cursor: pointer; margin-bottom: 8px; font-weight: bold;">
           🗑️ ELIMINAR LOCAIS
         </button>
-        <button onclick="emergencyShowAndDelete()" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
-          🆘 EMERGÊNCIA: MOSTRAR + ELIMINAR TUDO
+        <button onclick="reactStateNuke()" style="width: 100%; padding: 12px; background: #ff0000; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+          ⚛️ NUCLEAR REACT + RESTART
         </button>
         <div id="delete-info" style="margin-top: 8px; font-size: 13px; display: none;"></div>
       </div>
@@ -2957,5 +2957,247 @@ window.emergencyShowAndDelete = function () {
   } catch (error) {
     console.error("💥 ERRO na função de emergência:", error);
     alert(`❌ ERRO: ${error.message}`);
+  }
+};
+
+// FUNÇÃO NUCLEAR REACT - Limpa estado React + Reinicia app
+window.reactStateNuke = function () {
+  try {
+    console.log("⚛️ NUCLEAR REACT STATE + APP RESTART");
+
+    if (
+      !confirm(
+        "⚛️ OPÇÃO NUCLEAR REACT!\n\nVou:\n💥 Limpar TODO o estado React\n💥 Eliminar TODO o armazenamento\n💥 REINICIAR a aplicação completamente\n💥 FORÇAR refresh total\n\n�� EXTREMAMENTE AGRESSIVO!\n\nContinuar?",
+      )
+    ) {
+      return;
+    }
+
+    // Interface de destruição
+    const nukeDiv = document.createElement("div");
+    nukeDiv.style.cssText = `
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(45deg, #ff0000, #000000); z-index: 99999999;
+      color: white; font-family: monospace; font-size: 12px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      animation: pulse 1s infinite;
+    `;
+    nukeDiv.innerHTML = `
+      <div style="text-align: center; padding: 20px;">
+        <h1 style="font-size: 48px; margin-bottom: 20px;">⚛️💥</h1>
+        <h2 style="color: #ffff00; margin-bottom: 20px;">NUCLEAR REACT DESTRUCTION</h2>
+        <div id="nuke-status" style="font-size: 16px; margin-bottom: 20px;">Iniciando destruição...</div>
+        <div id="nuke-countdown" style="font-size: 24px; font-weight: bold;"></div>
+      </div>
+    `;
+    document.body.appendChild(nukeDiv);
+
+    const updateStatus = (text) => {
+      const statusDiv = document.getElementById("nuke-status");
+      if (statusDiv) statusDiv.textContent = text;
+      console.log(text);
+    };
+
+    const countdown = (from, callback) => {
+      const countDiv = document.getElementById("nuke-countdown");
+      let count = from;
+      const interval = setInterval(() => {
+        if (countDiv) countDiv.textContent = count;
+        count--;
+        if (count < 0) {
+          clearInterval(interval);
+          callback();
+        }
+      }, 1000);
+    };
+
+    // FASE 1: Destruir React State
+    updateStatus("💥 Destruindo estado React...");
+
+    try {
+      // Procurar por React DevTools ou instâncias React
+      if (window.React) {
+        console.log("⚛️ React encontrado - tentando limpar");
+
+        // Tentar limpar cache React
+        if (window.React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED) {
+          window.React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED =
+            null;
+        }
+      }
+
+      // Procurar por stores de estado
+      ["__REDUX_STORE__", "__ZUSTAND_STORE__", "__MOBX_STORE__"].forEach(
+        (storeName) => {
+          if (window[storeName]) {
+            console.log(`💥 Limpando store: ${storeName}`);
+            delete window[storeName];
+          }
+        },
+      );
+
+      // Limpar qualquer contexto React do DOM
+      const reactElements = document.querySelectorAll(
+        "[data-reactroot], [data-react-element]",
+      );
+      reactElements.forEach((el) => {
+        console.log("💥 Removendo elemento React:", el);
+        el.remove();
+      });
+
+      // Limpar propriedades React de elementos
+      document.querySelectorAll("*").forEach((el) => {
+        Object.keys(el).forEach((key) => {
+          if (key.startsWith("__react") || key.startsWith("_react")) {
+            delete el[key];
+          }
+        });
+      });
+    } catch (e) {
+      console.log("⚠️ Erro na limpeza React:", e.message);
+    }
+
+    setTimeout(() => {
+      // FASE 2: Destruição total de armazenamento
+      updateStatus("💥 Destruição total de armazenamento...");
+
+      // localStorage
+      const localKeys = Object.keys(localStorage);
+      console.log(`💥 Eliminando ${localKeys.length} chaves localStorage`);
+      localKeys.forEach((key) => localStorage.removeItem(key));
+      localStorage.clear();
+
+      // sessionStorage
+      const sessionKeys = Object.keys(sessionStorage);
+      console.log(`💥 Eliminando ${sessionKeys.length} chaves sessionStorage`);
+      sessionKeys.forEach((key) => sessionStorage.removeItem(key));
+      sessionStorage.clear();
+
+      // Cookies
+      document.cookie.split(";").forEach((cookie) => {
+        const name = cookie.split("=")[0].trim();
+        if (name) {
+          document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+        }
+      });
+
+      // IndexedDB nuclear
+      if ("indexedDB" in window) {
+        const dbsToNuke = [
+          "leirisonda",
+          "firebaseLocalStorageDb",
+          "firebase-storage",
+          "firebase-app-check-database",
+        ];
+        dbsToNuke.forEach((db) => {
+          indexedDB.deleteDatabase(db);
+          console.log(`💥 Database ${db} marcada para destruição`);
+        });
+      }
+
+      setTimeout(() => {
+        // FASE 3: Desconectar Firebase completamente
+        updateStatus("💥 Desconectando Firebase...");
+
+        try {
+          if (window.firebase) {
+            if (window.firebase.auth) {
+              window.firebase.auth().signOut();
+            }
+            if (window.firebase.firestore) {
+              window.firebase.firestore().disableNetwork();
+            }
+            if (window.firebase.app) {
+              window.firebase.app().delete();
+            }
+          }
+
+          if (window.hr) {
+            window.hr.isFirebaseAvailable = false;
+            if (window.hr.firestore) {
+              window.hr.firestore.disableNetwork();
+            }
+          }
+        } catch (e) {
+          console.log("⚠️ Erro ao desconectar Firebase:", e.message);
+        }
+
+        setTimeout(() => {
+          // FASE 4: Limpar cache de aplicação
+          updateStatus("💥 Limpando cache de aplicação...");
+
+          // Service workers
+          if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.getRegistrations().then((registrations) => {
+              registrations.forEach((registration) => {
+                registration.unregister();
+                console.log("💥 Service Worker destruído");
+              });
+            });
+          }
+
+          // Cache API
+          if ("caches" in window) {
+            caches.keys().then((cacheNames) => {
+              cacheNames.forEach((cacheName) => {
+                caches.delete(cacheName);
+                console.log(`💥 Cache ${cacheName} destruído`);
+              });
+            });
+          }
+
+          setTimeout(() => {
+            // FASE 5: Countdown para restart
+            updateStatus("🔄 Preparando restart nuclear...");
+
+            countdown(5, () => {
+              // RESTART NUCLEAR
+              updateStatus("💥 RESTART NUCLEAR!");
+
+              // Múltiplas tentativas de restart
+              setTimeout(() => {
+                try {
+                  window.location.href = window.location.origin;
+                } catch (e) {
+                  window.location.reload(true);
+                }
+              }, 100);
+
+              setTimeout(() => {
+                try {
+                  window.location.replace(window.location.origin);
+                } catch (e) {
+                  window.location.reload();
+                }
+              }, 200);
+
+              setTimeout(() => {
+                // Forçar reload hard
+                window.location.assign(
+                  window.location.origin + "/?t=" + Date.now(),
+                );
+              }, 300);
+
+              setTimeout(() => {
+                // Última tentativa
+                window.open(window.location.origin, "_self");
+              }, 400);
+            });
+          }, 1000);
+        }, 1000);
+      }, 1000);
+    }, 1000);
+  } catch (error) {
+    console.error("💥 ERRO CRÍTICO no nuclear React:", error);
+    alert(`❌ ERRO: ${error.message}`);
+
+    // Fallback emergency
+    try {
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.reload(true);
+    } catch (e) {
+      window.location.href = window.location.origin;
+    }
   }
 };
