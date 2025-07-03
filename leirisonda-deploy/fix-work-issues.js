@@ -1,21 +1,24 @@
-// CORRIGIR PROBLEMAS: FURO + GUARDAR OBRA
-console.log("🔧 Carregando correções para obra e furo...");
+// SISTEMA ROBUSTO: FURO + GUARDAR OBRA
+console.log("🔧 Sistema de correções ativo...");
 
 (function () {
   "use strict";
 
-  // 1. REMOVER QUALQUER BOTÃO DE TESTE AZUL
+  // 1. REMOVER BOTÕES DE TESTE - MAIS AGRESSIVO
   function removeTestButtons() {
-    const testButtons = document.querySelectorAll("button");
-    testButtons.forEach((btn) => {
+    document.querySelectorAll("button, div, span").forEach((el) => {
+      const text = el.textContent || "";
+      const style = el.style.cssText || "";
+
       if (
-        btn.textContent &&
-        (btn.textContent.includes("TESTE FURO") ||
-          btn.textContent.includes("💧 TESTE") ||
-          btn.style.background === "rgb(14, 165, 233)")
+        text.includes("TESTE") ||
+        text.includes("💧 TESTE") ||
+        style.includes("rgb(14, 165, 233)") ||
+        style.includes("#0ea5e9") ||
+        el.className.includes("test-")
       ) {
-        btn.remove();
-        console.log("🗑️ Botão de teste removido");
+        el.remove();
+        console.log("🗑️ Elemento de teste removido:", text.substring(0, 30));
       }
     });
   }
@@ -88,17 +91,17 @@ console.log("🔧 Carregando correções para obra e furo...");
       <h3 style="color: #0c4a6e; margin-bottom: 15px; display: flex; align-items: center;">
         💧 Detalhes do Furo de Água
       </h3>
-      
+
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
-        
+
         <div>
           <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px;">
             Profundidade Total (metros)
           </label>
-          <input type="number" name="furo_profundidade_total" step="0.1" placeholder="Ex: 45.5" 
+          <input type="number" name="furo_profundidade_total" step="0.1" placeholder="Ex: 45.5"
                  style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;">
         </div>
-        
+
         <div>
           <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px;">
             Nível da Água (metros)
@@ -106,7 +109,7 @@ console.log("🔧 Carregando correções para obra e furo...");
           <input type="number" name="furo_nivel_agua" step="0.1" placeholder="Ex: 12.3"
                  style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;">
         </div>
-        
+
         <div>
           <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px;">
             Profundidade da Bomba (metros)
@@ -114,7 +117,7 @@ console.log("🔧 Carregando correções para obra e furo...");
           <input type="number" name="furo_profundidade_bomba" step="0.1" placeholder="Ex: 38.0"
                  style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;">
         </div>
-        
+
         <div>
           <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px;">
             Caudal do Furo (m³/h)
@@ -122,19 +125,19 @@ console.log("🔧 Carregando correções para obra e furo...");
           <input type="number" name="furo_caudal" step="0.1" placeholder="Ex: 2.5"
                  style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;">
         </div>
-        
+
         <div>
           <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px;">
             Tipo de Coluna
           </label>
-          <select name="furo_tipo_coluna" 
+          <select name="furo_tipo_coluna"
                   style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; background: white;">
             <option value="">Selecionar tipo...</option>
             <option value="PEAD">PEAD</option>
             <option value="HIDROROSCADO">HIDROROSCADO</option>
           </select>
         </div>
-        
+
         <div>
           <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px;">
             Diâmetro da Coluna (mm)
@@ -152,7 +155,7 @@ console.log("🔧 Carregando correções para obra e furo...");
             <option value="200">200mm</option>
           </select>
         </div>
-        
+
         <div>
           <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px;">
             Modelo da Bomba
@@ -160,7 +163,7 @@ console.log("🔧 Carregando correções para obra e furo...");
           <input type="text" name="furo_modelo_bomba" placeholder="Ex: Grundfos SQ3-105"
                  style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;">
         </div>
-        
+
         <div>
           <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px;">
             Potência Motor (HP)
@@ -179,7 +182,7 @@ console.log("🔧 Carregando correções para obra e furo...");
             <option value="10">10 HP</option>
           </select>
         </div>
-        
+
         <div>
           <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px;">
             Voltagem da Bomba
@@ -191,9 +194,9 @@ console.log("🔧 Carregando correções para obra e furo...");
             <option value="400V">400V (Trifásica)</option>
           </select>
         </div>
-        
+
       </div>
-      
+
       <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #cbd5e1; font-size: 12px; color: #64748b; text-align: center;">
         💡 Dados técnicos do furo de água - serão guardados com a obra
       </div>
@@ -243,7 +246,7 @@ console.log("🔧 Carregando correções para obra e furo...");
                       <div style="font-size: 48px; margin-bottom: 20px;">✅</div>
                       <h2 style="color: #22c55e; margin-bottom: 15px;">Obra Guardada!</h2>
                       <p style="margin-bottom: 25px;">A obra foi criada com sucesso.</p>
-                      <button onclick="window.location.href='/works'" 
+                      <button onclick="window.location.href='/works'"
                               style="background: #22c55e; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;">
                         Ver Lista de Obras
                       </button>
