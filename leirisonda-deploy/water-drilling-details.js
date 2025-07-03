@@ -973,7 +973,7 @@ window.testWaterDrilling = function () {
 
 // Função para verificar o estado atual
 window.checkWaterDrillingStatus = function () {
-  console.log("📊 DIAGNÓSTICO FURO DE ÁGUA:");
+  console.log("📊 DIAGNÓSTICO FURO DE ��GUA:");
   console.log("📍 URL:", window.location.pathname);
   console.log("📄 Título:", document.title);
   console.log(
@@ -1255,38 +1255,10 @@ window.forcarFuroAgua = function () {
   return section;
 };
 
-// Criar botão de teste visível na página
+// BOTÃO DE TESTE DESATIVADO
 function criarBotaoTesteFuro() {
-  // Só criar se não existir
-  if (document.getElementById("botao-teste-furo")) return;
-
-  const botao = document.createElement("button");
-  botao.id = "botao-teste-furo";
-  botao.innerHTML = "💧 TESTE FURO";
-  botao.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 99999;
-    background: #0ea5e9;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  `;
-
-  botao.onclick = function () {
-    forcarFuroAgua();
-    // Esconder o botão após usar
-    this.style.display = "none";
-  };
-
-  document.body.appendChild(botao);
-  console.log("🔵 Botão de teste criado no canto superior direito");
+  // Botão de teste desativado permanentemente
+  return;
 }
 
 // Detecção automática super agressiva
@@ -1377,7 +1349,7 @@ function adicionarOpcaoFuro() {
 
     // Se este select tem as opções que vimos no screenshot
     if (textoOpcoes.includes("piscina") && textoOpcoes.includes("manutenção")) {
-      console.log("🎯 Encontrado select de tipo de trabalho!");
+      console.log("��� Encontrado select de tipo de trabalho!");
 
       // Verificar se já tem opção Furo
       const temFuro = opcoes.some(
