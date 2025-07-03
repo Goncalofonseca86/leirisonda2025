@@ -433,20 +433,20 @@ console.log("🚀 LEIRISONDA: Integração real com Firebase iniciada");
           <label style="display: block; font-weight: 500; margin-bottom: 6px; color: #333; font-size: 13px;">
             🔐 Palavra-passe de acesso
           </label>
-          <input type="password" id="settings-password" placeholder="Digite a palavra-passe" 
-                 style="width: 100%; padding: 12px; border: 2px solid #e1e5e9; border-radius: 10px; 
+          <input type="password" id="settings-password" placeholder="Digite a palavra-passe"
+                 style="width: 100%; padding: 12px; border: 2px solid #e1e5e9; border-radius: 10px;
                         font-size: 16px; box-sizing: border-box; -webkit-appearance: none;">
         </div>
-        <button onclick="window.leirisondaSettings.checkPassword()" 
-                style="width: 100%; padding: 14px; background: linear-gradient(135deg, #007784, #005a66); 
-                       color: white; border: none; border-radius: 10px; font-size: 16px; cursor: pointer; 
+        <button onclick="window.leirisondaSettings.checkPassword()"
+                style="width: 100%; padding: 14px; background: linear-gradient(135deg, #007784, #005a66);
+                       color: white; border: none; border-radius: 10px; font-size: 16px; cursor: pointer;
                        font-weight: 500; -webkit-appearance: none; touch-action: manipulation;">
           Aceder
         </button>
       </div>
 
       <div id="settings-content" style="display: none;">
-        
+
         <!-- Status do Sistema -->
         <div style="background: #f0f9ff; padding: 12px; border-radius: 10px; margin-bottom: 15px; border-left: 3px solid #0ea5e9;">
           <div style="font-weight: 500; color: #0c4a6e; margin-bottom: 6px; font-size: 14px;">
@@ -470,42 +470,57 @@ console.log("🚀 LEIRISONDA: Integração real com Firebase iniciada");
 
         <!-- Quick Actions -->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px;">
-          <button onclick="window.leirisondaSettings.testYuriLogin()" 
-                  style="padding: 10px; background: #10b981; color: white; border: none; 
+          <button onclick="window.leirisondaSettings.testYuriLogin()"
+                  style="padding: 10px; background: #10b981; color: white; border: none;
                          border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 500;
                          -webkit-appearance: none;">
             🧪 Testar Yuri
           </button>
-          <button onclick="window.leirisondaSettings.runDiagnostics()" 
-                  style="padding: 10px; background: #6366f1; color: white; border: none; 
+          <button onclick="window.leirisondaSettings.runDiagnostics()"
+                  style="padding: 10px; background: #6366f1; color: white; border: none;
                          border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 500;
                          -webkit-appearance: none;">
             🔍 Diagnóstico
           </button>
         </div>
 
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px;">
+          <button onclick="window.leirisondaSettings.testFuros()"
+                  style="padding: 10px; background: #0ea5e9; color: white; border: none;
+                         border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 500;
+                         -webkit-appearance: none;">
+            💧 Testar Furos
+          </button>
+          <button onclick="window.leirisondaSettings.forceSection()"
+                  style="padding: 10px; background: #f59e0b; color: white; border: none;
+                         border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 500;
+                         -webkit-appearance: none;">
+            🔧 Forçar Secção
+          </button>
+        </div>
+
         <!-- Gestão de Dados -->
         <div style="margin-bottom: 15px;">
           <h4 style="color: #333; margin-bottom: 10px; font-size: 14px;">📁 Dados</h4>
-          
+
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
-            <button onclick="window.leirisondaSettings.exportData()" 
-                    style="padding: 10px; background: #f59e0b; color: white; border: none; 
+            <button onclick="window.leirisondaSettings.exportData()"
+                    style="padding: 10px; background: #f59e0b; color: white; border: none;
                            border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 500;
                            -webkit-appearance: none;">
               📤 Exportar
             </button>
-            <label style="padding: 10px; background: #3b82f6; color: white; border: none; 
-                          border-radius: 8px; cursor: pointer; font-size: 12px; text-align: center; 
+            <label style="padding: 10px; background: #3b82f6; color: white; border: none;
+                          border-radius: 8px; cursor: pointer; font-size: 12px; text-align: center;
                           font-weight: 500; -webkit-appearance: none;">
               📥 Importar
-              <input type="file" accept=".json" onchange="window.leirisondaSettings.importData(event)" 
+              <input type="file" accept=".json" onchange="window.leirisondaSettings.importData(event)"
                      style="display: none;">
             </label>
           </div>
-          
-          <button onclick="window.leirisondaSettings.clearData()" 
-                  style="width: 100%; padding: 10px; background: #ef4444; color: white; border: none; 
+
+          <button onclick="window.leirisondaSettings.clearData()"
+                  style="width: 100%; padding: 10px; background: #ef4444; color: white; border: none;
                          border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 500;
                          -webkit-appearance: none;">
             🗑️ Limpar Dados
@@ -522,8 +537,8 @@ console.log("🚀 LEIRISONDA: Integração real com Firebase iniciada");
         </div>
       </div>
 
-      <button onclick="window.leirisondaSettings.closeModal()" 
-              style="position: absolute; top: 10px; right: 15px; background: none; border: none; 
+      <button onclick="window.leirisondaSettings.closeModal()"
+              style="position: absolute; top: 10px; right: 15px; background: none; border: none;
                      font-size: 24px; cursor: pointer; color: #999; width: 30px; height: 30px;
                      -webkit-appearance: none; touch-action: manipulation;">
         ✕
@@ -683,6 +698,30 @@ console.log("🚀 LEIRISONDA: Integração real com Firebase iniciada");
           this.closeModal();
         }
       },
+
+      testFuros() {
+        if (window.leirisondaFuros) {
+          window.leirisondaFuros.status();
+          window.leirisondaFuros.detectPage();
+          alert(
+            "🔍 Sistema de furos testado!\n\nVerifique o console para detalhes.",
+          );
+        } else {
+          alert("❌ Sistema de furos não inicializado");
+        }
+      },
+
+      forceSection() {
+        if (window.leirisondaFuros) {
+          window.leirisondaFuros.forceCreate();
+          alert(
+            "💧 Secção de furo forçada!\n\nA secção deve aparecer na página.",
+          );
+        } else {
+          alert("❌ Sistema de furos não disponível");
+        }
+        this.closeModal();
+      },
     };
   }
 
@@ -703,10 +742,429 @@ console.log("🚀 LEIRISONDA: Integração real com Firebase iniciada");
     }
   }
 
-  // ==================== OUTRAS FUNCIONALIDADES ====================
+  // ==================== SISTEMA DE FUROS DE ÁGUA COMPLETO ====================
   function setupWaterDrillingSystem() {
-    console.log("💧 Sistema de furos configurado");
-    // Implementation similar to previous version but optimized
+    console.log("💧 Configurando sistema completo de furos de água...");
+
+    // Observer para detectar mudanças na página
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach(() => {
+        // Verificar se estamos numa página de criar obra
+        const isCreateWorkPage =
+          window.location.pathname.includes("/create") ||
+          window.location.pathname.includes("/works/new") ||
+          window.location.pathname.includes("/nova-obra") ||
+          document.querySelector('[data-loc*="CreateWork"]') ||
+          document.querySelector('[data-loc*="create-work"]') ||
+          document.body.textContent.includes("Tipo de Trabalho") ||
+          document.body.textContent.includes("Nova Obra") ||
+          document.body.textContent.includes("Criar Obra");
+
+        if (isCreateWorkPage) {
+          console.log("📝 Página de criar obra detectada - configurando furos");
+          setTimeout(() => {
+            addWaterDrillingOption();
+            setupWaterDrillingTriggers();
+          }, 1000);
+        }
+      });
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+
+    // Verificar imediatamente se já estamos numa página de criar obra
+    setTimeout(() => {
+      const isCreateWorkPage =
+        window.location.pathname.includes("/create") ||
+        window.location.pathname.includes("/works/new") ||
+        document.body.textContent.includes("Tipo de Trabalho");
+
+      if (isCreateWorkPage) {
+        addWaterDrillingOption();
+        setupWaterDrillingTriggers();
+      }
+    }, 2000);
+
+    function addWaterDrillingOption() {
+      // Procurar todos os dropdowns que possam ser de tipo de trabalho
+      const selects = document.querySelectorAll("select");
+
+      selects.forEach((select) => {
+        const options = Array.from(select.options);
+        const parentText = select.closest("div")?.textContent || "";
+
+        // Verificar se é um dropdown de tipo de trabalho
+        const isWorkTypeSelect =
+          parentText.toLowerCase().includes("tipo") ||
+          parentText.toLowerCase().includes("trabalho") ||
+          options.some(
+            (opt) =>
+              opt.text.toLowerCase().includes("piscina") ||
+              opt.text.toLowerCase().includes("manutenção") ||
+              opt.text.toLowerCase().includes("instalação") ||
+              opt.text.toLowerCase().includes("reparação"),
+          );
+
+        if (isWorkTypeSelect) {
+          // Verificar se já tem opção de furo
+          const hasFuro = options.some(
+            (opt) =>
+              opt.text.toLowerCase().includes("furo") ||
+              opt.value.toLowerCase().includes("furo"),
+          );
+
+          if (!hasFuro) {
+            console.log("💧 Adicionando opção 'Furo de Água' ao dropdown");
+
+            const furoOption = document.createElement("option");
+            furoOption.value = "furo_agua";
+            furoOption.text = "Furo de Água";
+            furoOption.setAttribute("data-leirisonda-furo", "true");
+            select.appendChild(furoOption);
+
+            // Marcar select como processado
+            select.setAttribute("data-leirisonda-processed", "true");
+          }
+        }
+      });
+    }
+
+    function setupWaterDrillingTriggers() {
+      // Configurar event listeners para todos os selects processados
+      const processedSelects = document.querySelectorAll(
+        'select[data-leirisonda-processed="true"]',
+      );
+
+      processedSelects.forEach((select) => {
+        // Remover listeners existentes para evitar duplicação
+        select.removeEventListener("change", handleSelectChange);
+        select.addEventListener("change", handleSelectChange);
+      });
+    }
+
+    function handleSelectChange(event) {
+      const select = event.target;
+      const value = select.value;
+
+      console.log("🔄 Tipo de trabalho mudou para:", value);
+
+      if (value === "furo_agua") {
+        console.log("💧 Furo de Água selecionado - criando secção técnica");
+        setTimeout(() => createWaterDrillingSection(), 300);
+      } else {
+        removeWaterDrillingSection();
+      }
+    }
+
+    function createWaterDrillingSection() {
+      // Remover secção existente
+      const existing = document.getElementById(
+        "leirisonda-water-drilling-section",
+      );
+      if (existing) {
+        existing.remove();
+        console.log("🗑�� Secção anterior removida");
+      }
+
+      console.log("💧 Criando nova secção de furo de água...");
+
+      const section = document.createElement("div");
+      section.id = "leirisonda-water-drilling-section";
+
+      // Estilos otimizados para mobile
+      Object.assign(section.style, {
+        background: "linear-gradient(135deg, #e0f2fe, #f0f9ff)",
+        border: "2px solid #0ea5e9",
+        borderRadius: "15px",
+        padding: "20px",
+        margin: "20px 0",
+        boxShadow: "0 4px 15px rgba(14, 165, 233, 0.2)",
+        animation: "leirisondaFadeIn 0.3s ease-in-out",
+      });
+
+      // Adicionar CSS de animação se não existir
+      if (!document.getElementById("leirisonda-animations")) {
+        const style = document.createElement("style");
+        style.id = "leirisonda-animations";
+        style.textContent = `
+          @keyframes leirisondaFadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+
+          .leirisonda-field-group {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+          }
+
+          .leirisonda-field-group h4 {
+            color: #0c4a6e;
+            margin: 0 0 12px 0;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          }
+
+          .leirisonda-field {
+            margin-bottom: 12px;
+          }
+
+          .leirisonda-field:last-child {
+            margin-bottom: 0;
+          }
+
+          .leirisonda-label {
+            display: block;
+            font-weight: 500;
+            color: #475569;
+            margin-bottom: 6px;
+            font-size: 14px;
+          }
+
+          .leirisonda-input, .leirisonda-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+            background: white;
+            -webkit-appearance: none;
+            transition: border-color 0.2s ease;
+          }
+
+          .leirisonda-input:focus, .leirisonda-select:focus {
+            outline: none;
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+          }
+
+          @media (max-width: 768px) {
+            .leirisonda-grid {
+              grid-template-columns: 1fr !important;
+            }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+
+      section.innerHTML = `
+        <div style="display: flex; align-items: center; margin-bottom: 20px; justify-content: center;">
+          <span style="font-size: 28px; margin-right: 12px;">💧</span>
+          <h3 style="color: #0c4a6e; margin: 0; font-size: 20px; font-weight: 600; text-align: center;">
+            Detalhes Técnicos do Furo de Água
+          </h3>
+        </div>
+
+        <div class="leirisonda-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
+
+          <!-- Medições Principais -->
+          <div class="leirisonda-field-group">
+            <h4>📏 Medições Principais</h4>
+
+            <div class="leirisonda-field">
+              <label class="leirisonda-label">Profundidade Total (metros)</label>
+              <input type="number" name="furo_profundidade_total" step="0.1" placeholder="Ex: 45.5" class="leirisonda-input">
+            </div>
+
+            <div class="leirisonda-field">
+              <label class="leirisonda-label">Nível da Água (metros)</label>
+              <input type="number" name="furo_nivel_agua" step="0.1" placeholder="Ex: 12.3" class="leirisonda-input">
+            </div>
+
+            <div class="leirisonda-field">
+              <label class="leirisonda-label">Profundidade da Bomba (metros)</label>
+              <input type="number" name="furo_profundidade_bomba" step="0.1" placeholder="Ex: 38.0" class="leirisonda-input">
+            </div>
+
+            <div class="leirisonda-field">
+              <label class="leirisonda-label">Caudal do Furo (m³/h)</label>
+              <input type="number" name="furo_caudal" step="0.1" placeholder="Ex: 2.5" class="leirisonda-input">
+            </div>
+          </div>
+
+          <!-- Especificações da Coluna -->
+          <div class="leirisonda-field-group">
+            <h4>🔧 Especificações da Coluna</h4>
+
+            <div class="leirisonda-field">
+              <label class="leirisonda-label">Tipo de Coluna</label>
+              <select name="furo_tipo_coluna" class="leirisonda-select">
+                <option value="">Selecionar tipo...</option>
+                <option value="PEAD">PEAD (Polietileno de Alta Densidade)</option>
+                <option value="HIDROROSCADO">HIDROROSCADO (Aço Galvanizado)</option>
+              </select>
+            </div>
+
+            <div class="leirisonda-field">
+              <label class="leirisonda-label">Diâmetro da Coluna (mm)</label>
+              <select name="furo_diametro_coluna" class="leirisonda-select">
+                <option value="">Selecionar diâmetro...</option>
+                <option value="50">50mm</option>
+                <option value="63">63mm</option>
+                <option value="75">75mm</option>
+                <option value="90">90mm</option>
+                <option value="110">110mm</option>
+                <option value="125">125mm</option>
+                <option value="160">160mm</option>
+                <option value="200">200mm</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Equipamento de Bombeamento -->
+          <div class="leirisonda-field-group">
+            <h4>⚡ Equipamento de Bombeamento</h4>
+
+            <div class="leirisonda-field">
+              <label class="leirisonda-label">Modelo da Bomba</label>
+              <input type="text" name="furo_modelo_bomba" placeholder="Ex: Grundfos SQ3-105" class="leirisonda-input">
+            </div>
+
+            <div class="leirisonda-field">
+              <label class="leirisonda-label">Potência do Motor (HP)</label>
+              <select name="furo_potencia_motor" class="leirisonda-select">
+                <option value="">Selecionar potência...</option>
+                <option value="0.5">0.5 HP</option>
+                <option value="0.75">0.75 HP</option>
+                <option value="1">1 HP</option>
+                <option value="1.5">1.5 HP</option>
+                <option value="2">2 HP</option>
+                <option value="3">3 HP</option>
+                <option value="5">5 HP</option>
+                <option value="7.5">7.5 HP</option>
+                <option value="10">10 HP</option>
+              </select>
+            </div>
+
+            <div class="leirisonda-field">
+              <label class="leirisonda-label">Voltagem da Bomba</label>
+              <select name="furo_voltagem_bomba" class="leirisonda-select">
+                <option value="">Selecionar voltagem...</option>
+                <option value="230V">230V (Monofásica)</option>
+                <option value="400V">400V (Trifásica)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 20px; padding: 15px; background: rgba(14, 165, 233, 0.1);
+                    border-radius: 10px; border-left: 4px solid #0ea5e9;">
+          <div style="color: #0c4a6e; font-size: 14px; display: flex; align-items: flex-start; gap: 8px;">
+            <span style="font-size: 16px;">💡</span>
+            <div>
+              <strong>Informação Técnica:</strong> Estes dados técnicos são específicos para furos de água e serão guardados como parte integrante da obra. Certifique-se de que todas as medições estão corretas antes de guardar.
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Encontrar onde inserir (procurar o local mais apropriado)
+      const insertLocations = [
+        document.querySelector("form"),
+        document.querySelector('[data-loc*="CreateWork"]'),
+        document.querySelector('[data-loc*="create-work"]'),
+        document.querySelector("main"),
+        document.querySelector(".container"),
+        document.body,
+      ];
+
+      let inserted = false;
+      for (const location of insertLocations) {
+        if (location && !inserted) {
+          location.appendChild(section);
+          inserted = true;
+          console.log("✅ Secção de furo inserida em:", location.tagName);
+          break;
+        }
+      }
+
+      if (!inserted) {
+        document.body.appendChild(section);
+        console.log("✅ Secção de furo inserida no body como fallback");
+      }
+
+      // Scroll suave para a secção
+      setTimeout(() => {
+        section.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }, 100);
+
+      console.log("✅ Secção completa de furo de água criada com sucesso");
+    }
+
+    function removeWaterDrillingSection() {
+      const section = document.getElementById(
+        "leirisonda-water-drilling-section",
+      );
+      if (section) {
+        section.style.animation = "leirisondaFadeOut 0.2s ease-out";
+        setTimeout(() => {
+          section.remove();
+          console.log("🗑️ Secção de furo removida");
+        }, 200);
+
+        // Adicionar animação de fade out se não existir
+        if (!document.querySelector("style[data-fadeout]")) {
+          const style = document.createElement("style");
+          style.setAttribute("data-fadeout", "true");
+          style.textContent = `
+            @keyframes leirisondaFadeOut {
+              from { opacity: 1; transform: translateY(0); }
+              to { opacity: 0; transform: translateY(-10px); }
+            }
+          `;
+          document.head.appendChild(style);
+        }
+      }
+    }
+
+    // Função para forçar detecção (útil para debug)
+    window.leirisondaFuros = {
+      detectPage() {
+        console.log("🔍 Verificando página atual...");
+        console.log("URL:", window.location.pathname);
+        console.log("Texto:", document.body.textContent.substring(0, 200));
+        addWaterDrillingOption();
+        setupWaterDrillingTriggers();
+      },
+
+      forceCreate() {
+        console.log("🔧 Forçando criação da secção de furo...");
+        createWaterDrillingSection();
+      },
+
+      status() {
+        const selects = document.querySelectorAll("select");
+        const processedSelects = document.querySelectorAll(
+          'select[data-leirisonda-processed="true"]',
+        );
+        const furoOptions = document.querySelectorAll(
+          'option[data-leirisonda-furo="true"]',
+        );
+        const section = document.getElementById(
+          "leirisonda-water-drilling-section",
+        );
+
+        console.log("📊 Status do sistema de furos:");
+        console.log("Selects encontrados:", selects.length);
+        console.log("Selects processados:", processedSelects.length);
+        console.log("Opções de furo:", furoOptions.length);
+        console.log("Secção ativa:", !!section);
+      },
+    };
+
+    console.log("✅ Sistema completo de furos de água configurado");
+    console.log("🔧 Debug disponível: window.leirisondaFuros.status()");
   }
 
   function hideMenuItems() {
