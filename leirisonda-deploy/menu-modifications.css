@@ -1,49 +1,18 @@
-/* Modificações do menu lateral da Leirisonda */
+/* Modificações simples do menu lateral da Leirisonda */
 
-/* Esconde DIAGNÓSTICO - usando vários seletores para garantir */
-*[role="button"] {
-  display: block;
-}
-
-/* Procura qualquer elemento que contenha DIAGNÓSTICO e esconde */
-div:contains("DIAGNÓSTICO"),
-button:contains("DIAGNÓSTICO"),
-a:contains("DIAGNÓSTICO"),
-li:contains("DIAGNÓSTICO"),
-span:contains("DIAGNÓSTICO") {
+/* Classes específicas para itens a ocultar */
+.menu-item-hidden {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
-  height: 0 !important;
-  overflow: hidden !important;
-  padding: 0 !important;
-  margin: 0 !important;
 }
 
-/* Esconde ADMINISTRAÇÃO - usando vários seletores para garantir */
-div:contains("ADMINISTRAÇÃO"),
-button:contains("ADMINISTRAÇÃO"),
-a:contains("ADMINISTRAÇÃO"),
-li:contains("ADMINISTRAÇÃO"),
-span:contains("ADMINISTRAÇÃO") {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  height: 0 !important;
-  overflow: hidden !important;
-  padding: 0 !important;
-  margin: 0 !important;
-}
-
-/* Alternativa usando atributos de texto */
+/* Seletores conservadores para ocultação */
 [data-testid*="diagnostico"],
-[aria-label*="DIAGNÓSTICO"],
-[title*="DIAGNÓSTICO"] {
-  display: none !important;
-}
-
 [data-testid*="administracao"],
+[aria-label*="DIAGNÓSTICO"],
 [aria-label*="ADMINISTRAÇÃO"],
+[title*="DIAGNÓSTICO"],
 [title*="ADMINISTRAÇÃO"] {
   display: none !important;
 }
