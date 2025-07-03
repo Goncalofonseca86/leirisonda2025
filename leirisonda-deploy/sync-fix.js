@@ -50,81 +50,183 @@ function diagnoseSyncIssues() {
 
 // Função para corrigir problemas de sync
 function fixSyncIssues() {
-  console.log("🔧 Tentando corrigir problemas de sincronização...");
+  console.log("🔧 Corrigindo ERRO SYNC (initial_full_sync)...");
 
   try {
-    // Passo 1: Limpar cache problemático
-    console.log("1️⃣ Limpando cache problemático...");
+    // Passo 1: Interromper sincronização atual
+    console.log("1️⃣ Interrompendo sincronização problemática...");
 
-    // Remover dados corrompidos
-    const keysToCheck = Object.keys(localStorage);
-    keysToCheck.forEach((key) => {
+    if (window.hr) {
+      // Desabilitar Firebase temporariamente
+      window.hr.isFirebaseAvailable = false;
+
+      // Parar listeners ativos
+      if (window.hr.firestore) {
+        try {
+          window.hr.firestore.disableNetwork();
+          console.log("🛑 Firebase network desabilitado");
+        } catch (e) {
+          console.log("⚠️ Erro ao desabilitar network:", e.message);
+        }
+      }
+    }
+
+    // Passo 2: Limpar estado de sincronização corrompido
+    console.log("2️⃣ Limpando estado de sincronização...");
+
+    const syncKeys = [
+      "lastSync",
+      "syncInProgress",
+      "syncError",
+      "syncState",
+      "firebase_sync_state",
+      "initial_sync_complete",
+      "sync_timestamp",
+    ];
+
+    syncKeys.forEach((key) => {
+      localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
+    });
+
+    // Limpar dados corrompidos
+    const allKeys = Object.keys(localStorage);
+    allKeys.forEach((key) => {
       try {
         const value = localStorage.getItem(key);
-        if ((value && value.includes("undefined")) || value.includes("null")) {
+        if (
+          value &&
+          (value.includes("undefined") ||
+            value.includes("null") ||
+            value.includes("NaN") ||
+            value === "undefined")
+        ) {
           localStorage.removeItem(key);
           console.log(`🗑️ Removido dado corrompido: ${key}`);
         }
       } catch (e) {
-        console.log(`❌ Erro ao verificar ${key}: ${e.message}`);
+        localStorage.removeItem(key);
+        console.log(`🗑️ Removido chave problemática: ${key}`);
       }
     });
 
-    // Passo 2: Resetar estado Firebase
-    console.log("2️⃣ Resetando estado Firebase...");
+    // Passo 3: Reset completo do Firebase
+    console.log("3️⃣ Reset completo do Firebase...");
 
-    if (window.hr) {
-      try {
-        // Forçar reconexão
-        if (window.hr.firestore) {
-          window.hr.firestore
-            .enableNetwork()
-            .then(() => {
-              console.log("✅ Firebase network reabilitado");
-            })
-            .catch((e) => {
-              console.log("⚠️ Erro ao reabilitar network:", e.message);
-            });
+    setTimeout(() => {
+      if (window.hr) {
+        try {
+          // Reabilitar Firebase
+          window.hr.isFirebaseAvailable = true;
+
+          if (window.hr.firestore) {
+            // Reabilitar network
+            window.hr.firestore
+              .enableNetwork()
+              .then(() => {
+                console.log("✅ Firebase network reabilitado");
+
+                // Aguardar e tentar sincronização limpa
+                setTimeout(() => {
+                  forceCleanSync();
+                }, 2000);
+              })
+              .catch((e) => {
+                console.log("⚠️ Erro ao reabilitar:", e.message);
+                // Fallback: recarregar página
+                setTimeout(() => {
+                  console.log("🔄 Fallback: recarregando página...");
+                  window.location.reload();
+                }, 3000);
+              });
+          }
+        } catch (e) {
+          console.log("❌ Erro no reset Firebase:", e.message);
         }
-      } catch (e) {
-        console.log("⚠️ Erro no reset Firebase:", e.message);
       }
-    }
+    }, 1000);
 
-    // Passo 3: Recriar service worker
-    console.log("3️⃣ Resetando Service Worker...");
+    // Passo 4: Limpar Service Worker
+    console.log("4️⃣ Limpando Service Worker...");
 
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.getRegistrations().then((registrations) => {
         registrations.forEach((registration) => {
-          registration.update().then(() => {
-            console.log("✅ Service Worker atualizado");
+          registration.unregister().then(() => {
+            console.log("🗑️ Service Worker removido");
+
+            // Re-registrar após limpeza
+            navigator.serviceWorker.register("/sw.js").then(() => {
+              console.log("✅ Service Worker re-registrado");
+            });
           });
         });
       });
     }
 
-    // Passo 4: Forçar nova sincronização
-    console.log("4️⃣ Forçando nova sincronização...");
-
-    setTimeout(() => {
-      if (window.hr && typeof window.hr.syncData === "function") {
-        window.hr
-          .syncData()
-          .then(() => {
-            console.log("✅ Sincronização forçada concluída");
-          })
-          .catch((e) => {
-            console.log("❌ Erro na sincronização forçada:", e.message);
-          });
-      }
-    }, 2000);
-
-    console.log("✅ Tentativas de correção concluídas");
+    console.log("✅ Correção de sync inicial_full_sync concluída");
     return true;
   } catch (error) {
     console.error("❌ Erro ao corrigir sync:", error);
     return false;
+  }
+}
+
+// Função para forçar sincronização limpa
+function forceCleanSync() {
+  console.log("🔄 Forçando sincronização limpa...");
+
+  try {
+    if (window.hr) {
+      // Tentar múltiplos métodos de sincronização
+      const syncMethods = [
+        "syncData",
+        "syncLocalDataToFirebase",
+        "fullSync",
+        "initialSync",
+        "forceSync",
+      ];
+
+      syncMethods.forEach((method) => {
+        if (typeof window.hr[method] === "function") {
+          console.log(`🔄 Tentando ${method}...`);
+          try {
+            window.hr[method]()
+              .then(() => {
+                console.log(`✅ ${method} concluído`);
+              })
+              .catch((e) => {
+                console.log(`⚠️ ${method} falhou:`, e.message);
+              });
+          } catch (e) {
+            console.log(`❌ Erro ao executar ${method}:`, e.message);
+          }
+        }
+      });
+
+      // Verificar se resolveu após 10 segundos
+      setTimeout(() => {
+        console.log("🔍 Verificando se sync foi corrigido...");
+
+        // Se ainda houver erro, oferecer reload
+        const hasErrors = localStorage.getItem("last_sync_error");
+        if (hasErrors) {
+          console.log("⚠️ Ainda há erros de sync - oferecendo reload");
+
+          if (
+            confirm(
+              "🔄 Problema de sincronização detectado.\n\nRecarregar página para resolver?",
+            )
+          ) {
+            window.location.reload();
+          }
+        } else {
+          console.log("✅ Sincronização parece estar funcionando");
+        }
+      }, 10000);
+    }
+  } catch (error) {
+    console.error("❌ Erro na sincronização limpa:", error);
   }
 }
 
@@ -135,16 +237,30 @@ function monitorSyncErrors() {
   console.error = function (...args) {
     const errorText = args.join(" ");
 
+    // Detectar especificamente o erro initial_full_sync
     if (
+      errorText.includes("initial_full_sync") ||
+      errorText.includes("ERRO SYNC")
+    ) {
+      console.log("🚨 ERRO SYNC (initial_full_sync) detectado!");
+
+      // Registrar erro para rastreamento
+      localStorage.setItem("last_sync_error", Date.now().toString());
+      localStorage.setItem("sync_error_type", "initial_full_sync");
+
+      // Auto-correção imediata
+      setTimeout(() => {
+        console.log("🔧 Auto-correção para initial_full_sync...");
+        fixInitialFullSyncError();
+      }, 500);
+    } else if (
       errorText.includes("SYNC") ||
       errorText.includes("Firebase") ||
       errorText.includes("sync")
     ) {
-      console.log("🚨 Erro de sincronização detectado:", errorText);
+      console.log("🚨 Outro erro de sincronização:", errorText);
 
-      // Auto-correção
       setTimeout(() => {
-        console.log("🔧 Tentando auto-correção...");
         fixSyncIssues();
       }, 1000);
     }
@@ -154,13 +270,90 @@ function monitorSyncErrors() {
 
   // Monitorar eventos de rede
   window.addEventListener("online", () => {
-    console.log("🌐 Conectividade restaurada - tentando ressincronizar");
-    setTimeout(fixSyncIssues, 1000);
+    console.log("🌐 Conectividade restaurada");
+    setTimeout(() => {
+      // Verificar se há erros de sync pendentes
+      const lastError = localStorage.getItem("sync_error_type");
+      if (lastError === "initial_full_sync") {
+        console.log("🔧 Corrigindo erro pendente após reconexão");
+        fixInitialFullSyncError();
+      }
+    }, 2000);
   });
 
   window.addEventListener("offline", () => {
     console.log("📴 Dispositivo offline");
   });
+}
+
+// Função específica para corrigir erro initial_full_sync
+function fixInitialFullSyncError() {
+  console.log("🎯 Correção específica para initial_full_sync");
+
+  try {
+    // Parar qualquer sync em andamento
+    if (window.hr) {
+      // Resetar flags de sync
+      if (window.hr.isSyncing) {
+        window.hr.isSyncing = false;
+      }
+
+      // Limpar estado de sync
+      const syncStateKeys = [
+        "syncInProgress",
+        "initialSyncStarted",
+        "fullSyncInProgress",
+      ];
+
+      syncStateKeys.forEach((key) => {
+        if (window.hr[key] !== undefined) {
+          window.hr[key] = false;
+        }
+      });
+    }
+
+    // Limpar localStorage relacionado com sync
+    const syncStorageKeys = [
+      "sync_in_progress",
+      "initial_sync_started",
+      "full_sync_timestamp",
+    ];
+
+    syncStorageKeys.forEach((key) => {
+      localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
+    });
+
+    // Aguardar e tentar novo sync
+    setTimeout(() => {
+      console.log("🔄 Tentando novo initial_full_sync...");
+
+      if (window.hr && typeof window.hr.syncData === "function") {
+        window.hr
+          .syncData()
+          .then(() => {
+            console.log("✅ initial_full_sync corrigido!");
+            localStorage.removeItem("sync_error_type");
+          })
+          .catch((e) => {
+            console.log("❌ Ainda há erro no sync:", e.message);
+
+            // Última tentativa: reload
+            setTimeout(() => {
+              if (
+                confirm(
+                  "🔄 Erro de sincronização persistente.\n\nRecarregar página?",
+                )
+              ) {
+                window.location.reload();
+              }
+            }, 3000);
+          });
+      }
+    }, 2000);
+  } catch (error) {
+    console.error("❌ Erro na correção initial_full_sync:", error);
+  }
 }
 
 // Função para correção manual via botão de definições
