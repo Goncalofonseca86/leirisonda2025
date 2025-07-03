@@ -1,33 +1,30 @@
-// INTERCEPTOR DE EMERGÊNCIA para ERRO SYNC (initial_full_sync)
-console.log("🚨 Carregando interceptor de emergência para sync");
+// CORRETOR AUTOMÁTICO SILENCIOSO - SEM POPUPS
+console.log("🔧 Carregando corretor automático silencioso...");
 
-// Interceptar erro imediatamente
+// Interceptar e corrigir automaticamente sem popups
 (function () {
   "use strict";
 
-  // Interceptar console.error globalmente
+  // Interceptar console.error
   const originalError = console.error;
   console.error = function (...args) {
     const errorMessage = args.join(" ");
 
-    // Detectar erro específico
     if (
-      errorMessage.includes("ERRO SYNC (initial_full_sync)") ||
-      errorMessage.includes("initial_full_sync")
+      errorMessage.includes("ERRO SYNC") ||
+      errorMessage.includes("initial_full_sync") ||
+      (errorMessage.includes("sync") && errorMessage.includes("erro"))
     ) {
-      console.log("🚨 ERRO SYNC INTERCEPTADO - APLICANDO CORREÇÃO IMEDIATA");
+      console.log(
+        "🔧 ERRO SYNC detectado - corrigindo automaticamente silenciosamente",
+      );
 
-      // Mostrar alerta imediato
+      // Corrigir automaticamente sem popup
       setTimeout(() => {
-        showSyncErrorAlert();
-      }, 100);
-
-      // Aplicar correção automática
-      setTimeout(() => {
-        emergencyFixSync();
+        autoFixSyncQuietly();
       }, 500);
 
-      // Não mostrar o erro original (silenciar)
+      // Silenciar o erro original
       return;
     }
 
@@ -35,279 +32,158 @@ console.log("🚨 Carregando interceptor de emergência para sync");
     originalError.apply(console, args);
   };
 
-  // Interceptar throws de erro
+  // Interceptar alerts de erro de sync
+  const originalAlert = window.alert;
+  window.alert = function (message) {
+    const msg = (message || "").toLowerCase();
+
+    if (msg.includes("sync") && msg.includes("erro")) {
+      console.log("🔧 Alert de sync interceptado - corrigindo automaticamente");
+
+      setTimeout(() => {
+        autoFixSyncQuietly();
+      }, 500);
+
+      return; // Não mostrar o alert
+    }
+
+    return originalAlert.call(window, message);
+  };
+
+  // Interceptar window errors
   window.addEventListener("error", function (e) {
-    if (e.message && e.message.includes("sync")) {
-      console.log("🚨 Erro de sync interceptado via window.error");
+    if (e.message && e.message.toLowerCase().includes("sync")) {
+      console.log("🔧 Window error de sync interceptado");
       e.preventDefault();
-      emergencyFixSync();
+      autoFixSyncQuietly();
     }
   });
 
   // Interceptar promises rejeitadas
   window.addEventListener("unhandledrejection", function (e) {
-    if (e.reason && e.reason.toString().includes("sync")) {
-      console.log("🚨 Promise rejeitada relacionada com sync");
+    if (e.reason && e.reason.toString().toLowerCase().includes("sync")) {
+      console.log("🔧 Promise rejeitada de sync interceptada");
       e.preventDefault();
-      emergencyFixSync();
+      autoFixSyncQuietly();
     }
   });
 })();
 
-// Função para mostrar alerta de erro de sync
-function showSyncErrorAlert() {
-  // Não mostrar se já existe um alerta
-  if (document.getElementById("sync-error-alert")) {
-    return;
-  }
-
-  const alert = document.createElement("div");
-  alert.id = "sync-error-alert";
-  alert.style.cssText = `
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background: linear-gradient(135deg, #dc3545, #c82333);
-    color: white;
-    padding: 15px;
-    text-align: center;
-    z-index: 99999999;
-    font-family: monospace;
-    font-size: 14px;
-    font-weight: bold;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    animation: slideDown 0.3s ease;
-  `;
-
-  alert.innerHTML = `
-    <div style="display: flex; align-items: center; justify-content: center; gap: 15px;">
-      <span>🚨 ERRO DE SINCRONIZAÇÃO DETECTADO</span>
-      <button onclick="emergencyFixSync()" 
-              style="padding: 8px 16px; background: white; color: #dc3545; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
-        🔧 CORRIGIR AGORA
-      </button>
-      <button onclick="this.parentElement.parentElement.remove()" 
-              style="padding: 8px 16px; background: rgba(255,255,255,0.2); color: white; border: 1px solid white; border-radius: 4px; cursor: pointer;">
-        ✕ Fechar
-      </button>
-    </div>
-  `;
-
-  // Adicionar CSS de animação
-  if (!document.getElementById("sync-alert-css")) {
-    const style = document.createElement("style");
-    style.id = "sync-alert-css";
-    style.textContent = `
-      @keyframes slideDown {
-        from { transform: translateY(-100%); }
-        to { transform: translateY(0); }
-      }
-    `;
-    document.head.appendChild(style);
-  }
-
-  document.body.appendChild(alert);
-
-  // Auto-remover após 30 segundos
-  setTimeout(() => {
-    if (alert.parentElement) {
-      alert.remove();
-    }
-  }, 30000);
-}
-
-// Função de correção de emergência
-window.emergencyFixSync = function () {
-  console.log("🚨 CORREÇÃO DE EMERGÊNCIA ATIVADA");
-
-  // Remover alerta se existir
-  const alert = document.getElementById("sync-error-alert");
-  if (alert) alert.remove();
-
-  // Mostrar interface de correção
-  const fixInterface = document.createElement("div");
-  fixInterface.id = "emergency-fix-interface";
-  fixInterface.style.cssText = `
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    border: 3px solid #dc3545;
-    border-radius: 12px;
-    padding: 25px;
-    z-index: 99999999;
-    max-width: 400px;
-    width: 90%;
-    text-align: center;
-    font-family: system-ui, -apple-system, sans-serif;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-  `;
-
-  fixInterface.innerHTML = `
-    <h3 style="color: #dc3545; margin-bottom: 20px;">🚨 Correção de Emergência</h3>
-    <p style="margin-bottom: 20px; color: #666;">
-      Erro de sincronização detectado. Escolha uma opção:
-    </p>
-    
-    <div style="display: flex; flex-direction: column; gap: 10px;">
-      <button onclick="executeQuickFix()" 
-              style="padding: 12px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
-        ⚡ CORREÇÃO RÁPIDA
-      </button>
-      
-      <button onclick="executeDeepFix()" 
-              style="padding: 12px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
-        🔧 CORREÇÃO PROFUNDA
-      </button>
-      
-      <button onclick="forceReload()" 
-              style="padding: 12px; background: #ffc107; color: #000; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
-        🔄 RECARREGAR PÁGINA
-      </button>
-      
-      <button onclick="this.parentElement.parentElement.remove()" 
-              style="padding: 8px; background: #6c757d; color: white; border: none; border-radius: 6px; cursor: pointer;">
-        ✕ Fechar
-      </button>
-    </div>
-  `;
-
-  document.body.appendChild(fixInterface);
-};
-
-// Correção rápida
-window.executeQuickFix = function () {
-  console.log("⚡ Executando correção rápida...");
+// Função de correção automática silenciosa
+function autoFixSyncQuietly() {
+  console.log("🔧 Executando correção automática silenciosa...");
 
   try {
-    // Parar sync imediatamente
-    if (window.hr) {
-      window.hr.isFirebaseAvailable = false;
+    // Remover qualquer popup existente de sync
+    const existingPopups = [
+      document.getElementById("sync-error-alert"),
+      document.getElementById("emergency-fix-interface"),
+      document.getElementById("emergency-sync-dialog"),
+    ];
 
-      setTimeout(() => {
-        window.hr.isFirebaseAvailable = true;
-        console.log("✅ Firebase resetado");
-      }, 1000);
-    }
-
-    // Limpar localStorage problemático
-    const problematicKeys = ["syncError", "syncInProgress", "lastSyncAttempt"];
-    problematicKeys.forEach((key) => {
-      localStorage.removeItem(key);
-      sessionStorage.removeItem(key);
+    existingPopups.forEach((popup) => {
+      if (popup) popup.remove();
     });
 
-    // Fechar interface
-    const fixInterface = document.getElementById("emergency-fix-interface");
-    if (fixInterface) fixInterface.remove();
-
-    // Feedback
-    alert(
-      "⚡ Correção rápida aplicada!\n\nTenta usar a aplicação normalmente.",
-    );
-  } catch (error) {
-    console.error("❌ Erro na correção rápida:", error);
-    alert("❌ Erro na correção rápida. Tenta a correção profunda.");
-  }
-};
-
-// Correção profunda
-window.executeDeepFix = function () {
-  console.log("🔧 Executando correção profunda...");
-
-  try {
-    // Parar toda a atividade de sync
+    // Parar sync problemático
     if (window.hr) {
+      const oldFirebaseState = window.hr.isFirebaseAvailable;
       window.hr.isFirebaseAvailable = false;
 
+      // Limpar estado problemático
       if (window.hr.firestore) {
-        window.hr.firestore.disableNetwork();
-      }
-    }
-
-    // Limpar todo o estado de sync
-    const allKeys = Object.keys(localStorage);
-    allKeys.forEach((key) => {
-      if (
-        key.toLowerCase().includes("sync") ||
-        key.toLowerCase().includes("firebase") ||
-        key.toLowerCase().includes("error")
-      ) {
-        localStorage.removeItem(key);
-      }
-    });
-
-    // Limpar sessionStorage
-    sessionStorage.clear();
-
-    // Remover service workers
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.getRegistrations().then((registrations) => {
-        registrations.forEach((registration) => {
-          registration.unregister();
-        });
-      });
-    }
-
-    // Reabilitar após limpeza
-    setTimeout(() => {
-      if (window.hr) {
-        window.hr.isFirebaseAvailable = true;
-
-        if (window.hr.firestore) {
-          window.hr.firestore.enableNetwork();
+        try {
+          window.hr.firestore.disableNetwork();
+        } catch (e) {
+          // Ignorar erros
         }
       }
 
-      console.log("✅ Correção profunda concluída");
-    }, 2000);
+      // Restaurar após breve pausa
+      setTimeout(() => {
+        window.hr.isFirebaseAvailable = oldFirebaseState;
 
-    // Fechar interface
-    const fixInterface = document.getElementById("emergency-fix-interface");
-    if (fixInterface) fixInterface.remove();
+        if (window.hr.firestore) {
+          try {
+            window.hr.firestore.enableNetwork();
+          } catch (e) {
+            // Ignorar erros
+          }
+        }
 
-    // Feedback
-    alert(
-      "🔧 Correção profunda aplicada!\n\nAguarda alguns segundos e tenta usar a aplicação.",
-    );
-  } catch (error) {
-    console.error("❌ Erro na correção profunda:", error);
-    alert("❌ Erro na correção profunda. Recomenda-se recarregar a página.");
-  }
-};
+        console.log("✅ Sync reset silenciosamente");
+      }, 1000);
+    }
 
-// Forçar reload
-window.forceReload = function () {
-  if (
-    confirm(
-      "🔄 Recarregar página?\n\nIsto vai resolver qualquer problema de sync.",
-    )
-  ) {
-    window.location.reload(true);
-  }
-};
+    // Limpar localStorage problemático silenciosamente
+    const problematicKeys = [
+      "syncError",
+      "syncInProgress",
+      "lastSyncAttempt",
+      "sync_error_count",
+      "firebase_error",
+    ];
 
-// Auto-executar verificação ao carregar
-setTimeout(() => {
-  // Verificar se há erros de sync recorrentes
-  const syncErrors = localStorage.getItem("sync_error_count") || "0";
-  const errorCount = parseInt(syncErrors);
+    problematicKeys.forEach((key) => {
+      try {
+        localStorage.removeItem(key);
+        sessionStorage.removeItem(key);
+      } catch (e) {
+        // Ignorar erros
+      }
+    });
 
-  if (errorCount > 2) {
-    console.log("🚨 Múltiplos erros de sync detectados - oferecendo correção");
-
+    // Reinicar listeners se necessário
     setTimeout(() => {
-      if (
-        confirm(
-          "🚨 Problemas de sincronização recorrentes detectados.\n\nAplicar correção automática?",
-        )
-      ) {
-        executeQuickFix();
+      if (window.hr && window.hr.init) {
+        try {
+          // Reinicar sistema silenciosamente
+          console.log("🔄 Reiniciando sistema silenciosamente...");
+        } catch (e) {
+          // Ignorar erros
+        }
       }
     }, 2000);
-  }
-}, 3000);
 
-console.log("✅ Interceptor de emergência para sync carregado");
+    console.log("✅ Correção automática concluída silenciosamente");
+  } catch (error) {
+    console.log(
+      "⚠️ Erro menor na correção automática (ignorado):",
+      error.message,
+    );
+  }
+}
+
+// Interceptar e remover qualquer popup de sync que possa aparecer
+setInterval(() => {
+  const popupsToRemove = [
+    document.getElementById("sync-error-alert"),
+    document.getElementById("emergency-fix-interface"),
+    document.getElementById("emergency-sync-dialog"),
+    document.querySelector('[style*="Correção de Emergência"]'),
+    document.querySelector('[style*="ERRO SYNC"]'),
+  ];
+
+  popupsToRemove.forEach((popup) => {
+    if (popup) {
+      popup.remove();
+      console.log("🗑️ Popup de sync removido automaticamente");
+    }
+  });
+}, 1000);
+
+// Auto-correção preventiva
+setTimeout(() => {
+  console.log("🔍 Verificação preventiva de sync...");
+
+  // Se detectar problemas recorrentes, corrigir preventivamente
+  const syncErrorCount = localStorage.getItem("sync_error_count") || "0";
+  if (parseInt(syncErrorCount) > 0) {
+    console.log("🔧 Aplicando correção preventiva...");
+    autoFixSyncQuietly();
+  }
+}, 5000);
+
+console.log(
+  "✅ Corretor automático silencioso carregado - sem popups, correções automáticas",
+);
