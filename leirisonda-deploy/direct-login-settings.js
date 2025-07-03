@@ -89,6 +89,343 @@ function createSettingsIcon() {
   return true;
 }
 
+// Função para criar modal de definições dentro da app
+function createSettingsModal() {
+  // Remover modal existente se houver
+  const existingModal = document.getElementById("settings-modal");
+  if (existingModal) {
+    existingModal.remove();
+  }
+
+  console.log("📱 Criando modal de definições dentro da app");
+
+  // Criar overlay do modal
+  const modalOverlay = document.createElement("div");
+  modalOverlay.id = "settings-modal";
+  modalOverlay.style.cssText = `
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(0, 0, 0, 0.8) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 999999 !important;
+    backdrop-filter: blur(5px) !important;
+    animation: fadeIn 0.3s ease !important;
+  `;
+
+  // Criar conteúdo do modal
+  const modalContent = document.createElement("div");
+  modalContent.style.cssText = `
+    background: white !important;
+    border-radius: 20px !important;
+    padding: 30px !important;
+    max-width: 500px !important;
+    width: 90% !important;
+    max-height: 80vh !important;
+    overflow-y: auto !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+    position: relative !important;
+    animation: slideIn 0.3s ease !important;
+  `;
+
+  modalContent.innerHTML = `
+    <div style="text-align: center; margin-bottom: 30px;">
+      <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #007784 0%, #005f6a 100%); border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
+        ⚙️
+      </div>
+      <h2 style="color: #333; margin: 0; font-size: 24px; font-weight: 600;">Definições e Administração</h2>
+    </div>
+
+    <!-- Seção Notificações -->
+    <div style="background: #f8f9fa; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+      <h3 style="color: #007784; margin: 0 0 15px 0; font-size: 18px; display: flex; align-items: center;">
+        📱 Notificações Push
+      </h3>
+      <button id="enable-notifications" style="width: 100%; padding: 12px; background: #007784; color: white; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; margin-bottom: 10px;">
+        🔔 Ativar Notificações neste Dispositivo
+      </button>
+      <input type="text" id="test-message" placeholder="Digite mensagem de teste" value="Teste de notificação - Leirisonda" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; box-sizing: border-box;">
+      <button id="send-test" style="width: 100%; padding: 12px; background: #28a745; color: white; border: none; border-radius: 8px; font-size: 14px; cursor: pointer;">
+        🧪 Enviar Notificação de Teste
+      </button>
+      <div id="notification-status" style="margin-top: 10px; padding: 10px; border-radius: 6px; display: none;"></div>
+    </div>
+
+    <!-- Seção Limpeza de Dados -->
+    <div style="background: #fff3cd; border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid #ffeaa7;">
+      <h3 style="color: #856404; margin: 0 0 15px 0; font-size: 18px; display: flex; align-items: center;">
+        🗑️ Limpeza de Dados
+      </h3>
+      <p style="color: #856404; margin: 0 0 15px 0; font-size: 14px; font-weight: 600;">
+        ⚠️ ATENÇÃO: Esta ação eliminará TODOS os dados permanentemente!
+      </p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-bottom: 15px;">
+        <div style="text-align: center; padding: 10px; background: white; border-radius: 8px;">
+          <div style="font-size: 20px; margin-bottom: 5px;">🏗️</div>
+          <div style="font-size: 12px; font-weight: 600;">Obras</div>
+          <div id="works-count" style="color: #007784; font-size: 12px;">0</div>
+        </div>
+        <div style="text-align: center; padding: 10px; background: white; border-radius: 8px;">
+          <div style="font-size: 20px; margin-bottom: 5px;">🔧</div>
+          <div style="font-size: 12px; font-weight: 600;">Manutenções</div>
+          <div id="maintenance-count" style="color: #007784; font-size: 12px;">0</div>
+        </div>
+        <div style="text-align: center; padding: 10px; background: white; border-radius: 8px;">
+          <div style="font-size: 20px; margin-bottom: 5px;">🏊</div>
+          <div style="font-size: 12px; font-weight: 600;">Piscinas</div>
+          <div id="pools-count" style="color: #007784; font-size: 12px;">0</div>
+        </div>
+      </div>
+
+      <button id="delete-all-data" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; font-weight: 600;">
+        💣 ELIMINAR TODOS OS DADOS
+      </button>
+      <div id="delete-status" style="margin-top: 10px; padding: 10px; border-radius: 6px; display: none;"></div>
+    </div>
+
+    <!-- Botões de Ação -->
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+      <button id="close-modal" style="flex: 1; padding: 12px; background: #6c757d; color: white; border: none; border-radius: 8px; cursor: pointer;">
+        Fechar
+      </button>
+      <button id="open-full-admin" style="flex: 1; padding: 12px; background: #007784; color: white; border: none; border-radius: 8px; cursor: pointer;">
+        Abrir Administração Completa
+      </button>
+    </div>
+  `;
+
+  // Adicionar CSS para animações
+  const style = document.createElement("style");
+  style.textContent = `
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideIn {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  `;
+  document.head.appendChild(style);
+
+  modalOverlay.appendChild(modalContent);
+  document.body.appendChild(modalOverlay);
+
+  // Adicionar event listeners
+  setupModalEventListeners();
+
+  // Carregar dados
+  loadModalData();
+
+  console.log("✅ Modal de definições criado dentro da app");
+}
+
+// Configurar event listeners do modal
+function setupModalEventListeners() {
+  // Fechar modal
+  document.getElementById("close-modal").addEventListener("click", function () {
+    const modal = document.getElementById("settings-modal");
+    if (modal) {
+      modal.style.animation = "fadeIn 0.3s ease reverse";
+      setTimeout(() => modal.remove(), 300);
+    }
+  });
+
+  // Fechar modal clicando fora
+  document
+    .getElementById("settings-modal")
+    .addEventListener("click", function (e) {
+      if (e.target === this) {
+        this.style.animation = "fadeIn 0.3s ease reverse";
+        setTimeout(() => this.remove(), 300);
+      }
+    });
+
+  // Ativar notificações
+  document
+    .getElementById("enable-notifications")
+    .addEventListener("click", async function () {
+      if (!("Notification" in window)) {
+        showModalStatus(
+          "notification-status",
+          "Este dispositivo não suporta notificações",
+          "error",
+        );
+        return;
+      }
+
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission === "granted") {
+          showModalStatus(
+            "notification-status",
+            "✅ Notificações ativadas neste dispositivo!",
+            "success",
+          );
+        } else {
+          showModalStatus(
+            "notification-status",
+            "❌ Permissão de notificações negada",
+            "error",
+          );
+        }
+      } catch (error) {
+        showModalStatus(
+          "notification-status",
+          "❌ Erro ao ativar notificações: " + error.message,
+          "error",
+        );
+      }
+    });
+
+  // Enviar notificação de teste
+  document.getElementById("send-test").addEventListener("click", function () {
+    const message =
+      document.getElementById("test-message").value || "Teste de notificação";
+
+    if (Notification.permission === "granted") {
+      new Notification("Leirisonda Admin", {
+        body: message,
+        icon: "/leirisonda-logo.svg",
+      });
+      showModalStatus(
+        "notification-status",
+        "✅ Notificação enviada!",
+        "success",
+      );
+    } else {
+      showModalStatus(
+        "notification-status",
+        "❌ Ative as notificações primeiro",
+        "error",
+      );
+    }
+  });
+
+  // Eliminar todos os dados
+  document
+    .getElementById("delete-all-data")
+    .addEventListener("click", function () {
+      if (
+        confirm(
+          "⚠️ TEM A CERTEZA?\n\nEsta ação eliminará TODOS os dados permanentemente!\n\nObras, Manutenções e Piscinas serão perdidos para sempre.\n\nEsta ação NÃO PODE ser desfeita!",
+        )
+      ) {
+        if (
+          confirm(
+            "🔥 CONFIRMAÇÃO FINAL\n\nÚltima oportunidade para cancelar.\n\nClique OK para ELIMINAR TODOS OS DADOS agora!",
+          )
+        ) {
+          deleteAllModalData();
+        }
+      }
+    });
+
+  // Abrir administração completa
+  document
+    .getElementById("open-full-admin")
+    .addEventListener("click", function () {
+      window.open("/admin", "_blank");
+    });
+}
+
+// Carregar dados no modal
+function loadModalData() {
+  try {
+    const works = JSON.parse(localStorage.getItem("leirisonda_works") || "[]");
+    const maintenances = JSON.parse(
+      localStorage.getItem("leirisonda_maintenances") || "[]",
+    );
+    const pools = JSON.parse(localStorage.getItem("leirisonda_pools") || "[]");
+
+    document.getElementById("works-count").textContent =
+      works.length + " registos";
+    document.getElementById("maintenance-count").textContent =
+      maintenances.length + " registos";
+    document.getElementById("pools-count").textContent =
+      pools.length + " registos";
+  } catch (error) {
+    console.error("Erro ao carregar dados:", error);
+    document.getElementById("works-count").textContent = "Erro";
+    document.getElementById("maintenance-count").textContent = "Erro";
+    document.getElementById("pools-count").textContent = "Erro";
+  }
+}
+
+// Eliminar todos os dados
+function deleteAllModalData() {
+  const keysToDelete = [
+    "leirisonda_works",
+    "leirisonda_maintenances",
+    "leirisonda_pools",
+    "leirisonda_users",
+    "leirisonda_settings",
+    "leirisonda_backups",
+    "works",
+    "maintenances",
+    "pools",
+    "users",
+  ];
+
+  let deletedCount = 0;
+
+  keysToDelete.forEach((key) => {
+    if (localStorage.getItem(key)) {
+      localStorage.removeItem(key);
+      deletedCount++;
+    }
+  });
+
+  // Limpar IndexedDB se existir
+  if ("indexedDB" in window) {
+    try {
+      indexedDB.deleteDatabase("leirisonda");
+      indexedDB.deleteDatabase("LeirisondaDB");
+    } catch (error) {
+      console.error("Erro ao limpar IndexedDB:", error);
+    }
+  }
+
+  showModalStatus(
+    "delete-status",
+    `✅ ${deletedCount} tipos de dados eliminados com sucesso!`,
+    "success",
+  );
+
+  // Atualizar contadores
+  loadModalData();
+
+  // Notificação se disponível
+  if (Notification.permission === "granted") {
+    new Notification("Leirisonda Admin", {
+      body: "Todos os dados foram eliminados com sucesso!",
+      icon: "/leirisonda-logo.svg",
+    });
+  }
+}
+
+// Mostrar status no modal
+function showModalStatus(elementId, message, type) {
+  const statusEl = document.getElementById(elementId);
+  if (statusEl) {
+    statusEl.style.display = "block";
+    statusEl.style.background = type === "success" ? "#d4edda" : "#f8d7da";
+    statusEl.style.color = type === "success" ? "#155724" : "#721c24";
+    statusEl.style.border =
+      "1px solid " + (type === "success" ? "#c3e6cb" : "#f5c6cb");
+    statusEl.textContent = message;
+
+    setTimeout(() => {
+      statusEl.style.display = "none";
+    }, 3000);
+  }
+}
+
 // Função para verificar se estamos no login
 function isOnLoginPage() {
   return (
