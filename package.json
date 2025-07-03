@@ -1,23 +1,5 @@
 {
-  "name": "leirisonda-deploy",
+  "name": "leirisonda",
   "version": "1.0.0",
-  "description": "Sistema de gestão de obras Leirisonda",
-  "main": "index.html",
-  "scripts": {
-    "dev": "serve -s . -l 3000",
-    "build": "echo 'Static site - no build needed'",
-    "start": "serve -s . -l 3000",
-    "preview": "serve -s . -l 4173"
-  },
-  "dependencies": {
-    "serve": "^14.0.0"
-  },
-  "devDependencies": {},
-  "keywords": [
-    "leirisonda",
-    "obras",
-    "piscinas"
-  ],
-  "author": "Leirisonda",
-  "license": "MIT"
+  "main": "index.html"
 }
