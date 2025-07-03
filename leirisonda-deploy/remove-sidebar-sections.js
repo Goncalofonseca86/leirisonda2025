@@ -9,7 +9,49 @@ console.log("🗑️ SIDEBAR: Removendo seções desnecessárias do sidebar...")
   function removeSidebarSections() {
     let removedSections = 0;
 
-    // Procurar por elementos que contenham "Diagnóstico" ou "Administração"
+    // Procurar por spans específicos com as classes do sidebar compilado
+    const targetSpans = document.querySelectorAll(
+      "span.text-xs.font-semibold.text-gray-400.uppercase.tracking-wider",
+    );
+
+    for (const span of targetSpans) {
+      const textContent = span.textContent?.trim();
+
+      if (textContent === "Diagnóstico" || textContent === "Administração") {
+        console.log(`🗑️ SIDEBAR: Encontrado span "${textContent}"`);
+
+        // Encontrar o container pai mais adequado (div que contém toda a seção)
+        let sectionContainer = span;
+
+        // Subir na hierarquia DOM para encontrar o container completo da seção
+        for (let i = 0; i < 15; i++) {
+          sectionContainer = sectionContainer.parentElement;
+          if (!sectionContainer) break;
+
+          // Procurar por um container que seja uma seção completa do sidebar
+          if (
+            sectionContainer.tagName === "DIV" &&
+            (sectionContainer.children.length >= 2 ||
+              sectionContainer.querySelector("nav") ||
+              sectionContainer.querySelector("ul") ||
+              sectionContainer.classList.contains("space-y-2") ||
+              sectionContainer.classList.contains("space-y-1"))
+          ) {
+            console.log(
+              `🗑️ SIDEBAR: Removendo seção completa "${textContent}"`,
+            );
+            sectionContainer.style.display = "none !important";
+            sectionContainer.style.visibility = "hidden";
+            sectionContainer.style.height = "0";
+            sectionContainer.style.overflow = "hidden";
+            removedSections++;
+            break;
+          }
+        }
+      }
+    }
+
+    // Procurar por elementos que contenham "Diagnóstico" ou "Administração" em qualquer lugar
     const allElements = document.querySelectorAll("*");
 
     for (const element of allElements) {
@@ -31,7 +73,8 @@ console.log("🗑️ SIDEBAR: Removendo seções desnecessárias do sidebar...")
             sectionContainer.children.length > 2
           ) {
             console.log(`🗑️ SIDEBAR: Removendo seção "${textContent}"`);
-            sectionContainer.style.display = "none";
+            sectionContainer.style.display = "none !important";
+            sectionContainer.style.visibility = "hidden";
             removedSections++;
             break;
           }
@@ -40,7 +83,7 @@ console.log("🗑️ SIDEBAR: Removendo seções desnecessárias do sidebar...")
     }
 
     // Procurar especificamente por texto "Diagnóstico de Sincronização" e similares
-    const diagnosticButtons = document.querySelectorAll("button");
+    const diagnosticButtons = document.querySelectorAll("button, div, span");
     for (const button of diagnosticButtons) {
       const buttonText = button.textContent?.toLowerCase() || "";
 
@@ -52,9 +95,28 @@ console.log("🗑️ SIDEBAR: Removendo seções desnecessárias do sidebar...")
         buttonText.includes("administração") ||
         buttonText.includes("administration")
       ) {
-        console.log(`🗑️ SIDEBAR: Removendo botão "${button.textContent}"`);
-        button.style.display = "none";
+        console.log(
+          `🗑️ SIDEBAR: Removendo elemento "${button.textContent?.substring(0, 50)}..."`,
+        );
+        button.style.display = "none !important";
+        button.style.visibility = "hidden";
         removedSections++;
+
+        // Também esconder elementos pais se necessário
+        let parent = button.parentElement;
+        for (let i = 0; i < 5; i++) {
+          if (!parent) break;
+          const parentText = parent.textContent?.toLowerCase() || "";
+          if (
+            parentText.includes("diagnóstico") ||
+            parentText.includes("administração")
+          ) {
+            parent.style.display = "none !important";
+            parent.style.visibility = "hidden";
+            break;
+          }
+          parent = parent.parentElement;
+        }
       }
     }
 
@@ -66,7 +128,8 @@ console.log("🗑️ SIDEBAR: Removendo seções desnecessárias do sidebar...")
       console.log(
         `🗑️ SIDEBAR: Removendo elemento com data-loc "${element.getAttribute("data-loc")}"`,
       );
-      element.style.display = "none";
+      element.style.display = "none !important";
+      element.style.visibility = "hidden";
       removedSections++;
     }
 
@@ -76,7 +139,8 @@ console.log("🗑️ SIDEBAR: Removendo seções desnecessárias do sidebar...")
     );
     for (const link of links) {
       console.log(`🗑️ SIDEBAR: Removendo link "${link.href}"`);
-      link.style.display = "none";
+      link.style.display = "none !important";
+      link.style.visibility = "hidden";
       removedSections++;
     }
 
