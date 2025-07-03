@@ -8,29 +8,32 @@ console.log("🎯 DIRETO: Removendo seções específicas do sidebar...");
   function hideElements() {
     let removed = 0;
 
-    // Estratégia 1: Esconder spans exatos
+    // Estratégia 1: Esconder spans exatos (mas MANTER Definições/Configurações)
     const spans = document.querySelectorAll("span");
     for (const span of spans) {
       const text = span.textContent?.trim();
       if (text === "Diagnóstico" || text === "Administração") {
-        console.log(`🎯 DIRETO: Encontrado span "${text}"`);
+        console.log(`���� DIRETO: Encontrado span "${text}"`);
 
         // Esconder o span
         span.style.display = "none !important";
         span.style.visibility = "hidden !important";
 
-        // Esconder containers pais até 8 níveis
+        // Esconder containers pais até 8 níveis, mas só se não contêm "Definições"
         let parent = span.parentElement;
         for (let i = 0; i < 8; i++) {
           if (!parent) break;
 
           const parentText = parent.textContent?.trim();
-          // Se o pai só contém este texto (ou muito pouco mais), esconder
+          // Se o pai só contém este texto E NÃO contém Definições/Configurações
           if (
             parentText &&
             parentText.length < 200 &&
             (parentText.includes("Diagnóstico") ||
-              parentText.includes("Administração"))
+              parentText.includes("Administração")) &&
+            !parentText.includes("Definições") &&
+            !parentText.includes("Configurações") &&
+            !parentText.includes("Settings")
           ) {
             console.log(`🎯 DIRETO: Escondendo container nível ${i + 1}`);
             parent.style.display = "none !important";
@@ -45,7 +48,7 @@ console.log("🎯 DIRETO: Removendo seções específicas do sidebar...");
       }
     }
 
-    // Estratégia 2: Esconder qualquer elemento com texto exato
+    // Estratégia 2: Esconder qualquer elemento com texto exato (mas manter Definições)
     const walker = document.createTreeWalker(
       document.body,
       NodeFilter.SHOW_ELEMENT,
@@ -60,11 +63,15 @@ console.log("🎯 DIRETO: Removendo seções específicas do sidebar...");
       const text = node.textContent?.trim();
       const directText = node.innerText?.trim();
 
+      // Só esconder se for exatamente Diagnóstico ou Administração E não contém Definições
       if (
-        text === "Diagnóstico" ||
-        text === "Administração" ||
-        directText === "Diagnóstico" ||
-        directText === "Administração"
+        (text === "Diagnóstico" ||
+          text === "Administração" ||
+          directText === "Diagnóstico" ||
+          directText === "Administração") &&
+        !text?.includes("Definições") &&
+        !text?.includes("Configurações") &&
+        !text?.includes("Settings")
       ) {
         elementsToHide.push(node);
       }
@@ -103,14 +110,17 @@ console.log("🎯 DIRETO: Removendo seções específicas do sidebar...");
       document.head.appendChild(style);
     }
 
-    // Estratégia 4: Força bruta em elementos específicos
+    // Estratégia 4: Força bruta em elementos específicos (mas manter Definições)
     const problemElements = document.querySelectorAll("*");
     for (const el of problemElements) {
       const text = el.textContent?.trim();
       if (
         text &&
         text.length < 50 &&
-        (text === "Diagnóstico" || text === "Administração")
+        (text === "Diagnóstico" || text === "Administração") &&
+        !text.includes("Definições") &&
+        !text.includes("Configurações") &&
+        !text.includes("Settings")
       ) {
         el.style.display = "none !important";
         el.style.visibility = "hidden !important";
