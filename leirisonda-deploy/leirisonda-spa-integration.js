@@ -301,10 +301,14 @@ console.log("🚀 LEIRISONDA: Integração SPA React iniciada");
       const parentText = parentElement?.textContent || "";
 
       console.log(`🔍 Select ${index + 1}:`, {
-        options: options.map((o) => o.text),
-        parentText: parentText.substring(0, 50),
         name: select.name,
         id: select.id,
+        className: select.className,
+        labelText: labelText.substring(0, 50),
+        parentText: parentText.substring(0, 50),
+        options: options.map((o) => ({ value: o.value, text: o.text })),
+        optionsCount: options.length,
+        isWorkType: isWorkTypeSelect,
       });
 
       // Detectar se é um dropdown de tipo de trabalho - versão melhorada
@@ -616,7 +620,7 @@ console.log("🚀 LEIRISONDA: Integração SPA React iniciada");
     // Adicionar novo listener
     form.addEventListener("submit", handleFormSubmit);
 
-    console.log("�� Interceptação de formulário configurada");
+    console.log("✅ Interceptação de formulário configurada");
   }
 
   function handleFormSubmit(event) {
