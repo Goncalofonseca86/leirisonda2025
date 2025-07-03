@@ -140,7 +140,7 @@ function modifyMenuItems() {
       }
 
       if (elementToEnhance && elementToEnhance.tagName !== "BODY") {
-        console.log(`�� Destacando elemento administração:`, elementToEnhance);
+        console.log(`⭐ Destacando elemento administração:`, elementToEnhance);
 
         // Aplicar estilo destacado
         elementToEnhance.style.setProperty(
@@ -173,6 +173,34 @@ function modifyMenuItems() {
         children.forEach((child) => {
           child.style.setProperty("color", "#1f2937", "important");
         });
+
+        // Adicionar ícone SVG se não existir
+        const existingIcon = elementToEnhance.querySelector("svg");
+        if (!existingIcon) {
+          // Procurar onde está o texto "Administração" para adicionar ícone antes
+          const adminText = elementToEnhance.querySelector("span");
+          if (adminText && adminText.textContent.includes("Administração")) {
+            const iconSvg = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              "svg",
+            );
+            iconSvg.setAttribute("class", "w-4 h-4 text-gray-400 mr-2");
+            iconSvg.setAttribute("fill", "none");
+            iconSvg.setAttribute("stroke", "currentColor");
+            iconSvg.setAttribute("viewBox", "0 0 24 24");
+            iconSvg.style.color = "#1f2937";
+
+            iconSvg.innerHTML = `
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            `;
+
+            // Inserir o ícone antes do texto
+            adminText.parentElement.insertBefore(iconSvg, adminText);
+          }
+        }
 
         // Adicionar click handler para redirecionar para página de administração
         elementToEnhance.style.cursor = "pointer";
