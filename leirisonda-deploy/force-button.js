@@ -1607,7 +1607,7 @@ window.comprehensiveDelete = function () {
                       log(`💾 Encontrados ${cacheNames.length} caches`);
                       return Promise.all(
                         cacheNames.map((cacheName) => {
-                          log(`  ✅ Eliminando cache: ${cacheName}`);
+                          log(`  ��� Eliminando cache: ${cacheName}`);
                           return caches.delete(cacheName);
                         }),
                       );
@@ -1907,3 +1907,244 @@ try {
 } catch (error) {
   console.error("Erro crítico:", error);
 }
+
+// Função para eliminar APENAS obras, manutenções e piscinas (dados de trabalho)
+window.deleteWorkData = function () {
+  try {
+    console.log("🎯 ELIMINAÇÃO CIRÚRGICA - SÓ DADOS DE TRABALHO");
+
+    if (
+      !confirm(
+        "🎯 ELIMINAR APENAS OBRAS, MANUTENÇÕES E PISCINAS?\n\nEsta função vai eliminar ESPECIFICAMENTE:\n✅ Todas as obras criadas\n✅ Todas as manutenções\n✅ Todas as piscinas\n\n❌ NÃO vai tocar em:\n⚪ Configurações de login\n⚪ Utilizadores\n⚪ Configurações da app\n\nContinuar?",
+      )
+    ) {
+      return;
+    }
+
+    // Interface de progresso específica
+    const progressDiv = document.createElement("div");
+    progressDiv.id = "targeted-deletion";
+    progressDiv.style.cssText = `
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      background: white; padding: 25px; border-radius: 15px;
+      border: 3px solid #007784; z-index: 10000000;
+      font-family: monospace; text-align: center; min-width: 400px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    `;
+    progressDiv.innerHTML = `
+      <h3 style="color: #007784; margin-bottom: 20px;">🎯 Eliminação Cirúrgica</h3>
+      <div id="targeted-log" style="text-align: left; font-size: 11px; max-height: 250px; overflow: auto; background: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 15px;"></div>
+      <div id="targeted-progress" style="font-weight: bold; color: #007784;">Analisando dados...</div>
+    `;
+    document.body.appendChild(progressDiv);
+
+    const log = (message, color = "#000") => {
+      console.log(message);
+      const logDiv = document.getElementById("targeted-log");
+      if (logDiv) {
+        logDiv.innerHTML += `<div style="color: ${color}; margin: 2px 0;">${message}</div>`;
+        logDiv.scrollTop = logDiv.scrollHeight;
+      }
+    };
+
+    const updateStatus = (text) => {
+      const statusDiv = document.getElementById("targeted-progress");
+      if (statusDiv) statusDiv.textContent = text;
+    };
+
+    // FASE 1: Identificar dados específicos
+    updateStatus("🔍 Identificando dados específicos...");
+    log("🔍 FASE 1: Identificação de dados de trabalho");
+
+    const workDataKeys = [];
+    const allKeys = Object.keys(localStorage);
+
+    // Palavras-chave específicas para dados de trabalho
+    const workKeywords = [
+      "work",
+      "obra",
+      "job",
+      "project",
+      "construction",
+      "maintenance",
+      "manutenc",
+      "service",
+      "repair",
+      "pool",
+      "piscina",
+      "swimming",
+    ];
+
+    // Analisar cada chave
+    allKeys.forEach((key) => {
+      const value = localStorage.getItem(key);
+      let isWorkData = false;
+
+      // Verificar se a chave contém palavras relacionadas com trabalho
+      const keyLower = key.toLowerCase();
+      if (workKeywords.some((keyword) => keyLower.includes(keyword))) {
+        isWorkData = true;
+        log(
+          `🔑 Chave identificada: ${key} (palavra-chave na chave)`,
+          "#007784",
+        );
+      }
+
+      // Verificar conteúdo se for JSON
+      if (!isWorkData && (value.startsWith("[") || value.startsWith("{"))) {
+        try {
+          const parsed = JSON.parse(value);
+
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            const sample = parsed[0];
+            if (typeof sample === "object" && sample !== null) {
+              const sampleKeys = Object.keys(sample);
+
+              // Verificar se as propriedades indicam dados de trabalho
+              const hasWorkProperties = sampleKeys.some((prop) =>
+                workKeywords.some((keyword) =>
+                  prop.toLowerCase().includes(keyword),
+                ),
+              );
+
+              if (hasWorkProperties) {
+                isWorkData = true;
+                log(
+                  `🔑 Chave identificada: ${key} (propriedades de trabalho: ${sampleKeys.join(", ")})`,
+                  "#007784",
+                );
+              }
+            }
+          }
+        } catch (e) {
+          // Ignorar erros de parsing
+        }
+      }
+
+      if (isWorkData) {
+        workDataKeys.push({ key, value, size: value.length });
+      }
+    });
+
+    log(`📊 Total de chaves identificadas: ${workDataKeys.length}`);
+
+    // FASE 2: Eliminar dados do localStorage
+    setTimeout(() => {
+      updateStatus("🗑️ Eliminando dados locais...");
+      log("🗑️ FASE 2: Eliminação de dados locais");
+
+      let localDeleted = 0;
+      workDataKeys.forEach((item) => {
+        try {
+          localStorage.removeItem(item.key);
+
+          // Verificar se foi eliminado
+          if (localStorage.getItem(item.key) === null) {
+            log(`  ✅ ${item.key} eliminado (${item.size} chars)`, "#28a745");
+            localDeleted++;
+          } else {
+            log(`  ❌ ${item.key} resistiu à eliminação`, "#dc3545");
+          }
+        } catch (e) {
+          log(`  ❌ Erro ao eliminar ${item.key}: ${e.message}`, "#dc3545");
+        }
+      });
+
+      log(`📊 Dados locais eliminados: ${localDeleted}/${workDataKeys.length}`);
+
+      // FASE 3: Eliminar dados do Firebase
+      setTimeout(() => {
+        updateStatus("🔥 Eliminando dados do Firebase...");
+        log("🔥 FASE 3: Eliminação de dados Firebase");
+
+        // Coleções específicas de trabalho
+        const workCollections = ["works", "maintenances", "pools"];
+
+        // Tentar múltiplos métodos Firebase
+        workCollections.forEach((collection) => {
+          try {
+            if (
+              window.hr &&
+              window.hr.isFirebaseAvailable &&
+              window.hr.firestore
+            ) {
+              window.hr.firestore
+                .collection(collection)
+                .get()
+                .then((snapshot) => {
+                  const docs = snapshot.docs;
+                  log(
+                    `  🔥 Encontrados ${docs.length} documentos em ${collection}`,
+                    "#ffc107",
+                  );
+
+                  docs.forEach((doc) => {
+                    doc.ref
+                      .delete()
+                      .then(() => {
+                        log(
+                          `    ✅ ${doc.id} eliminado de ${collection}`,
+                          "#28a745",
+                        );
+                      })
+                      .catch((e) => {
+                        log(`    ❌ Erro: ${e.message}`, "#dc3545");
+                      });
+                  });
+                })
+                .catch((e) => {
+                  log(
+                    `  ❌ Erro na coleção ${collection}: ${e.message}`,
+                    "#dc3545",
+                  );
+                });
+            } else {
+              log(`  ⚠️ Firebase não disponível para ${collection}`, "#ffc107");
+            }
+          } catch (e) {
+            log(`  ❌ Erro Firebase ${collection}: ${e.message}`, "#dc3545");
+          }
+        });
+
+        // FASE 4: Finalização
+        setTimeout(() => {
+          updateStatus("✅ Eliminação concluída!");
+          log("🎉 ELIMINAÇÃO CIRÚRGICA CONCLUÍDA!", "#28a745");
+          log(
+            `📊 Resumo: ${localDeleted} chaves locais eliminadas + comandos Firebase enviados`,
+            "#007784",
+          );
+
+          const targetedDiv = document.getElementById("targeted-deletion");
+          if (targetedDiv) {
+            targetedDiv.innerHTML = `
+              <h3 style="color: #28a745;">🎉 Eliminação Concluída!</h3>
+              <div style="text-align: left; margin: 15px 0; font-size: 13px;">
+                ✅ ${localDeleted} tipos de dados locais eliminados<br>
+                ✅ Comandos Firebase enviados para obras/manutenções/piscinas<br>
+                ⚪ Configurações e utilizadores mantidos intactos
+              </div>
+              <button onclick="window.location.reload()"
+                      style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 10px;">
+                🔄 Recarregar
+              </button>
+              <button onclick="this.parentElement.remove()"
+                      style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                Fechar
+              </button>
+            `;
+          }
+
+          showInfo(
+            "delete-info",
+            `🎯 ${localDeleted} tipos de trabalho eliminados!`,
+            "green",
+          );
+        }, 2000);
+      }, 1000);
+    }, 1000);
+  } catch (error) {
+    console.error("💥 ERRO na eliminação cirúrgica:", error);
+    showInfo("delete-info", `❌ ERRO: ${error.message}`, "red");
+  }
+};
