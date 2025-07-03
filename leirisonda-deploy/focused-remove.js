@@ -1,6 +1,6 @@
-// FOCUSED REMOVE - Remove APENAS Administração e Diagnóstico (mantém Definições)
+// FOCUSED REMOVE - Remove APENAS Diagnóstico (mantém Administração e Definições)
 
-console.log("🎯 FOCUSED: Removendo apenas Administração e Diagnóstico...");
+console.log("🎯 FOCUSED: Removendo apenas Diagnóstico...");
 
 (function () {
   "use strict";
@@ -8,14 +8,14 @@ console.log("🎯 FOCUSED: Removendo apenas Administração e Diagnóstico...");
   function removeSpecificSections() {
     let removed = 0;
 
-    // Procurar APENAS por elementos com texto exato "Diagnóstico" ou "Administração"
+    // Procurar APENAS por elementos com texto exato "Diagnóstico"
     const allElements = document.querySelectorAll("*");
 
     for (const element of allElements) {
       const exactText = element.textContent?.trim();
 
-      // APENAS se for exatamente "Diagnóstico" ou "Administração"
-      if (exactText === "Diagnóstico" || exactText === "Administração") {
+      // APENAS se for exatamente "Diagnóstico"
+      if (exactText === "Diagnóstico") {
         console.log(`🎯 FOCUSED: Removendo "${exactText}"`);
 
         // Esconder o elemento
@@ -31,7 +31,7 @@ console.log("🎯 FOCUSED: Removendo apenas Administração e Diagnóstico...");
           if (
             parentText &&
             parentText.length < 50 &&
-            (parentText === "Diagnóstico" || parentText === "Administração")
+            parentText === "Diagnóstico"
           ) {
             parent.style.display = "none !important";
             parent.style.visibility = "hidden !important";
@@ -43,13 +43,12 @@ console.log("🎯 FOCUSED: Removendo apenas Administração e Diagnóstico...");
       }
     }
 
-    // Procurar também por botões ou links específicos
+    // Procurar também por botões ou links específicos de diagnóstico
     const buttons = document.querySelectorAll("button, a");
     for (const btn of buttons) {
       const btnText = btn.textContent?.trim();
       if (
         btnText === "Diagnóstico" ||
-        btnText === "Administração" ||
         btnText === "Diagnóstico de Sincronização" ||
         btnText === "Diagnóstico de Emergência"
       ) {
