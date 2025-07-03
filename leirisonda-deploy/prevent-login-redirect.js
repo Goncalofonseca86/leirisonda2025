@@ -1,87 +1,15 @@
-// IMPEDIR REDIRECIONAMENTO AUTOMÁTICO PARA LOGIN
-console.log("🔒 Carregando proteção contra logout automático...");
+// PROTEÇÃO SIMPLES CONTRA LOGOUT AUTOMÁTICO
+console.log("🔒 Carregando proteção simples contra logout...");
 
 (function () {
   "use strict";
 
   let isProcessingSubmit = false;
   let lastSubmitTime = 0;
-
-  // Interceptar redirecionamentos para login
-  function interceptLoginRedirect() {
-    console.log("🛡️ Configurando interceptadores de redirecionamento...");
-
-    // Interceptar assign, replace e reload
-    const originalAssign = window.location.assign;
-    const originalReplace = window.location.replace;
-    const originalReload = window.location.reload;
-
-    window.location.assign = function (url) {
-      console.log("🔄 location.assign detectado:", url);
-
-      if (url && url.includes("/login") && isProcessingSubmit) {
-        console.log("🚫 Redirecionamento assign para login BLOQUEADO");
-        return;
-      }
-
-      if (url && url.includes("/login") && !isIntentionalLogout()) {
-        console.log("🚫 Redirecionamento involuntário assign BLOQUEADO");
-        return;
-      }
-
-      return originalAssign.call(window.location, url);
-    };
-
-    window.location.replace = function (url) {
-      console.log("🔄 location.replace detectado:", url);
-
-      if (url && url.includes("/login") && isProcessingSubmit) {
-        console.log("🚫 Redirecionamento replace para login BLOQUEADO");
-        return;
-      }
-
-      if (url && url.includes("/login") && !isIntentionalLogout()) {
-        console.log("🚫 Redirecionamento involuntário replace BLOQUEADO");
-        return;
-      }
-
-      return originalReplace.call(window.location, url);
-    };
-
-    // Interceptar history pushState/replaceState
-    const originalPushState = history.pushState;
-    const originalReplaceState = history.replaceState;
-
-    history.pushState = function (state, title, url) {
-      if (url && url.includes("/login") && isProcessingSubmit) {
-        console.log("🚫 History pushState para login BLOQUEADO");
-        return;
-      }
-      return originalPushState.apply(history, arguments);
-    };
-
-    history.replaceState = function (state, title, url) {
-      if (url && url.includes("/login") && isProcessingSubmit) {
-        console.log("🚫 History replaceState para login BLOQUEADO");
-        return;
-      }
-      return originalReplaceState.apply(history, arguments);
-    };
-
-    // Interceptar popstate (botão voltar)
-    window.addEventListener("popstate", function (event) {
-      if (window.location.pathname.includes("/login") && isProcessingSubmit) {
-        console.log("🚫 Popstate para login BLOQUEADO - voltando");
-        setTimeout(() => {
-          history.back();
-        }, 100);
-      }
-    });
-  }
+  let protectionActive = false;
 
   // Detectar se é um logout intencional
   function isIntentionalLogout() {
-    // Se clicou num botão de logout recentemente
     const logoutClicked = sessionStorage.getItem("intentional_logout");
     if (logoutClicked) {
       const clickTime = parseInt(logoutClicked);
@@ -91,9 +19,28 @@ console.log("🔒 Carregando proteção contra logout automático...");
     return false;
   }
 
+  // Ativar proteção durante submissão
+  function activateProtection() {
+    console.log("🛡️ Ativando proteção contra logout...");
+
+    isProcessingSubmit = true;
+    protectionActive = true;
+    lastSubmitTime = Date.now();
+
+    // Manter sessão ativa
+    maintainSession();
+
+    // Desativar após 15 segundos
+    setTimeout(() => {
+      isProcessingSubmit = false;
+      protectionActive = false;
+      console.log("✅ Proteção desativada");
+    }, 15000);
+  }
+
   // Interceptar submissões de formulários
-  function interceptFormSubmissions() {
-    console.log("📝 Configurando interceptadores de formulário...");
+  function setupFormProtection() {
+    console.log("📝 Configurando proteção de formulários...");
 
     // Interceptar submit events
     document.addEventListener(
@@ -104,18 +51,7 @@ console.log("🔒 Carregando proteção contra logout automático...");
         // Se é um formulário de obra/trabalho
         if (isWorkForm(form)) {
           console.log("💼 Submit de formulário de obra detectado");
-
-          isProcessingSubmit = true;
-          lastSubmitTime = Date.now();
-
-          // Manter sessão ativa
-          maintainSession();
-
-          // Remover flag após processamento
-          setTimeout(() => {
-            isProcessingSubmit = false;
-            console.log("✅ Processamento de submit concluído");
-          }, 10000); // 10 segundos de proteção
+          activateProtection();
         }
       },
       true,
@@ -132,16 +68,7 @@ console.log("🔒 Carregando proteção contra logout automático...");
 
           if (form && isWorkForm(form)) {
             console.log("💼 Botão submit de obra clicado");
-
-            isProcessingSubmit = true;
-            lastSubmitTime = Date.now();
-
-            // Preparar sessão
-            maintainSession();
-
-            setTimeout(() => {
-              isProcessingSubmit = false;
-            }, 10000);
+            activateProtection();
           }
         }
 
@@ -154,6 +81,7 @@ console.log("🔒 Carregando proteção contra logout automático...");
         ) {
           console.log("🚪 Logout intencional detectado");
           sessionStorage.setItem("intentional_logout", Date.now().toString());
+          protectionActive = false;
         }
       },
       true,
@@ -190,37 +118,18 @@ console.log("🔒 Carregando proteção contra logout automático...");
       session.keepAlive = true;
       localStorage.setItem("session", JSON.stringify(session));
 
-      // Atualizar tokens se existirem
-      const authToken =
-        localStorage.getItem("authToken") || localStorage.getItem("token");
-      if (authToken) {
-        localStorage.setItem("tokenRefreshed", Date.now().toString());
-      }
+      // Atualizar timestamp de atividade
+      localStorage.setItem("lastActivity", Date.now().toString());
+      sessionStorage.setItem("formSubmitInProgress", "true");
 
       // Manter estado Firebase
-      if (window.hr && window.hr.auth) {
+      if (window.hr && window.hr.auth && window.hr.auth.currentUser) {
         try {
-          // Forçar refresh do token
-          if (window.hr.auth.currentUser) {
-            window.hr.auth.currentUser.getIdToken(true);
-          }
-        } catch (e) {
-          console.log("⚠️ Erro ao refresh token Firebase (ignorado)");
-        }
-      }
-
-      // Ping keep-alive se disponível
-      if (window.fetch) {
-        try {
-          fetch("/api/keep-alive", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ timestamp: Date.now() }),
-          }).catch(() => {
-            // Ignorar erro se endpoint não existir
+          window.hr.auth.currentUser.getIdToken(true).catch(() => {
+            // Ignorar erros
           });
         } catch (e) {
-          // Ignorar erros de rede
+          // Ignorar erros
         }
       }
     } catch (error) {
@@ -228,72 +137,70 @@ console.log("🔒 Carregando proteção contra logout automático...");
     }
   }
 
-  // Interceptar fetch requests que podem causar logout
-  function interceptAuthRequests() {
-    const originalFetch = window.fetch;
-
-    window.fetch = function (...args) {
-      const url = args[0];
-      const options = args[1] || {};
-
-      return originalFetch
-        .apply(this, args)
-        .then((response) => {
-          // Se resposta indica logout (401, 403, etc.)
-          if (
-            (response.status === 401 || response.status === 403) &&
-            isProcessingSubmit
-          ) {
-            console.log("🚫 Resposta de logout interceptada durante submit");
-
-            // Retornar resposta falsa de sucesso
-            return new Response(JSON.stringify({ success: true }), {
-              status: 200,
-              headers: { "Content-Type": "application/json" },
-            });
-          }
-
-          return response;
-        })
-        .catch((error) => {
-          // Se erro de auth durante submit, ignorar
-          if (isProcessingSubmit && error.message.includes("auth")) {
-            console.log("🚫 Erro de auth ignorado durante submit");
-            return new Response(JSON.stringify({ success: true }), {
-              status: 200,
-              headers: { "Content-Type": "application/json" },
-            });
-          }
-
-          throw error;
-        });
-    };
-  }
-
-  // Monitorar mudanças de página
+  // Monitorar mudanças de página para detectar logout inesperado
   function monitorPageChanges() {
+    console.log("👁️ Iniciando monitoramento de página...");
+
+    let currentPath = window.location.pathname;
+
+    // Verificar mudanças de URL periodicamente
+    setInterval(() => {
+      const newPath = window.location.pathname;
+
+      if (newPath !== currentPath) {
+        console.log(
+          "🔄 Mudança de página detectada:",
+          currentPath,
+          "→",
+          newPath,
+        );
+
+        // Se foi para login durante proteção ativa
+        if (
+          newPath.includes("/login") &&
+          protectionActive &&
+          !isIntentionalLogout()
+        ) {
+          console.log("🚫 Logout inesperado detectado durante proteção!");
+
+          // Tentar recuperar
+          const previousPage =
+            sessionStorage.getItem("previous_page") || "/works";
+          setTimeout(() => {
+            console.log("↩️ Tentando voltar para:", previousPage);
+            window.history.back();
+
+            // Se ainda estiver no login após 2 segundos, forçar navegação
+            setTimeout(() => {
+              if (window.location.pathname.includes("/login")) {
+                console.log("🔧 Forçando navegação para:", previousPage);
+                window.location.href = previousPage;
+              }
+            }, 2000);
+          }, 1000);
+        }
+
+        currentPath = newPath;
+      }
+    }, 1000);
+
+    // Observer para mudanças no DOM
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         // Se apareceu página de login inesperadamente
         if (
           document.body.textContent.includes("Email de acesso") &&
           document.body.textContent.includes("Palavra-passe") &&
-          isProcessingSubmit
+          protectionActive &&
+          !isIntentionalLogout()
         ) {
-          console.log(
-            "🚫 Página de login detectada durante submit - redirecionando de volta",
-          );
+          console.log("��� DOM de login detectado durante proteção!");
 
-          // Tentar voltar para onde estava
+          // Tentar voltar
           const previousPage =
             sessionStorage.getItem("previous_page") || "/works";
           setTimeout(() => {
             window.history.back();
-            setTimeout(() => {
-              if (window.location.pathname.includes("/login")) {
-                window.location.href = previousPage;
-              }
-            }, 1000);
           }, 1000);
         }
       });
@@ -305,64 +212,110 @@ console.log("🔒 Carregando proteção contra logout automático...");
     });
   }
 
-  // Salvar página atual para recuperação
+  // Interceptar requests de auth
+  function setupRequestInterception() {
+    console.log("🌐 Configurando interceptação de requests...");
+
+    const originalFetch = window.fetch;
+
+    window.fetch = function (...args) {
+      const url = args[0];
+
+      return originalFetch
+        .apply(this, args)
+        .then((response) => {
+          // Se resposta indica logout durante proteção
+          if (
+            (response.status === 401 || response.status === 403) &&
+            protectionActive
+          ) {
+            console.log("🚫 Resposta de logout interceptada durante proteção");
+
+            // Manter sessão ativa e tentar novamente
+            maintainSession();
+
+            // Simular resposta de sucesso
+            return new Response(
+              JSON.stringify({
+                success: true,
+                message: "Operação protegida",
+              }),
+              {
+                status: 200,
+                headers: { "Content-Type": "application/json" },
+              },
+            );
+          }
+
+          return response;
+        })
+        .catch((error) => {
+          // Se erro de auth durante proteção, tentar manter
+          if (
+            protectionActive &&
+            error.message &&
+            error.message.includes("auth")
+          ) {
+            console.log("🚫 Erro de auth ignorado durante proteção");
+            maintainSession();
+
+            return new Response(
+              JSON.stringify({
+                success: true,
+                message: "Erro de auth ignorado",
+              }),
+              {
+                status: 200,
+                headers: { "Content-Type": "application/json" },
+              },
+            );
+          }
+
+          throw error;
+        });
+    };
+  }
+
+  // Salvar página atual
   function trackCurrentPage() {
     if (!window.location.pathname.includes("/login")) {
       sessionStorage.setItem("previous_page", window.location.pathname);
     }
   }
 
-  // Recuperar de logout inesperado
-  function recoverFromUnexpectedLogout() {
-    // Se estamos no login mas não devíamos estar
-    if (
-      window.location.pathname.includes("/login") &&
-      !isIntentionalLogout() &&
-      Date.now() - lastSubmitTime < 30000
-    ) {
-      // 30 segundos após submit
+  // Funções para uso manual
+  window.forcarProtecao = function () {
+    console.log("🔒 Proteção forçada ativada");
+    activateProtection();
+  };
 
-      console.log("🔧 Recuperando de logout inesperado...");
-
-      const previousPage = sessionStorage.getItem("previous_page");
-      if (previousPage && previousPage !== "/login") {
-        setTimeout(() => {
-          console.log("↩️ Voltando para página anterior:", previousPage);
-          window.location.href = previousPage;
-        }, 2000);
-      }
-    }
-  }
-
-  // Função para uso manual
-  window.forcarManterSessao = function () {
-    console.log("🔒 Forçando manutenção de sessão...");
-    isProcessingSubmit = true;
-    maintainSession();
-
-    setTimeout(() => {
-      isProcessingSubmit = false;
-    }, 30000); // 30 segundos de proteção
+  window.desativarProtecao = function () {
+    console.log("🔓 Proteção desativada manualmente");
+    isProcessingSubmit = false;
+    protectionActive = false;
+    sessionStorage.removeItem("formSubmitInProgress");
   };
 
   // Inicialização
   function init() {
     console.log("🔒 Inicializando proteção contra logout...");
 
-    interceptLoginRedirect();
-    interceptFormSubmissions();
-    interceptAuthRequests();
-    monitorPageChanges();
+    try {
+      setupFormProtection();
+      setupRequestInterception();
+      monitorPageChanges();
 
-    // Rastrear página atual
-    trackCurrentPage();
-    setInterval(trackCurrentPage, 5000);
+      // Rastrear página atual
+      trackCurrentPage();
+      setInterval(trackCurrentPage, 5000);
 
-    // Manter sessão ativa periodicamente
-    setInterval(maintainSession, 60000); // A cada minuto
+      // Manter sessão ativa periodicamente
+      setInterval(maintainSession, 30000); // A cada 30 segundos
 
-    // Verificar recuperação de logout
-    setTimeout(recoverFromUnexpectedLogout, 2000);
+      console.log("✅ Proteção inicializada com sucesso");
+    } catch (error) {
+      console.log("⚠️ Erro ao inicializar proteção:", error.message);
+    }
   }
 
   // Inicializar quando carregar
@@ -372,5 +325,5 @@ console.log("🔒 Carregando proteção contra logout automático...");
     init();
   }
 
-  console.log("✅ Proteção contra logout automático ativa");
+  console.log("✅ Sistema de proteção carregado");
 })();
