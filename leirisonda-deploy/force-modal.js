@@ -47,12 +47,29 @@ document.addEventListener(
 
 // CRIAR ícone simples na página de login
 function createSimpleIcon() {
-  // Verificar se é login
-  if (
-    !window.location.pathname.includes("/login") &&
-    !document.querySelector('input[type="email"]') &&
-    !document.body.textContent.includes("Email de acesso")
-  ) {
+  // Verificar se é login usando múltiplas formas
+  const isLogin =
+    window.location.pathname.includes("/login") ||
+    document.querySelector('input[type="email"]') ||
+    document.querySelector('input[placeholder*="Email de acesso"]') ||
+    document.querySelector('[data-loc*="Login.tsx"]') ||
+    document.body.textContent.includes("Email de acesso") ||
+    document.body.textContent.includes("Palavra-passe") ||
+    document.body.textContent.includes("Leirisonda");
+
+  console.log("🔍 Verificando login:", {
+    pathname: window.location.pathname,
+    hasEmailInput: !!document.querySelector('input[type="email"]'),
+    hasEmailPlaceholder: !!document.querySelector(
+      'input[placeholder*="Email de acesso"]',
+    ),
+    hasLoginData: !!document.querySelector('[data-loc*="Login.tsx"]'),
+    hasLoginText: document.body.textContent.includes("Email de acesso"),
+    isLogin: isLogin,
+  });
+
+  if (!isLogin) {
+    console.log("❌ Não é página de login");
     return;
   }
 
@@ -67,23 +84,42 @@ function createSimpleIcon() {
 
   console.log("➕ Criando ícone SIMPLES");
 
-  const btn = document.createElement("button");
+  const btn = document.createElement("div");
+  btn.id = "settings-icon-forced";
   btn.innerHTML = "⚙️";
   btn.style.cssText = `
     position: fixed !important;
-    top: 15px !important;
-    right: 15px !important;
-    width: 45px !important;
-    height: 45px !important;
-    background: #007784 !important;
+    top: 20px !important;
+    right: 20px !important;
+    width: 60px !important;
+    height: 60px !important;
+    background: #ff0000 !important;
     color: white !important;
-    border: none !important;
+    border: 3px solid #ffffff !important;
     border-radius: 50% !important;
-    font-size: 18px !important;
+    font-size: 28px !important;
     cursor: pointer !important;
-    z-index: 999999 !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+    z-index: 9999999 !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    animation: pulse 2s infinite !important;
   `;
+
+  // Adicionar animação CSS
+  if (!document.getElementById("icon-animation")) {
+    const style = document.createElement("style");
+    style.id = "icon-animation";
+    style.textContent = `
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+      }
+    `;
+    document.head.appendChild(style);
+  }
 
   btn.addEventListener("click", function (e) {
     e.preventDefault();
@@ -133,7 +169,7 @@ function showSimpleModal() {
 
   box.innerHTML = `
     <h2 style="margin: 0 0 15px 0; color: #007784;">⚙️ Definições</h2>
-    
+
     <div style="margin-bottom: 15px; text-align: left;">
       <h4 style="margin: 0 0 8px 0; color: #333;">📱 Notificações</h4>
       <button onclick="requestNotif()" style="width: 100%; padding: 8px; background: #007784; color: white; border: none; border-radius: 4px; margin-bottom: 5px; cursor: pointer;">
@@ -289,23 +325,37 @@ function showResult(id, text, color) {
   }
 }
 
-// Executar
-setTimeout(createSimpleIcon, 800);
-setTimeout(createSimpleIcon, 2000);
+// Executar IMEDIATAMENTE e múltiplas vezes
+console.log("🚀 Iniciando criação de ícone...");
+createSimpleIcon();
 
-// Monitorar mudanças
+setTimeout(createSimpleIcon, 500);
+setTimeout(createSimpleIcon, 1000);
+setTimeout(createSimpleIcon, 2000);
+setTimeout(createSimpleIcon, 3000);
+setTimeout(createSimpleIcon, 5000);
+
+// Monitorar constantemente
 setInterval(() => {
-  if (
-    window.location.pathname.includes("/login") ||
-    document.querySelector('input[type="email"]')
-  ) {
-    if (
-      !document.getElementById("simple-modal") &&
-      !document.querySelector('button[style*="position: fixed"]')
-    ) {
-      createSimpleIcon();
-    }
+  const hasIcon =
+    document.querySelector('button[style*="position: fixed"]') ||
+    document.getElementById("settings-icon") ||
+    document.querySelector('[id*="icon"]');
+
+  if (!hasIcon) {
+    console.log("🔄 Ícone não encontrado, recriando...");
+    createSimpleIcon();
   }
-}, 1500);
+}, 1000);
+
+// Observer para detectar mudanças no DOM
+const observer = new MutationObserver(() => {
+  setTimeout(createSimpleIcon, 200);
+});
+
+observer.observe(document.body, {
+  childList: true,
+  subtree: true,
+});
 
 console.log("✅ FORÇA modal carregado - redirecionamentos BLOQUEADOS");
