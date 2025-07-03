@@ -16,12 +16,37 @@ function isLoginPage() {
 
 // Função para adicionar o ícone de definições
 function addSettingsIcon() {
-  // Verificar se já existe o ícone
-  if (document.getElementById("login-settings-icon")) {
-    return;
+  // Verificar se já existe o ícone ou se existe um ícone SVG com settings
+  let existingIcon = document.getElementById("login-settings-icon");
+
+  // Procurar por ícones SVG existentes que possam ser de settings
+  if (!existingIcon) {
+    const svgIcons = document.querySelectorAll("svg");
+    svgIcons.forEach((svg) => {
+      const paths = svg.querySelectorAll("path");
+      paths.forEach((path) => {
+        const d = path.getAttribute("d");
+        // Verificar se é o ícone de configurações pela signature do path
+        if (d && d.includes("M12.22 2h-.44a2 2 0")) {
+          existingIcon = svg.closest("div");
+          if (existingIcon) {
+            existingIcon.id = "login-settings-icon";
+            console.log(
+              "🔍 Encontrei ícone SVG existente, aplicando funcionalidade",
+            );
+          }
+        }
+      });
+    });
   }
 
-  console.log("➕ Adicionando ícone de definições ao login");
+  if (existingIcon) {
+    // Aplicar estilos e click handler ao ícone existente
+    applyIconFunctionality(existingIcon);
+    return true;
+  }
+
+  console.log("➕ Criando novo ícone de definições no login");
 
   // Criar o ícone de definições
   const settingsIcon = document.createElement("div");
@@ -114,12 +139,152 @@ function addSettingsIcon() {
   return true;
 }
 
+// Função para aplicar funcionalidade a um ícone existente
+function applyIconFunctionality(iconElement) {
+  console.log("🔧 Aplicando funcionalidade ao ícone existente");
+
+  // Garantir que tem os estilos corretos
+  iconElement.style.cssText = `
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    width: 48px !important;
+    height: 48px !important;
+    background: rgba(0, 119, 132, 0.1) !important;
+    border: 2px solid rgba(0, 119, 132, 0.3) !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    z-index: 9999 !important;
+    color: #007784 !important;
+    transition: all 0.3s ease !important;
+    backdrop-filter: blur(10px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  `;
+
+  // Remover listeners anteriores
+  iconElement.onclick = null;
+  iconElement.onmouseenter = null;
+  iconElement.onmouseleave = null;
+
+  // Efeitos hover
+  iconElement.addEventListener("mouseenter", function () {
+    this.style.background = "rgba(0, 119, 132, 0.3) !important";
+    this.style.transform = "scale(1.1) !important";
+    this.style.boxShadow = "0 6px 20px rgba(0, 119, 132, 0.4) !important";
+  });
+
+  iconElement.addEventListener("mouseleave", function () {
+    this.style.background = "rgba(0, 119, 132, 0.1) !important";
+    this.style.transform = "scale(1) !important";
+    this.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.1) !important";
+  });
+
+  // Click handler para abrir administração
+  iconElement.addEventListener("click", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log("🔧 Click em definições no login - abrindo administração");
+
+    // Feedback visual
+    this.style.transform = "scale(0.9) !important";
+    this.style.background = "rgba(0, 255, 0, 0.3) !important";
+
+    setTimeout(() => {
+      this.style.transform = "scale(1) !important";
+      this.style.background = "rgba(0, 119, 132, 0.1) !important";
+    }, 200);
+
+    // Abrir página de administração
+    const adminUrls = [
+      `${window.location.origin}/admin.html`,
+      `${window.location.origin}/test-admin.html`,
+    ];
+
+    let opened = false;
+    for (const url of adminUrls) {
+      try {
+        console.log("🔗 Tentando abrir:", url);
+        const newWindow = window.open(url, "_blank", "noopener,noreferrer");
+        if (newWindow) {
+          console.log("✅ Administração aberta:", url);
+          opened = true;
+
+          // Mostrar feedback de sucesso
+          this.style.background = "rgba(0, 255, 0, 0.3) !important";
+          setTimeout(() => {
+            this.style.background = "rgba(0, 119, 132, 0.1) !important";
+          }, 1000);
+
+          break;
+        }
+      } catch (error) {
+        console.error("Erro ao abrir:", url, error);
+      }
+    }
+
+    if (!opened) {
+      console.log("⚠️ Popup bloqueado, tentando navegação direta...");
+      try {
+        window.location.href = adminUrls[0];
+      } catch (error) {
+        alert(
+          "Erro ao abrir administração. Tente desabilitar o bloqueador de popups.",
+        );
+      }
+    }
+  });
+
+  // Tooltip
+  iconElement.title = "Clique para aceder às Definições e Administração";
+
+  console.log("✅ Funcionalidade aplicada ao ícone existente");
+}
+
 // Função para verificar e adicionar o ícone quando necessário
 function checkAndAddIcon() {
   if (isLoginPage()) {
     console.log("📱 Página de login detectada");
-    addSettingsIcon();
+    const success = addSettingsIcon();
+
+    // Se não conseguiu criar/encontrar ícone, tentar abordagem mais agressiva
+    if (!success) {
+      setTimeout(() => {
+        console.log("🔄 Segunda tentativa de adicionar ícone...");
+        forceAddIcon();
+      }, 2000);
+    }
   }
+}
+
+// Função para forçar adição do ícone
+function forceAddIcon() {
+  // Procurar por qualquer SVG na página
+  const allSVGs = document.querySelectorAll("svg");
+  console.log(`🔍 Encontrados ${allSVGs.length} SVGs na página`);
+
+  allSVGs.forEach((svg, index) => {
+    console.log(`SVG ${index}:`, svg.outerHTML.substring(0, 100) + "...");
+
+    // Verificar se é um ícone de settings
+    const paths = svg.querySelectorAll("path");
+    paths.forEach((path) => {
+      const d = path.getAttribute("d");
+      if (
+        d &&
+        (d.includes("M12.22 2h-.44a2 2 0") || d.includes("12.22 2h-.44a2 2 0"))
+      ) {
+        console.log("🎯 Encontrado ícone de configurações!");
+        const container = svg.closest("div") || svg.parentElement;
+        if (container) {
+          container.id = "login-settings-icon-forced";
+          applyIconFunctionality(container);
+        }
+      }
+    });
+  });
 }
 
 // Execução imediata
