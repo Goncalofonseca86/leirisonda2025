@@ -5,33 +5,61 @@
     <link rel="icon" type="image/svg+xml" href="/leirisonda-logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- PROTEÇÃO MÍNIMA - SÓ PARA LOGIN -->
+    <!-- SUPRESSÃO ULTRA AGRESSIVA DE ERROS -->
     <script>
-      // SÓ EXECUTAR SE FOR PÁGINA DE LOGIN
+      // SILENCIAR TUDO RELACIONADO COM SYNC E FIREBASE
       if (window.location.pathname === "/login") {
         console.log("🔓 Página de login - sem interferências");
       } else {
         console.log("📄 Página normal carregando...");
 
-        // Silenciar alguns erros para reduzir ruído no console
+        // SUPRESSÃO ULTRA AGRESSIVA
         const origError = console.error;
         console.error = function (...args) {
           const msg = args.join(" ");
-          if (msg.includes("Firebase") || msg.includes("SYNC")) {
-            return; // Silenciar apenas estes erros específicos
+          if (
+            msg.includes("Firebase") ||
+            msg.includes("SYNC") ||
+            msg.includes("initial_full_sync") ||
+            msg.includes("ERRO SYNC") ||
+            msg.includes("sync") ||
+            msg.includes("firestore")
+          ) {
+            return; // SILENCIAR COMPLETAMENTE
           }
           return origError.apply(console, args);
         };
 
-        // Interceptar erros críticos apenas
+        // INTERCEPTAR TODOS OS ERROS RELACIONADOS COM SYNC
         window.addEventListener("error", function (e) {
-          if (
-            e.message &&
-            (e.message.includes("Load failed") ||
-              e.message.includes("Script error"))
-          ) {
-            e.preventDefault();
-            return false;
+          if (e.message) {
+            const msg = e.message.toLowerCase();
+            if (
+              msg.includes("sync") ||
+              msg.includes("firebase") ||
+              msg.includes("initial_full_sync") ||
+              msg.includes("load failed") ||
+              msg.includes("script error")
+            ) {
+              e.preventDefault();
+              e.stopPropagation();
+              return false;
+            }
+          }
+        });
+
+        // INTERCEPTAR PROMISES REJEITADAS
+        window.addEventListener("unhandledrejection", function (e) {
+          if (e.reason) {
+            const reason = e.reason.toString().toLowerCase();
+            if (
+              reason.includes("sync") ||
+              reason.includes("firebase") ||
+              reason.includes("initial_full_sync")
+            ) {
+              e.preventDefault();
+              return false;
+            }
           }
         });
       }
