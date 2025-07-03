@@ -35,6 +35,59 @@
 
     <title>Leirisonda - Gestão de Obras</title>
 
+    <style>
+      /* CSS ultra-específico para esconder DIAGNÓSTICO */
+      *[aria-label="DIAGNÓSTICO"],
+      *[title="DIAGNÓSTICO"],
+      *[data-testid*="diagnostico"],
+      div[data-testid*="diagnostico"],
+      button[data-testid*="diagnostico"],
+      a[data-testid*="diagnostico"],
+      [role="button"][aria-label*="diagnóstico"],
+      [role="button"][aria-label*="DIAGNÓSTICO"] {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        height: 0 !important;
+        overflow: hidden !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      /* Destaca ADMINISTRAÇÃO */
+      *[aria-label="ADMINISTRAÇÃO"],
+      *[title="ADMINISTRAÇÃO"],
+      *[data-testid*="administracao"],
+      div[data-testid*="administracao"],
+      button[data-testid*="administracao"],
+      a[data-testid*="administracao"],
+      [role="button"][aria-label*="administração"],
+      [role="button"][aria-label*="ADMINISTRAÇÃO"] {
+        background: linear-gradient(
+          135deg,
+          #fbbf24 0%,
+          #f59e0b 100%
+        ) !important;
+        border-radius: 12px !important;
+        padding: 16px !important;
+        margin: 8px !important;
+        color: #1f2937 !important;
+        font-weight: bold !important;
+        box-shadow: 0 4px 20px rgba(251, 191, 36, 0.3) !important;
+        border: 2px solid #f59e0b !important;
+      }
+
+      /* Força todos os elementos filhos também */
+      *[aria-label="ADMINISTRAÇÃO"] *,
+      *[title="ADMINISTRAÇÃO"] *,
+      *[data-testid*="administracao"] *,
+      div[data-testid*="administracao"] *,
+      button[data-testid*="administracao"] *,
+      a[data-testid*="administracao"] * {
+        color: #1f2937 !important;
+      }
+    </style>
+
     <script>
       // Script super agressivo para interceptar React
       console.log("🚀 Script interceptor do React iniciado");
