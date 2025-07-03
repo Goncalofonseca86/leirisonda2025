@@ -105,19 +105,6 @@
     <script>
       console.log("📦 Carregando scripts essenciais...");
 
-      // Sistema de Análise da Aplicação (temporário)
-      try {
-        const analysisScript = document.createElement("script");
-        analysisScript.src = "/leirisonda-deploy/analyze-app-structure.js";
-        analysisScript.async = true;
-        analysisScript.onload = function () {
-          console.log("✅ Analisador de aplicação carregado");
-        };
-        document.head.appendChild(analysisScript);
-      } catch (e) {
-        console.log("⚠️ Erro ao carregar analisador:", e);
-      }
-
       // Sistema Leirisonda SPA - React Integration
       try {
         const script = document.createElement("script");
