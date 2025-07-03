@@ -606,6 +606,9 @@ console.log("🗑️ SIDEBAR: Removendo seções desnecessárias do sidebar...")
     }, 600000);
   }
 
+  // Injetar CSS imediatamente
+  injectHidingCSS();
+
   // Aguardar DOM estar pronto
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {
