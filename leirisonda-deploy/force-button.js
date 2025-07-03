@@ -327,6 +327,9 @@ function showModal() {
           </div>
         </div>
 
+        <button onclick="inspectData()" style="width: 100%; padding: 8px; background: #17a2b8; color: white; border: none; border-radius: 6px; cursor: pointer; margin-bottom: 8px; font-size: 14px;">
+          🔍 ANALISAR DADOS
+        </button>
         <button onclick="deleteAllData()" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
           💣 ELIMINAR TUDO
         </button>
@@ -447,6 +450,147 @@ window.testNotification = function () {
   } catch (error) {
     console.error("Erro no teste de notificação:", error);
     showInfo("notif-info", `❌ Erro: ${error.message}`, "red");
+  }
+};
+
+// Função para analisar dados armazenados
+window.inspectData = function () {
+  try {
+    console.log("🔍 ANÁLISE COMPLETA DOS DADOS");
+
+    const allKeys = Object.keys(localStorage);
+    let report = "📊 RELATÓRIO DE DADOS:\n\n";
+    let foundData = [];
+
+    allKeys.forEach((key) => {
+      const value = localStorage.getItem(key);
+      let dataType = "unknown";
+      let count = 0;
+
+      try {
+        if (value.startsWith("[")) {
+          const parsed = JSON.parse(value);
+          if (Array.isArray(parsed)) {
+            count = parsed.length;
+
+            // Analisar conteúdo do array
+            if (parsed.length > 0) {
+              const sample = parsed[0];
+              if (typeof sample === "object") {
+                const keys = Object.keys(sample);
+
+                // Detectar tipo de dados baseado nas propriedades
+                if (
+                  keys.some(
+                    (k) =>
+                      k.toLowerCase().includes("work") ||
+                      k.toLowerCase().includes("obra"),
+                  )
+                ) {
+                  dataType = "OBRAS";
+                } else if (
+                  keys.some(
+                    (k) =>
+                      k.toLowerCase().includes("maintenance") ||
+                      k.toLowerCase().includes("manutenc"),
+                  )
+                ) {
+                  dataType = "MANUTENÇÕES";
+                } else if (
+                  keys.some(
+                    (k) =>
+                      k.toLowerCase().includes("pool") ||
+                      k.toLowerCase().includes("piscina"),
+                  )
+                ) {
+                  dataType = "PISCINAS";
+                } else if (
+                  keys.includes("name") ||
+                  keys.includes("title") ||
+                  keys.includes("description")
+                ) {
+                  dataType = "DADOS DA APP";
+                }
+
+                console.log(`📋 ${key} - Tipo: ${dataType}, Contém:`, keys);
+              }
+            }
+            dataType += ` (${count} items)`;
+          }
+        } else if (value.startsWith("{")) {
+          const parsed = JSON.parse(value);
+          dataType = "Objeto";
+        } else {
+          dataType = "String/Outro";
+        }
+      } catch (e) {
+        dataType = "Não-JSON";
+      }
+
+      report += `🔑 ${key}\n`;
+      report += `   Tipo: ${dataType}\n`;
+      report += `   Tamanho: ${value.length} chars\n`;
+      if (count > 0) {
+        report += `   Itens: ${count}\n`;
+      }
+      report += `   Preview: ${value.substring(0, 50)}${value.length > 50 ? "..." : ""}\n\n`;
+
+      // Adicionar à lista se parecer dados da app
+      if (
+        count > 0 ||
+        dataType.includes("OBRAS") ||
+        dataType.includes("MANUTENÇÕES") ||
+        dataType.includes("PISCINAS")
+      ) {
+        foundData.push({
+          key,
+          type: dataType,
+          count,
+          value: value.substring(0, 200),
+        });
+      }
+    });
+
+    console.log("📊 Relatório completo:", report);
+
+    // Mostrar relatório
+    const element = document.createElement("div");
+    element.style.cssText = `
+      position: fixed; top: 50px; left: 50%; transform: translateX(-50%);
+      background: white; padding: 20px; border-radius: 10px;
+      max-width: 80%; max-height: 70%; overflow: auto;
+      z-index: 10000000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      font-family: monospace; font-size: 12px; line-height: 1.4;
+      border: 2px solid #007784;
+    `;
+    element.innerHTML = `
+      <h3 style="color: #007784; text-align: center;">🔍 Análise de Dados</h3>
+      <pre style="white-space: pre-wrap; margin: 10px 0;">${report}</pre>
+      <div style="text-align: center; margin-top: 15px;">
+        <button onclick="this.parentElement.parentElement.remove()"
+                style="padding: 8px 16px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">
+          Fechar
+        </button>
+      </div>
+    `;
+    document.body.appendChild(element);
+
+    // Logs específicos para dados encontrados
+    if (foundData.length > 0) {
+      console.log("🎯 DADOS DA APLICAÇÃO ENCONTRADOS:");
+      foundData.forEach((item) => {
+        console.log(`📦 ${item.key} (${item.type}):`, item.value);
+      });
+    }
+
+    showInfo(
+      "delete-info",
+      `🔍 Análise completa! ${foundData.length} tipos de dados encontrados.`,
+      "blue",
+    );
+  } catch (error) {
+    console.error("Erro na análise:", error);
+    showInfo("delete-info", "❌ Erro na análise", "red");
   }
 };
 
