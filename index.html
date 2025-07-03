@@ -5,55 +5,17 @@
     <link rel="icon" type="image/svg+xml" href="/leirisonda-logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- PROTEÇÃO MÍNIMA - SÓ PARA LOGIN -->
+    <!-- Minimal error suppression -->
     <script>
-      // SÓ EXECUTAR SE FOR PÁGINA DE LOGIN
-      if (window.location.pathname === "/login") {
-        console.log("🔓 Página de login - sem interferências");
-      } else {
-        console.log("📄 Página normal carregando...");
-
-        // Silenciar alguns erros para reduzir ruído no console
-        const origError = console.error;
-        console.error = function (...args) {
-          const msg = args.join(" ");
-          if (msg.includes("Firebase") || msg.includes("SYNC")) {
-            return; // Silenciar apenas estes erros específicos
-          }
-          return origError.apply(console, args);
-        };
-
-        // Interceptar erros críticos apenas
-        window.addEventListener("error", function (e) {
-          if (
-            e.message &&
-            (e.message.includes("Load failed") ||
-              e.message.includes("Script error") ||
-              e.message.includes("Loading chunk") ||
-              e.message.includes("Failed to fetch") ||
-              e.message.includes("SYNC"))
-          ) {
-            console.log("🔧 Erro suprimido automaticamente:", e.message);
-            e.preventDefault();
-            return false;
-          }
-        });
-
-        // Interceptar promise rejections também
-        window.addEventListener("unhandledrejection", function (e) {
-          if (
-            e.reason &&
-            e.reason.message &&
-            (e.reason.message.includes("Load failed") ||
-              e.reason.message.includes("Loading chunk") ||
-              e.reason.message.includes("Failed to fetch") ||
-              e.reason.message.includes("SYNC"))
-          ) {
-            console.log("🔧 Promise rejection suprimida:", e.reason.message);
-            e.preventDefault();
-          }
-        });
-      }
+      // Basic error suppression for production deployment
+      const originalError = console.error;
+      console.error = function (...args) {
+        const msg = args.join(" ");
+        if (msg.includes("SYNC") || msg.includes("Firebase")) {
+          return;
+        }
+        return originalError.apply(console, args);
+      };
     </script>
 
     <!-- PWA Meta Tags -->
