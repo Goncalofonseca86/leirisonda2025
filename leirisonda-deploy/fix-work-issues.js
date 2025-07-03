@@ -380,61 +380,134 @@ console.log("🔧 Sistema de correções ativo...");
     });
   }
 
-  // 6. FUNÇÃO PRINCIPAL
+  // 6. SISTEMA PRINCIPAL DE INICIALIZAÇÃO
   function initFixWorkIssues() {
-    console.log("🔧 Inicializando correções...");
+    console.log("🔧 Iniciando sistema de correções...");
 
-    // Remover botões de teste imediatamente
+    // 1. Limpeza imediata
     removeTestButtons();
-
-    // Se estiver na página de criar obra
-    if (window.location.pathname.includes("/create-work")) {
-      setTimeout(() => {
-        // Adicionar opção furo ao dropdown
-        addFuroOption();
-
-        // Verificar a cada 2 segundos se precisa adicionar
-        setInterval(() => {
-          addFuroOption();
-          removeTestButtons();
-        }, 2000);
-      }, 1000);
-    }
-
-    // Configurar proteção ao guardar
     setupWorkSaveProtection();
 
-    // Remover botões de teste periodicamente
-    setInterval(removeTestButtons, 3000);
+    // 2. Se é página de criar obra, configurar tudo
+    if (
+      window.location.pathname.includes("/create-work") ||
+      window.location.pathname.includes("/nova-obra")
+    ) {
+      console.log("📝 Página de criar obra detectada");
+
+      // Aguardar carregamento da página
+      setTimeout(() => {
+        addFuroOption();
+        removeTestButtons();
+
+        // Força mostrar a secção furo se não existir
+        if (!document.getElementById("water-drilling-section-new")) {
+          setTimeout(() => {
+            console.log("💧 Forçando criação da secção furo como fallback");
+            createWaterDrillingSection();
+          }, 2000);
+        }
+      }, 1000);
+
+      // Monitorização contínua mais agressiva
+      const workPageInterval = setInterval(() => {
+        removeTestButtons();
+        addFuroOption();
+
+        // Se ainda não tem furo após 10 segundos, forçar
+        if (!document.querySelector("select option[value='furo_agua']")) {
+          console.log("🔄 Furo de Água não detectado - forçando adição");
+          addFuroOption();
+        }
+      }, 3000);
+
+      // Parar monitorização se sair da página
+      const stopMonitoring = () => {
+        if (
+          !window.location.pathname.includes("/create-work") &&
+          !window.location.pathname.includes("/nova-obra")
+        ) {
+          clearInterval(workPageInterval);
+        }
+      };
+
+      setInterval(stopMonitoring, 5000);
+    }
+
+    // 3. Limpeza global contínua (todas as páginas)
+    setInterval(removeTestButtons, 5000);
   }
 
-  // Função para uso manual
+  // Funções globais para debug/uso manual
   window.corrigirProblemasObra = function () {
-    console.log("🔧 Correção manual ativada");
+    console.log("🔧 Correção manual executada");
     removeTestButtons();
     addFuroOption();
+
     if (window.location.pathname.includes("/create-work")) {
+      if (!document.getElementById("water-drilling-section-new")) {
+        createWaterDrillingSection();
+      }
       alert(
-        "✅ Correções aplicadas:\n• Botões de teste removidos\n• Opção 'Furo de Água' adicionada",
+        "✅ Correções aplicadas:\n• Botões teste removidos\n• Furo de Água adicionado\n• Secção furo criada",
       );
     }
   };
 
-  // Inicializar
+  window.forcarSecaoFuro = function () {
+    removeWaterDrillingSection();
+    setTimeout(() => createWaterDrillingSection(), 100);
+    console.log("💧 Secção furo forçada");
+  };
+
+  window.debugFuroStatus = function () {
+    const hasOption = !!document.querySelector(
+      "select option[value='furo_agua']",
+    );
+    const hasSection = !!document.getElementById("water-drilling-section-new");
+
+    console.log("🔍 Status do sistema Furo:");
+    console.log("• Opção no dropdown:", hasOption);
+    console.log("• Secção criada:", hasSection);
+    console.log("• URL atual:", window.location.pathname);
+
+    if (!hasOption) addFuroOption();
+    if (!hasSection && window.location.pathname.includes("create-work")) {
+      createWaterDrillingSection();
+    }
+  };
+
+  // Inicialização robusta
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initFixWorkIssues);
+    document.addEventListener("DOMContentLoaded", () => {
+      setTimeout(initFixWorkIssues, 500);
+    });
   } else {
-    initFixWorkIssues();
+    setTimeout(initFixWorkIssues, 100);
   }
 
-  // Reinicializar quando URL mudar
+  // Monitorização de mudanças de URL (SPA)
   let currentUrl = window.location.href;
   setInterval(() => {
     if (window.location.href !== currentUrl) {
       currentUrl = window.location.href;
+      console.log("🔄 URL mudou - reinicializando", window.location.pathname);
       setTimeout(initFixWorkIssues, 1000);
     }
   }, 1000);
 
-  console.log("✅ Sistema de correção de problemas carregado");
+  // Auto-debug a cada 30 segundos nas páginas de work
+  setInterval(() => {
+    if (window.location.pathname.includes("/create-work")) {
+      const hasOption = !!document.querySelector(
+        "select option[value='furo_agua']",
+      );
+      if (!hasOption) {
+        console.log("🔄 Auto-correção: re-adicionando opção furo");
+        addFuroOption();
+      }
+    }
+  }, 30000);
+
+  console.log("✅ Sistema completo de correções carregado e ativo");
 })();
