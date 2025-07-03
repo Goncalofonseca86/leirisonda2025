@@ -536,11 +536,17 @@ console.log("🗑️ SIDEBAR: Removendo seções desnecessárias do sidebar...")
 
   // Aguardar DOM estar pronto
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", scheduleRemoval);
+    document.addEventListener("DOMContentLoaded", () => {
+      scheduleRemoval();
+      setupMutationObserver();
+    });
   } else {
     // Aguardar um pouco para a aplicação carregar
-    setTimeout(scheduleRemoval, 1000);
+    setTimeout(() => {
+      scheduleRemoval();
+      setupMutationObserver();
+    }, 500);
   }
 
-  console.log("🗑️ SIDEBAR: Sistema de remoção iniciado");
+  console.log("🗑️ SIDEBAR: Sistema de remoção avançado iniciado");
 })();
