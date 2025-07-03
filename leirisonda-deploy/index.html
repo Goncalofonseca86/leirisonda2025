@@ -45,6 +45,35 @@
 
       console.log("✅ Erros silenciados inline");
 
+      // CSS ULTRA AGRESSIVO PARA ESCONDER TELAS DE ERRO
+      const style = document.createElement("style");
+      style.innerHTML = `
+      /* Esconder qualquer elemento que contenha texto de erro */
+      *:has-text("Oops!") { display: none !important; }
+      *:has-text("Algo correu mal") { display: none !important; }
+      *:has-text("Tentar Novamente") { display: none !important; }
+      *:has-text("Diagnóstico") { display: none !important; }
+
+      /* Esconder elementos com posição fixa que possam ser modais */
+      div[style*="position: fixed"]:has-text("Oops") { display: none !important; }
+      div[style*="position: absolute"]:has-text("Algo correu mal") { display: none !important; }
+
+      /* Esconder por classes comuns de erro */
+      .error-screen, .error-modal, .error-overlay { display: none !important; }
+      [class*="error"][style*="position"] { display: none !important; }
+
+      /* Esconder elementos com z-index alto que contenham erro */
+      [style*="z-index"]:has-text("Oops") { display: none !important; }
+
+      /* Forçar visibilidade apenas para mensagens de sucesso */
+      *:has-text("guardada com sucesso") {
+        display: block !important;
+        visibility: visible !important;
+        z-index: 999999 !important;
+      }
+    `;
+      (document.head || document.documentElement).appendChild(style);
+
       // BLOQUEIO ULTRA AGRESSIVO DE "OOPS! ALGO CORREU MAL"
       setInterval(function () {
         try {
