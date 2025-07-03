@@ -655,43 +655,67 @@ console.log("🚀 LEIRISONDA: Integração SPA React iniciada");
   function handleFormSubmit(event) {
     console.log("📤 Formulário sendo submetido...");
 
-    // Verificar se há campos de furo preenchidos
+    // Verificar se o tipo de trabalho selecionado é furo de água
+    const workTypeSelect = document.querySelector(
+      'select[data-leirisonda-processed="true"]',
+    );
+    const isFuroSelected =
+      workTypeSelect && workTypeSelect.value === "furo_agua";
+
+    console.log(
+      "🔍 Tipo selecionado:",
+      workTypeSelect?.value,
+      "É furo:",
+      isFuroSelected,
+    );
+
+    // Verificar se há campos de furo presentes
     const furoFields = document.querySelectorAll(
       '[data-leirisonda-field="true"]',
     );
-    const furoData = {};
-    let hasFuroData = false;
 
-    furoFields.forEach((field) => {
-      if (field.value && field.value.trim() !== "") {
-        hasFuroData = true;
-        furoData[field.name] = field.value;
-      }
-    });
+    if (isFuroSelected && furoFields.length > 0) {
+      // Se furo está selecionado, processar dados
+      const furoData = {};
+      let hasFuroData = false;
 
-    if (hasFuroData) {
-      console.log("💧 Dados de furo detectados:", furoData);
-
-      // Criar campo oculto para armazenar dados de furo como JSON
-      let furoDataField = document.querySelector(
-        'input[name="leirisonda_furo_data"]',
-      );
-      if (!furoDataField) {
-        furoDataField = document.createElement("input");
-        furoDataField.type = "hidden";
-        furoDataField.name = "leirisonda_furo_data";
-        event.target.appendChild(furoDataField);
-      }
-
-      furoDataField.value = JSON.stringify(furoData);
-
-      // Remover campos individuais do form para evitar conflitos
       furoFields.forEach((field) => {
-        field.removeAttribute("name");
-        field.setAttribute("data-leirisonda-removed", "true");
+        if (field.value && field.value.trim() !== "") {
+          hasFuroData = true;
+          furoData[field.name] = field.value;
+        }
       });
 
-      console.log("✅ Dados de furo processados para envio");
+      if (hasFuroData) {
+        console.log("💧 Dados de furo detectados:", furoData);
+
+        // Criar campo oculto para armazenar dados de furo como JSON
+        let furoDataField = document.querySelector(
+          'input[name="leirisonda_furo_data"]',
+        );
+        if (!furoDataField) {
+          furoDataField = document.createElement("input");
+          furoDataField.type = "hidden";
+          furoDataField.name = "leirisonda_furo_data";
+          event.target.appendChild(furoDataField);
+        }
+
+        furoDataField.value = JSON.stringify(furoData);
+        console.log("✅ Dados de furo processados para envio");
+      }
+
+      // Desabilitar campos de furo individuais para não interferirem
+      furoFields.forEach((field) => {
+        field.disabled = true;
+        field.setAttribute("data-leirisonda-disabled", "true");
+      });
+    } else if (furoFields.length > 0) {
+      // Se não é furo ou furo não está selecionado, desabilitar todos os campos de furo
+      console.log("🚫 Desabilitando campos de furo (não selecionado)");
+      furoFields.forEach((field) => {
+        field.disabled = true;
+        field.setAttribute("data-leirisonda-disabled", "true");
+      });
     }
 
     // Permitir que o formulário prossiga normalmente
