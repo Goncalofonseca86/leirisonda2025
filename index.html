@@ -28,10 +28,27 @@
           if (
             e.message &&
             (e.message.includes("Load failed") ||
-              e.message.includes("Script error"))
+              e.message.includes("Script error") ||
+              e.message.includes("Loading chunk") ||
+              e.message.includes("Failed to fetch"))
           ) {
+            console.log("🔧 Erro suprimido automaticamente:", e.message);
             e.preventDefault();
             return false;
+          }
+        });
+
+        // Interceptar promise rejections também
+        window.addEventListener("unhandledrejection", function (e) {
+          if (
+            e.reason &&
+            e.reason.message &&
+            (e.reason.message.includes("Load failed") ||
+              e.reason.message.includes("Loading chunk") ||
+              e.reason.message.includes("Failed to fetch"))
+          ) {
+            console.log("🔧 Promise rejection suprimida:", e.reason.message);
+            e.preventDefault();
           }
         });
       }
