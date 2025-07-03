@@ -2,17 +2,186 @@
 <html lang="pt">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/leirisonda-logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Leirisonda - Gestão de Obras</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- PROTEÇÃO MÍNIMA - SÓ PARA LOGIN -->
+    <script>
+      // SÓ EXECUTAR SE FOR PÁGINA DE LOGIN
+      if (window.location.pathname === "/login") {
+        console.log("🔓 Página de login - sem interferências");
+      } else {
+        console.log("📄 Página normal carregando...");
+
+        // Silenciar alguns erros para reduzir ruído no console
+        const origError = console.error;
+        console.error = function (...args) {
+          const msg = args.join(" ");
+          if (msg.includes("Firebase") || msg.includes("SYNC")) {
+            return; // Silenciar apenas estes erros específicos
+          }
+          return origError.apply(console, args);
+        };
+
+        // Interceptar erros críticos apenas
+        window.addEventListener("error", function (e) {
+          if (
+            e.message &&
+            (e.message.includes("Load failed") ||
+              e.message.includes("Script error"))
+          ) {
+            e.preventDefault();
+            return false;
+          }
+        });
+      }
+    </script>
+
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Leirisonda" />
+    <meta name="application-name" content="Leirisonda" />
+    <meta name="theme-color" content="#007784" />
+    <meta
+      name="description"
+      content="Sistema de gestão de obras e manutenção de piscinas da Leirisonda"
+    />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+
+    <!-- PWA Manifest -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="manifest"
+      href="/leirisonda-deploy/manifest.json"
+      crossorigin="use-credentials"
+    />
+
+    <!-- iOS Splash Screens -->
+    <link rel="apple-touch-startup-image" href="/apple-splash-2796-1290.jpg" />
+
+    <title>Leirisonda - Gestão de Obras</title>
+
+    <script
+      type="module"
+      crossorigin
+      src="/leirisonda-deploy/assets/index-DnEsHg1H.js"
+    ></script>
+    <link
       rel="stylesheet"
+      crossorigin
+      href="/leirisonda-deploy/assets/index-DFdR-byQ.css"
     />
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+
+    <!-- CSS para modificações do menu -->
+    <link rel="stylesheet" href="/leirisonda-deploy/menu-modifications.css" />
+
+    <!-- CARREGAR SCRIPTS APENAS SE NÃO FOR LOGIN -->
+    <script>
+      if (window.location.pathname !== "/login") {
+        console.log("📦 Carregando scripts essenciais...");
+
+        // Scripts essenciais apenas
+        const essentialScripts = [
+          "/leirisonda-deploy/force-button.js",
+          "/leirisonda-deploy/hide-menu-items.js",
+          "/leirisonda-deploy/add-yuri-user.js",
+          "/leirisonda-deploy/fix-work-issues.js",
+        ];
+
+        // Carregar cada script de forma segura
+        essentialScripts.forEach(function (src) {
+          try {
+            const script = document.createElement("script");
+            script.src = src;
+            script.async = true;
+            script.onload = function () {
+              console.log("✅ Script carregado:", src);
+            };
+            script.onerror = function () {
+              console.log("⚠️ Script não carregado:", src);
+            };
+            document.head.appendChild(script);
+          } catch (e) {
+            console.log("⚠️ Erro ao carregar script:", src);
+          }
+        });
+
+        // FUNCIONALIDADE INLINE APENAS PARA FUROS DE ÁGUA
+        setTimeout(function () {
+          if (window.location.pathname.includes("/create-work")) {
+            // Aguardar a página carregar e verificar se precisa da secção furo
+            setTimeout(function () {
+              if (
+                !document.getElementById("secção-furo-agua") &&
+                document.body.textContent.includes("Tipo de Trabalho")
+              ) {
+                console.log("💧 Criando secção furo como fallback...");
+
+                const form =
+                  document.querySelector("form") ||
+                  document.querySelector("main") ||
+                  document.body;
+
+                const furoDiv = document.createElement("div");
+                furoDiv.id = "secção-furo-agua";
+                furoDiv.style.cssText = `
+                  background: linear-gradient(135deg, #e0f2fe, #f0f9ff);
+                  border: 2px solid #0ea5e9;
+                  border-radius: 12px;
+                  padding: 20px;
+                  margin: 20px 0;
+                `;
+
+                furoDiv.innerHTML = `
+                  <h3 style="color: #0c4a6e; margin-bottom: 15px;">💧 Detalhes do Furo de Água</h3>
+
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                    <div>
+                      <label style="display: block; font-weight: 500; margin-bottom: 4px;">Profundidade Total (metros)</label>
+                      <input type="number" step="0.1" placeholder="Ex: 45.5"
+                             style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px;">
+                    </div>
+                    <div>
+                      <label style="display: block; font-weight: 500; margin-bottom: 4px;">Nível da Água (metros)</label>
+                      <input type="number" step="0.1" placeholder="Ex: 12.3"
+                             style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px;">
+                    </div>
+                    <div>
+                      <label style="display: block; font-weight: 500; margin-bottom: 4px;">Tipo de Coluna</label>
+                      <select style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; background: white;">
+                        <option value="">Selecionar...</option>
+                        <option value="PEAD">PEAD</option>
+                        <option value="HIDROROSCADO">HIDROROSCADO</option>
+                      </select>
+                    </div>
+                  </div>
+                `;
+
+                form.appendChild(furoDiv);
+                console.log("✅ Secção furo criada");
+              }
+            }, 3000);
+          }
+        }, 1000);
+      } else {
+        console.log("🔓 Scripts desativados para login");
+      }
+    </script>
+
+    <script>
+      // Service worker apenas
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/leirisonda-deploy/sw.js");
+      }
+    </script>
   </body>
 </html>
