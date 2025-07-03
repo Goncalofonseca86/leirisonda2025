@@ -171,32 +171,40 @@
     <!-- CSS para modificações do menu -->
     <link rel="stylesheet" href="/menu-modifications.css" />
 
-    <!-- SUPRESSOR NUCLEAR DE ERROS - PRIMEIRA PRIORIDADE -->
-    <script src="/nuclear-error-suppressor.js"></script>
-    <!-- BLOQUEADOR ESPECÍFICO DE TELA DE ERRO -->
-    <script src="/block-error-screen.js"></script>
-    <!-- Script SUPER SIMPLES - Força botão sempre (SEM CONFLITOS) -->
-    <script src="/force-button.js"></script>
-    <!-- Script focado para eliminar só dados de trabalho -->
-    <script src="/simple-work-delete.js"></script>
-    <!-- Componente para detalhes do Furo de Água -->
-    <script src="/water-drilling-details.js"></script>
-    <!-- Script para corrigir problemas de sincronização -->
-    <script src="/sync-fix.js"></script>
-    <!-- Script para esconder itens do menu lateral -->
-    <script src="/hide-menu-items.js"></script>
-    <!-- Interceptor de emergência para erros de sync -->
-    <script src="/emergency-sync-fix.js"></script>
-    <!-- Script directo para adicionar secção furo -->
-    <script src="/furo-directo.js"></script>
-    <!-- Sistema de recuperação automática de erros -->
-    <script src="/error-recovery.js"></script>
-    <!-- Corretor de carregamento lento -->
-    <script src="/loading-fix.js"></script>
-    <!-- Proteção contra logout automático -->
-    <script src="/prevent-login-redirect.js"></script>
-    <!-- Sistema robusto para ficar na página de obra -->
-    <script src="/stay-on-work-page.js"></script>
+    <!-- CARREGAR SCRIPTS CONDICIONALMENTE - NÃO NA PÁGINA DE LOGIN -->
+    <script>
+      // SÓ CARREGAR SCRIPTS SE NÃO ESTIVER NA PÁGINA DE LOGIN
+      if (window.location.pathname !== "/login") {
+        console.log("📦 Carregando scripts (não-login)");
+
+        // Lista de scripts para carregar
+        const scripts = [
+          "/nuclear-error-suppressor.js",
+          "/block-error-screen.js",
+          "/force-button.js",
+          "/simple-work-delete.js",
+          "/water-drilling-details.js",
+          "/sync-fix.js",
+          "/hide-menu-items.js",
+          "/emergency-sync-fix.js",
+          "/furo-directo.js",
+          "/error-recovery.js",
+          "/loading-fix.js",
+          "/prevent-login-redirect.js",
+          "/stay-on-work-page.js",
+        ];
+
+        // Carregar cada script dinamicamente
+        scripts.forEach(function (src) {
+          const script = document.createElement("script");
+          script.src = src;
+          script.async = true;
+          document.head.appendChild(script);
+        });
+      } else {
+        console.log("🔓 Página de login - scripts desativados");
+      }
+    </script>
 
     <script>
       // Essential protection and service worker
