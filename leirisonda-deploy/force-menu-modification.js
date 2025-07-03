@@ -56,12 +56,12 @@ function forceMenuModification() {
       }
     }
 
-    // DESTACAR ADMINISTRAÇÃO
+    // REMOVER ADMINISTRAÇÃO
     if (
       text.trim() === "ADMINISTRAÇÃO" ||
       (text.includes("ADMINISTRAÇÃO") && text.length < 50)
     ) {
-      console.log("⭐ ENCONTREI ADMINISTRAÇÃO:", element);
+      console.log("🗑️ ENCONTREI ADMINISTRAÇÃO:", element);
 
       let targetElement = element;
 
@@ -82,78 +82,21 @@ function forceMenuModification() {
       }
 
       if (targetElement) {
-        console.log("⭐ Destacando ADMINISTRAÇÃO:", targetElement);
+        console.log("🗑️ Removendo ADMINISTRAÇÃO:", targetElement);
+        targetElement.style.display = "none";
+        targetElement.style.visibility = "hidden";
+        targetElement.style.opacity = "0";
+        targetElement.style.height = "0px";
+        targetElement.style.overflow = "hidden";
+        targetElement.style.padding = "0";
+        targetElement.style.margin = "0";
 
-        // Aplica estilo dourado imediatamente
-        targetElement.style.setProperty(
-          "background",
-          "linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)",
-          "important",
-        );
-        targetElement.style.setProperty("border-radius", "12px", "important");
-        targetElement.style.setProperty("padding", "16px", "important");
-        targetElement.style.setProperty("margin", "8px 16px", "important");
-        targetElement.style.setProperty(
-          "box-shadow",
-          "0 4px 20px rgba(251, 191, 36, 0.3)",
-          "important",
-        );
-        targetElement.style.setProperty("color", "#1f2937", "important");
-        targetElement.style.setProperty("font-weight", "bold", "important");
-        targetElement.style.setProperty(
-          "border",
-          "2px solid #f59e0b",
-          "important",
-        );
-
-        // Força a cor do texto interno
-        const textElements = targetElement.querySelectorAll("*");
-        textElements.forEach((textEl) => {
-          textEl.style.setProperty("color", "#1f2937", "important");
-        });
-
-        // Adiciona as funcionalidades das Definições
-        if (!targetElement.textContent.includes("Configurações")) {
-          const settingsDiv = document.createElement("div");
-          settingsDiv.style.marginTop = "12px";
-          settingsDiv.style.fontSize = "14px";
-          settingsDiv.style.paddingLeft = "16px";
-
-          settingsDiv.innerHTML = `
-            <div style="padding: 8px 0; color: #1f2937; cursor: pointer; border-radius: 6px; font-weight: normal;" 
-                 onmouseover="this.style.backgroundColor='rgba(31, 41, 55, 0.1)'" 
-                 onmouseout="this.style.backgroundColor='transparent'">
-              ⚙️ Configurações Gerais
-            </div>
-            <div style="padding: 8px 0; color: #1f2937; cursor: pointer; border-radius: 6px; font-weight: normal;" 
-                 onmouseover="this.style.backgroundColor='rgba(31, 41, 55, 0.1)'" 
-                 onmouseout="this.style.backgroundColor='transparent'">
-              👤 Perfil de Utilizador  
-            </div>
-            <div style="padding: 8px 0; color: #1f2937; cursor: pointer; border-radius: 6px; font-weight: normal;" 
-                 onmouseover="this.style.backgroundColor='rgba(31, 41, 55, 0.1)'" 
-                 onmouseout="this.style.backgroundColor='transparent'">
-              🔒 Segurança & Privacidade
-            </div>
-            <div style="padding: 8px 0; color: #1f2937; cursor: pointer; border-radius: 6px; font-weight: normal;" 
-                 onmouseover="this.style.backgroundColor='rgba(31, 41, 55, 0.1)'" 
-                 onmouseout="this.style.backgroundColor='transparent'">
-              📊 Relatórios & Analytics
-            </div>
-            <div style="padding: 8px 0; color: #1f2937; cursor: pointer; border-radius: 6px; font-weight: normal;" 
-                 onmouseover="this.style.backgroundColor='rgba(31, 41, 55, 0.1)'" 
-                 onmouseout="this.style.backgroundColor='transparent'">
-              💾 Backup & Exportação
-            </div>
-            <div style="padding: 8px 0; color: #1f2937; cursor: pointer; border-radius: 6px; font-weight: normal;" 
-                 onmouseover="this.style.backgroundColor='rgba(31, 41, 55, 0.1)'" 
-                 onmouseout="this.style.backgroundColor='transparent'">
-              🔔 Notificações
-            </div>
-          `;
-
-          targetElement.appendChild(settingsDiv);
-        }
+        // Remove completamente após um delay
+        setTimeout(() => {
+          if (targetElement.parentElement) {
+            targetElement.remove();
+          }
+        }, 100);
 
         modified = true;
       }

@@ -16,7 +16,7 @@ function applyMenuCSS() {
     *:not(script):not(style) {
       display: block;
     }
-    
+
     /* Procura por elementos que contenham apenas DIAGNÓSTICO */
     [role="button"]:has-text("DIAGNÓSTICO"),
     div:has-text("DIAGNÓSTICO"),
@@ -30,28 +30,19 @@ function applyMenuCSS() {
       padding: 0 !important;
       margin: 0 !important;
     }
-    
-    /* DESTACAR ADMINISTRAÇÃO */
+
+    /* ESCONDER ADMINISTRAÇÃO */
     [role="button"]:has-text("ADMINISTRAÇÃO"),
     div:has-text("ADMINISTRAÇÃO"),
     a:has-text("ADMINISTRAÇÃO"),
     li:has-text("ADMINISTRAÇÃO") {
-      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
-      border-radius: 12px !important;
-      padding: 16px !important;
-      margin: 8px 16px !important;
-      box-shadow: 0 4px 20px rgba(251, 191, 36, 0.3) !important;
-      color: #1f2937 !important;
-      font-weight: bold !important;
-      border: 2px solid #f59e0b !important;
-    }
-    
-    /* Força cor do texto em ADMINISTRAÇÃO */
-    [role="button"]:has-text("ADMINISTRAÇÃO") *,
-    div:has-text("ADMINISTRAÇÃO") *,
-    a:has-text("ADMINISTRAÇÃO") *,
-    li:has-text("ADMINISTRAÇÃO") * {
-      color: #1f2937 !important;
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      height: 0 !important;
+      overflow: hidden !important;
+      padding: 0 !important;
+      margin: 0 !important;
     }
   `;
 
@@ -103,7 +94,7 @@ function addAdvancedCSS() {
       console.log("🗑️ DIAGNÓSTICO escondido:", targetElement);
     }
 
-    // Destaca ADMINISTRAÇÃO
+    // Remove ADMINISTRAÇÃO
     if (
       text.trim() === "ADMINISTRAÇÃO" ||
       (text.includes("ADMINISTRAÇÃO") && text.length < 30)
@@ -121,83 +112,16 @@ function addAdvancedCSS() {
         targetElement = targetElement.parentElement;
       }
 
-      // Aplica estilo dourado
-      targetElement.style.setProperty(
-        "background",
-        "linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)",
-        "important",
-      );
-      targetElement.style.setProperty("border-radius", "12px", "important");
-      targetElement.style.setProperty("padding", "16px", "important");
-      targetElement.style.setProperty("margin", "8px 16px", "important");
-      targetElement.style.setProperty(
-        "box-shadow",
-        "0 4px 20px rgba(251, 191, 36, 0.3)",
-        "important",
-      );
-      targetElement.style.setProperty("color", "#1f2937", "important");
-      targetElement.style.setProperty("font-weight", "bold", "important");
-      targetElement.style.setProperty(
-        "border",
-        "2px solid #f59e0b",
-        "important",
-      );
+      // Aplica CSS para esconder
+      targetElement.style.setProperty("display", "none", "important");
+      targetElement.style.setProperty("visibility", "hidden", "important");
+      targetElement.style.setProperty("opacity", "0", "important");
+      targetElement.style.setProperty("height", "0px", "important");
+      targetElement.style.setProperty("overflow", "hidden", "important");
+      targetElement.style.setProperty("padding", "0", "important");
+      targetElement.style.setProperty("margin", "0", "important");
 
-      // Força cor dos elementos filhos
-      const children = targetElement.querySelectorAll("*");
-      children.forEach((child) => {
-        child.style.setProperty("color", "#1f2937", "important");
-      });
-
-      console.log("⭐ ADMINISTRAÇÃO destacada:", targetElement);
-
-      // Adiciona funcionalidades das Definições se não existir
-      if (
-        !targetElement.textContent.includes("Configurações") &&
-        !targetElement.querySelector(".definicoes-content")
-      ) {
-        const settingsDiv = document.createElement("div");
-        settingsDiv.className = "definicoes-content";
-        settingsDiv.style.marginTop = "12px";
-        settingsDiv.style.fontSize = "14px";
-        settingsDiv.style.paddingLeft = "16px";
-
-        settingsDiv.innerHTML = `
-          <div style="padding: 8px 0; color: #1f2937 !important; cursor: pointer; border-radius: 6px; font-weight: normal;" 
-               onmouseover="this.style.backgroundColor='rgba(31, 41, 55, 0.1)'" 
-               onmouseout="this.style.backgroundColor='transparent'">
-            ⚙️ Configurações Gerais
-          </div>
-          <div style="padding: 8px 0; color: #1f2937 !important; cursor: pointer; border-radius: 6px; font-weight: normal;" 
-               onmouseover="this.style.backgroundColor='rgba(31, 41, 55, 0.1)'" 
-               onmouseout="this.style.backgroundColor='transparent'">
-            👤 Perfil de Utilizador  
-          </div>
-          <div style="padding: 8px 0; color: #1f2937 !important; cursor: pointer; border-radius: 6px; font-weight: normal;" 
-               onmouseover="this.style.backgroundColor='rgba(31, 41, 55, 0.1)'" 
-               onmouseout="this.style.backgroundColor='transparent'">
-            🔒 Segurança & Privacidade
-          </div>
-          <div style="padding: 8px 0; color: #1f2937 !important; cursor: pointer; border-radius: 6px; font-weight: normal;" 
-               onmouseover="this.style.backgroundColor='rgba(31, 41, 55, 0.1)'" 
-               onmouseout="this.style.backgroundColor='transparent'">
-            📊 Relatórios & Analytics
-          </div>
-          <div style="padding: 8px 0; color: #1f2937 !important; cursor: pointer; border-radius: 6px; font-weight: normal;" 
-               onmouseover="this.style.backgroundColor='rgba(31, 41, 55, 0.1)'" 
-               onmouseout="this.style.backgroundColor='transparent'">
-            💾 Backup & Exportação
-          </div>
-          <div style="padding: 8px 0; color: #1f2937 !important; cursor: pointer; border-radius: 6px; font-weight: normal;" 
-               onmouseover="this.style.backgroundColor='rgba(31, 41, 55, 0.1)'" 
-               onmouseout="this.style.backgroundColor='transparent'">
-            🔔 Notificações
-          </div>
-        `;
-
-        targetElement.appendChild(settingsDiv);
-        console.log("➕ Funcionalidades das Definições adicionadas");
-      }
+      console.log("🗑️ ADMINISTRAÇÃO removida:", targetElement);
     }
   });
 
