@@ -202,27 +202,52 @@ function modifyMenuItems() {
           }
         }
 
-        // Adicionar click handler para redirecionar para página de administração
+        // Fazer toda a área clicável
         elementToEnhance.style.cursor = "pointer";
-        elementToEnhance.onclick = function (e) {
+        elementToEnhance.style.userSelect = "none";
+        elementToEnhance.style.pointerEvents = "auto";
+
+        // Função de redirecionamento
+        const adminRedirect = function (e) {
           e.preventDefault();
           e.stopPropagation();
-          console.log("🔄 Redirecionando para página de administração...");
+          console.log(
+            "🔄 Clique detectado - Redirecionando para administração...",
+          );
 
-          // Tenta múltiplas opções de navegação
           const adminUrl = window.location.origin + "/admin.html";
-          console.log("🔗 Tentando aceder a:", adminUrl);
+          console.log("🔗 Abrindo:", adminUrl);
 
-          try {
-            window.open(adminUrl, "_blank");
-          } catch (error) {
-            console.error("Erro ao abrir admin:", error);
-            alert("Por favor, aceda manualmente a: " + adminUrl);
-          }
+          // Abrir em nova aba
+          window.open(adminUrl, "_blank");
         };
+
+        // Adicionar múltiplos event listeners para garantir que funciona
+        elementToEnhance.onclick = adminRedirect;
+        elementToEnhance.addEventListener("click", adminRedirect, true);
+        elementToEnhance.addEventListener("mousedown", adminRedirect, true);
+
+        // Adicionar também aos elementos filhos
+        const allChildren = elementToEnhance.querySelectorAll("*");
+        allChildren.forEach((child) => {
+          child.style.pointerEvents = "auto";
+          child.style.cursor = "pointer";
+          child.onclick = adminRedirect;
+          child.addEventListener("click", adminRedirect, true);
+        });
 
         // Adicionar indicador visual de que é clicável
         elementToEnhance.title = "Clique para aceder à administração";
+
+        // Adicionar efeito hover
+        elementToEnhance.addEventListener("mouseenter", function () {
+          this.style.transform = "scale(1.02)";
+          this.style.transition = "transform 0.2s ease";
+        });
+
+        elementToEnhance.addEventListener("mouseleave", function () {
+          this.style.transform = "scale(1)";
+        });
 
         // Adicionar pequeno texto explicativo se não existir
         if (!elementToEnhance.querySelector(".admin-hint")) {
