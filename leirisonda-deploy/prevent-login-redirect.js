@@ -67,6 +67,16 @@ console.log("🔒 Carregando proteção contra logout automático...");
       }
       return originalReplaceState.apply(history, arguments);
     };
+
+    // Interceptar popstate (botão voltar)
+    window.addEventListener("popstate", function (event) {
+      if (window.location.pathname.includes("/login") && isProcessingSubmit) {
+        console.log("🚫 Popstate para login BLOQUEADO - voltando");
+        setTimeout(() => {
+          history.back();
+        }, 100);
+      }
+    });
   }
 
   // Detectar se é um logout intencional
