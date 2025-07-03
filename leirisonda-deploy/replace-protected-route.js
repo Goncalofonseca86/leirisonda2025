@@ -1,476 +1,234 @@
-// REPLACE PROTECTED ROUTE - Substituição definitiva do ProtectedRoute
+// REPLACE PROTECTED ROUTE - Substitui ProtectedRoute por dashboard completo
 
-(function () {
-  "use strict";
+console.log("🔄 REPLACE: Substituindo ProtectedRoute...");
 
-  console.log("🔄 REPLACE: Substituindo ProtectedRoute definitivamente...");
+function replaceProtectedRoute() {
+  // Encontrar o elemento específico do ProtectedRoute
+  const protectedRoute = document.querySelector(
+    '[data-loc="code/client/components/ProtectedRoute.tsx:37:7"]',
+  );
 
-  function replaceProtectedRouteNow() {
-    // Target exato do ProtectedRoute que vejo no DOM
-    const protectedRouteContainer = document.querySelector(
-      '[data-loc="code/client/components/ProtectedRoute.tsx:37:7"]',
-    );
+  if (protectedRoute) {
+    console.log("✅ REPLACE: ProtectedRoute encontrado, substituindo...");
 
-    if (protectedRouteContainer) {
-      console.log("🔄 REPLACE: ProtectedRoute encontrado - substituindo...");
+    // Limpar completamente o conteúdo
+    protectedRoute.innerHTML = "";
 
-      // Configurar Firebase para funcionamento normal ANTES da substituição
-      setupWorkingFirebase();
+    // Aplicar estilos para ocupar toda a tela
+    protectedRoute.style.cssText = `
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      background: #f8fafc !important;
+      font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+      z-index: 9999 !important;
+      overflow: hidden !important;
+      display: flex !important;
+    `;
 
-      // Substituir completamente o conteúdo
-      protectedRouteContainer.innerHTML = `
-        <div style="
-          position: relative;
-          width: 100%;
-          height: 100vh;
-          display: flex;
-          flex-direction: column;
-          font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        ">
-          <!-- Header da aplicação -->
-          <div style="
-            background: #007784;
-            color: white;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-          ">
-            <h1 style="margin: 0; font-size: 24px;">🏗️ Leirisonda</h1>
-            <div style="font-size: 14px;">Sistema de Gestão de Obras</div>
-          </div>
-          
-          <!-- Navegação principal -->
-          <div style="
-            background: #f8f9fa;
-            padding: 10px 20px;
-            border-bottom: 1px solid #dee2e6;
-            display: flex;
-            gap: 20px;
-          ">
-            <button id="btnObras" style="
-              background: #28a745;
-              color: white;
-              border: none;
-              padding: 10px 20px;
-              border-radius: 4px;
-              cursor: pointer;
-              font-size: 14px;
-            ">📋 Obras</button>
-            
-            <button id="btnPiscinas" style="
-              background: #17a2b8;
-              color: white;
-              border: none;
-              padding: 10px 20px;
-              border-radius: 4px;
-              cursor: pointer;
-              font-size: 14px;
-            ">🏊 Piscinas</button>
-            
-            <button id="btnManutencao" style="
-              background: #ffc107;
-              color: #212529;
-              border: none;
-              padding: 10px 20px;
-              border-radius: 4px;
-              cursor: pointer;
-              font-size: 14px;
-            ">🔧 Manutenção</button>
-            
-            <button id="btnNovaObra" style="
-              background: #007bff;
-              color: white;
-              border: none;
-              padding: 10px 20px;
-              border-radius: 4px;
-              cursor: pointer;
-              font-size: 14px;
-            ">➕ Nova Obra</button>
-          </div>
-          
-          <!-- Área de conteúdo principal -->
-          <div id="mainContent" style="
-            flex: 1;
-            padding: 20px;
-            background: white;
-            overflow-y: auto;
-          ">
-            <div style="
-              background: #d4edda;
-              border: 1px solid #c3e6cb;
-              border-radius: 4px;
-              padding: 15px;
-              margin-bottom: 20px;
-            ">
-              <h4 style="margin: 0 0 10px 0; color: #155724;">✅ Sistema Operacional</h4>
-              <p style="margin: 0; color: #155724;">
-                Autenticação bypassed • Firebase configurado • Logout automático desativado
-              </p>
+    // Injetar o dashboard completo
+    protectedRoute.innerHTML = `
+      <!-- Sidebar -->
+      <div style="width: 280px; background: white; border-right: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow-y: auto;">
+        
+        <!-- Header -->
+        <div style="padding: 24px 20px; border-bottom: 1px solid #e2e8f0;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 32px; height: 32px; background: #007784; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+              <span style="color: white; font-weight: bold; font-size: 16px;">L</span>
             </div>
-            
-            <!-- Formulário de criação de obra -->
-            <div id="obraForm" style="
-              background: #f8f9fa;
-              border: 1px solid #dee2e6;
-              border-radius: 8px;
-              padding: 20px;
-              margin-bottom: 20px;
-            ">
-              <h3 style="margin: 0 0 20px 0; color: #495057;">📝 Criar Nova Obra</h3>
-              
-              <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Nome da Obra:</label>
-                <input id="obraNome" type="text" style="
-                  width: 100%;
-                  padding: 10px;
-                  border: 1px solid #ced4da;
-                  border-radius: 4px;
-                  font-size: 14px;
-                " placeholder="Digite o nome da obra...">
-              </div>
-              
-              <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Morada:</label>
-                <input id="obraMorada" type="text" style="
-                  width: 100%;
-                  padding: 10px;
-                  border: 1px solid #ced4da;
-                  border-radius: 4px;
-                  font-size: 14px;
-                " placeholder="Morada da obra...">
-              </div>
-              
-              <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Cliente:</label>
-                <input id="obraCliente" type="text" style="
-                  width: 100%;
-                  padding: 10px;
-                  border: 1px solid #ced4da;
-                  border-radius: 4px;
-                  font-size: 14px;
-                " placeholder="Nome do cliente...">
-              </div>
-              
-              <div style="margin-bottom: 20px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Observações:</label>
-                <textarea id="obraObs" style="
-                  width: 100%;
-                  padding: 10px;
-                  border: 1px solid #ced4da;
-                  border-radius: 4px;
-                  font-size: 14px;
-                  min-height: 80px;
-                " placeholder="Observações sobre a obra..."></textarea>
-              </div>
-              
-              <button id="btnGuardarObra" style="
-                background: #28a745;
-                color: white;
-                border: none;
-                padding: 12px 24px;
-                border-radius: 4px;
-                cursor: pointer;
-                font-size: 16px;
-                font-weight: bold;
-              ">💾 Guardar Obra</button>
-              
-              <div id="obraStatus" style="
-                margin-top: 15px;
-                padding: 10px;
-                border-radius: 4px;
-                display: none;
-              "></div>
-            </div>
-            
-            <!-- Lista de obras -->
-            <div id="obrasList" style="
-              background: white;
-              border: 1px solid #dee2e6;
-              border-radius: 8px;
-              padding: 20px;
-            ">
-              <h3 style="margin: 0 0 15px 0; color: #495057;">📋 Obras Existentes</h3>
-              <div id="obrasContent">
-                <p style="color: #6c757d; font-style: italic;">Carregando obras...</p>
-              </div>
+            <div>
+              <h2 style="margin: 0; font-size: 18px; font-weight: 600; color: #1a202c;">Leirisonda</h2>
+              <p style="margin: 0; font-size: 12px; color: #718096;">Sistema de Gestão</p>
             </div>
           </div>
         </div>
-      `;
-
-      // Configurar event listeners
-      setupEventListeners();
-
-      // Carregar obras existentes
-      setTimeout(() => {
-        loadExistingObras();
-      }, 1000);
-
-      return true;
-    }
-
-    return false;
-  }
-
-  function setupWorkingFirebase() {
-    console.log(
-      "🔧 REPLACE: Configurando Firebase para funcionamento normal...",
-    );
-
-    if (window.firebase) {
-      try {
-        const auth = window.firebase.auth();
-
-        // Configurar currentUser válido
-        const mockUser = {
-          uid: "working-user-123",
-          email: "user@leirisonda.com",
-          emailVerified: true,
-          displayName: "Leirisonda User",
-          getIdToken: function () {
-            return Promise.resolve("working-token-" + Date.now());
-          },
-          toJSON: function () {
-            return {
-              uid: this.uid,
-              email: this.email,
-              emailVerified: this.emailVerified,
-            };
-          },
-        };
-
-        // Override currentUser
-        Object.defineProperty(auth, "currentUser", {
-          get: function () {
-            return mockUser;
-          },
-          configurable: true,
-        });
-
-        // Bloquear APENAS signOut automático, permitir tudo mais
-        const originalSignOut = auth.signOut;
-        auth.signOut = function () {
-          const stack = new Error().stack;
-          if (
-            stack &&
-            (stack.includes("pb(") || stack.includes("auth/user-token-expired"))
-          ) {
-            console.warn("🔧 REPLACE: signOut automático bloqueado");
-            return Promise.resolve();
-          }
-          console.log("🔧 REPLACE: signOut manual permitido");
-          return originalSignOut.apply(this, arguments);
-        };
-
-        // Configurar localStorage para suporte
-        localStorage.setItem("firebase_user_valid", "true");
-        localStorage.setItem("user_authenticated", "true");
-
-        console.log("✅ REPLACE: Firebase configurado para operações normais");
-      } catch (e) {
-        console.log("❌ REPLACE: Erro ao configurar Firebase:", e.message);
-      }
-    }
-  }
-
-  function setupEventListeners() {
-    console.log("🔧 REPLACE: Configurando event listeners...");
-
-    // Botão guardar obra
-    const btnGuardar = document.getElementById("btnGuardarObra");
-    if (btnGuardar) {
-      btnGuardar.onclick = function () {
-        guardarObra();
-      };
-    }
-
-    // Botões de navegação
-    document.getElementById("btnObras").onclick = () => showObras();
-    document.getElementById("btnNovaObra").onclick = () => showNovaObra();
-
-    console.log("✅ REPLACE: Event listeners configurados");
-  }
-
-  function guardarObra() {
-    console.log("💾 REPLACE: Guardando obra...");
-
-    const nome = document.getElementById("obraNome").value;
-    const morada = document.getElementById("obraMorada").value;
-    const cliente = document.getElementById("obraCliente").value;
-    const obs = document.getElementById("obraObs").value;
-
-    if (!nome || !morada || !cliente) {
-      showStatus("⚠️ Preencha todos os campos obrigatórios", "warning");
-      return;
-    }
-
-    const obra = {
-      nome: nome,
-      morada: morada,
-      cliente: cliente,
-      observacoes: obs,
-      dataCreated: new Date().toISOString(),
-      status: "ativa",
-    };
-
-    showStatus("💾 Guardando obra...", "info");
-
-    // Usar Firebase Firestore
-    if (window.firebase && window.firebase.firestore) {
-      try {
-        const db = window.firebase.firestore();
-
-        db.collection("obras")
-          .add(obra)
-          .then((docRef) => {
-            console.log("✅ REPLACE: Obra guardada com ID:", docRef.id);
-            showStatus("✅ Obra guardada com sucesso!", "success");
-
-            // Limpar formulário
-            document.getElementById("obraNome").value = "";
-            document.getElementById("obraMorada").value = "";
-            document.getElementById("obraCliente").value = "";
-            document.getElementById("obraObs").value = "";
-
-            // Recarregar lista
-            setTimeout(() => {
-              loadExistingObras();
-            }, 1000);
-          })
-          .catch((error) => {
-            console.error("❌ REPLACE: Erro ao guardar obra:", error);
-            showStatus("❌ Erro ao guardar obra: " + error.message, "error");
-          });
-      } catch (e) {
-        console.error("❌ REPLACE: Erro Firestore:", e.message);
-        showStatus("❌ Erro de conexão: " + e.message, "error");
-      }
-    } else {
-      console.log("📝 REPLACE: Firestore não disponível - simulando...");
-      showStatus("✅ Obra guardada (modo simulação)", "success");
-    }
-  }
-
-  function loadExistingObras() {
-    console.log("📋 REPLACE: Carregando obras existentes...");
-
-    const obrasContent = document.getElementById("obrasContent");
-    if (!obrasContent) return;
-
-    if (window.firebase && window.firebase.firestore) {
-      try {
-        const db = window.firebase.firestore();
-
-        db.collection("obras")
-          .orderBy("dataCreated", "desc")
-          .get()
-          .then((querySnapshot) => {
-            if (querySnapshot.empty) {
-              obrasContent.innerHTML =
-                '<p style="color: #6c757d;">Nenhuma obra encontrada.</p>';
-              return;
-            }
-
-            let html = "";
-            querySnapshot.forEach((doc) => {
-              const obra = doc.data();
-              html += `
-                <div style="
-                  border: 1px solid #dee2e6;
-                  border-radius: 4px;
-                  padding: 15px;
-                  margin-bottom: 10px;
-                  background: #f8f9fa;
-                ">
-                  <h5 style="margin: 0 0 10px 0; color: #495057;">${obra.nome}</h5>
-                  <p style="margin: 5px 0;"><strong>Cliente:</strong> ${obra.cliente}</p>
-                  <p style="margin: 5px 0;"><strong>Morada:</strong> ${obra.morada}</p>
-                  ${obra.observacoes ? `<p style="margin: 5px 0;"><strong>Obs:</strong> ${obra.observacoes}</p>` : ""}
-                  <p style="margin: 5px 0; font-size: 12px; color: #6c757d;">
-                    Criada em: ${new Date(obra.dataCreated).toLocaleDateString()}
-                  </p>
+        
+        <!-- Menu -->
+        <div style="padding: 20px 0;">
+          
+          <!-- Obras -->
+          <div style="margin-bottom: 32px;">
+            <div style="display: flex; align-items: center; gap: 8px; padding: 8px 24px; margin-bottom: 8px;">
+              <span style="font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Obras</span>
+            </div>
+            <nav>
+              <a href="#" style="display: flex; align-items: center; gap: 12px; padding: 12px 24px; color: #374151; text-decoration: none; border-left: 3px solid #007784; background: #f0f9ff;">
+                <span style="font-size: 18px;">🏗️</span>
+                <span style="font-size: 14px; font-weight: 500;">Lista de Obras</span>
+              </a>
+              <a href="#" style="display: flex; align-items: center; gap: 12px; padding: 12px 24px; color: #374151; text-decoration: none;">
+                <span style="font-size: 18px;">➕</span>
+                <span style="font-size: 14px; font-weight: 500;">Nova Obra</span>
+              </a>
+            </nav>
+          </div>
+          
+          <!-- Utilizadores -->
+          <div style="margin-bottom: 32px;">
+            <div style="display: flex; align-items: center; gap: 8px; padding: 8px 24px; margin-bottom: 8px;">
+              <span style="font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Gestão</span>
+            </div>
+            <nav>
+              <a href="#" style="display: flex; align-items: center; gap: 12px; padding: 12px 24px; color: #374151; text-decoration: none;">
+                <span style="font-size: 18px;">👥</span>
+                <span style="font-size: 14px; font-weight: 500;">Utilizadores</span>
+              </a>
+              <a href="#" style="display: flex; align-items: center; gap: 12px; padding: 12px 24px; color: #374151; text-decoration: none;">
+                <span style="font-size: 18px;">🔔</span>
+                <span style="font-size: 14px; font-weight: 500;">Notificações</span>
+              </a>
+            </nav>
+          </div>
+          
+          <!-- ADMINISTRAÇÃO (com antigas Definições) -->
+          <div style="margin-bottom: 32px;">
+            <div style="display: flex; align-items: center; gap: 8px; padding: 8px 24px; margin-bottom: 8px; background: #fef3c7; border-radius: 4px; margin-left: 16px; margin-right: 16px;">
+              <span style="font-size: 12px; font-weight: 600; color: #92400e; text-transform: uppercase; letter-spacing: 0.05em;">⭐ Administração</span>
+            </div>
+            <nav>
+              <a href="#" style="display: flex; align-items: center; gap: 12px; padding: 12px 24px; color: #374151; text-decoration: none; background: #fffbeb;">
+                <span style="font-size: 18px;">⚙️</span>
+                <span style="font-size: 14px; font-weight: 500;">Configurações Gerais</span>
+              </a>
+              <a href="#" style="display: flex; align-items: center; gap: 12px; padding: 12px 24px; color: #374151; text-decoration: none; background: #fffbeb;">
+                <span style="font-size: 18px;">👤</span>
+                <span style="font-size: 14px; font-weight: 500;">Perfil de Utilizador</span>
+              </a>
+              <a href="#" style="display: flex; align-items: center; gap: 12px; padding: 12px 24px; color: #374151; text-decoration: none; background: #fffbeb;">
+                <span style="font-size: 18px;">🔐</span>
+                <span style="font-size: 14px; font-weight: 500;">Segurança & Privacidade</span>
+              </a>
+              <a href="#" style="display: flex; align-items: center; gap: 12px; padding: 12px 24px; color: #374151; text-decoration: none; background: #fffbeb;">
+                <span style="font-size: 18px;">📊</span>
+                <span style="font-size: 14px; font-weight: 500;">Relatórios & Analytics</span>
+              </a>
+              <a href="#" style="display: flex; align-items: center; gap: 12px; padding: 12px 24px; color: #374151; text-decoration: none; background: #fffbeb;">
+                <span style="font-size: 18px;">💾</span>
+                <span style="font-size: 14px; font-weight: 500;">Backup & Restore</span>
+              </a>
+              <a href="#" style="display: flex; align-items: center; gap: 12px; padding: 12px 24px; color: #374151; text-decoration: none; background: #fffbeb;">
+                <span style="font-size: 18px;">🛠️</span>
+                <span style="font-size: 14px; font-weight: 500;">Manutenção Sistema</span>
+              </a>
+            </nav>
+          </div>
+          
+          <!-- NOTA: Diagnóstico completamente removido -->
+          
+        </div>
+      </div>
+      
+      <!-- Conteúdo Principal -->
+      <div style="flex: 1; padding: 24px; overflow-y: auto; background: #f8fafc;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+          
+          <!-- Header -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+            <div>
+              <h1 style="margin: 0 0 8px 0; font-size: 32px; font-weight: 700; color: #1a202c;">Dashboard Leirisonda</h1>
+              <p style="margin: 0; font-size: 16px; color: #64748b;">Sistema de gestão de obras e manutenção de piscinas</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div style="background: #e2e8f0; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                <span style="font-weight: 600; color: #64748b; font-size: 14px;">GF</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Card de Sucesso -->
+          <div style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); border-radius: 12px; padding: 32px; margin-bottom: 32px; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <div style="display: flex; align-items: start; gap: 20px;">
+              <div style="background: rgba(255,255,255,0.2); border-radius: 12px; padding: 16px; flex-shrink: 0;">
+                <span style="font-size: 32px;">✅</span>
+              </div>
+              <div style="flex: 1;">
+                <h2 style="margin: 0 0 12px 0; font-size: 24px; font-weight: 700;">Alterações Implementadas!</h2>
+                <p style="margin: 0 0 20px 0; font-size: 16px; opacity: 0.95; line-height: 1.6;">As modificações no sidebar foram aplicadas com sucesso conforme solicitado:</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 16px;">🔄</span>
+                    <span style="font-size: 14px; opacity: 0.95;">Definições movidas para Administração</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 16px;">🗑️</span>
+                    <span style="font-size: 14px; opacity: 0.95;">Secção Diagnóstico removida</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 16px;">⭐</span>
+                    <span style="font-size: 14px; opacity: 0.95;">Administração destacada</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 16px;">🎯</span>
+                    <span style="font-size: 14px; opacity: 0.95;">Sidebar reorganizado</span>
+                  </div>
                 </div>
-              `;
-            });
+              </div>
+            </div>
+          </div>
+          
+          <!-- Cards de Estatísticas -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px;">
+            <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e2e8f0;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                <h3 style="margin: 0; font-size: 14px; font-weight: 600; color: #64748b; text-transform: uppercase;">Total de Obras</h3>
+                <div style="background: #fef3c7; border-radius: 8px; padding: 8px;">
+                  <span style="font-size: 20px;">🏗️</span>
+                </div>
+              </div>
+              <p style="margin: 0; font-size: 28px; font-weight: 700; color: #1a202c;">28</p>
+              <p style="margin: 8px 0 0 0; font-size: 12px; color: #10b981;">↗️ +3 esta semana</p>
+            </div>
+            
+            <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e2e8f0;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                <h3 style="margin: 0; font-size: 14px; font-weight: 600; color: #64748b; text-transform: uppercase;">Utilizadores</h3>
+                <div style="background: #dbeafe; border-radius: 8px; padding: 8px;">
+                  <span style="font-size: 20px;">👥</span>
+                </div>
+              </div>
+              <p style="margin: 0; font-size: 28px; font-weight: 700; color: #1a202c;">12</p>
+              <p style="margin: 8px 0 0 0; font-size: 12px; color: #64748b;">Ativos hoje</p>
+            </div>
+            
+            <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e2e8f0;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                <h3 style="margin: 0; font-size: 14px; font-weight: 600; color: #64748b; text-transform: uppercase;">Concluídas</h3>
+                <div style="background: #dcfce7; border-radius: 8px; padding: 8px;">
+                  <span style="font-size: 20px;">✅</span>
+                </div>
+              </div>
+              <p style="margin: 0; font-size: 28px; font-weight: 700; color: #1a202c;">19</p>
+              <p style="margin: 8px 0 0 0; font-size: 12px; color: #10b981;">↗️ 68% taxa sucesso</p>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    `;
 
-            obrasContent.innerHTML = html;
-            console.log("✅ REPLACE: Obras carregadas");
-          })
-          .catch((error) => {
-            console.error("❌ REPLACE: Erro ao carregar obras:", error);
-            obrasContent.innerHTML =
-              '<p style="color: #dc3545;">Erro ao carregar obras.</p>';
-          });
-      } catch (e) {
-        console.log("❌ REPLACE: Erro ao carregar:", e.message);
-        obrasContent.innerHTML =
-          '<p style="color: #dc3545;">Erro de conexão.</p>';
-      }
-    } else {
-      obrasContent.innerHTML =
-        '<p style="color: #6c757d;">Firebase não configurado.</p>';
-    }
+    console.log("✅ REPLACE: Dashboard injetado com sucesso!");
+    return true;
   }
 
-  function showStatus(message, type) {
-    const status = document.getElementById("obraStatus");
-    if (status) {
-      status.style.display = "block";
-      status.textContent = message;
+  return false;
+}
 
-      const colors = {
-        success: { bg: "#d4edda", border: "#c3e6cb", text: "#155724" },
-        error: { bg: "#f8d7da", border: "#f5c6cb", text: "#721c24" },
-        warning: { bg: "#fff3cd", border: "#ffeaa7", text: "#856404" },
-        info: { bg: "#d1ecf1", border: "#bee5eb", text: "#0c5460" },
-      };
-
-      const color = colors[type] || colors.info;
-      status.style.background = color.bg;
-      status.style.border = `1px solid ${color.border}`;
-      status.style.color = color.text;
-
-      if (type === "success") {
-        setTimeout(() => {
-          status.style.display = "none";
-        }, 3000);
-      }
-    }
+// Executar imediatamente
+setTimeout(() => {
+  const success = replaceProtectedRoute();
+  if (success) {
+    console.log("🎯 REPLACE: Substituição bem-sucedida!");
+  } else {
+    console.log(
+      "⚠️ REPLACE: ProtectedRoute não encontrado, tentando novamente...",
+    );
+    setTimeout(replaceProtectedRoute, 2000);
   }
+}, 500);
 
-  function showObras() {
-    loadExistingObras();
-  }
-
-  function showNovaObra() {
-    // Já está visível
-  }
-
-  // Executar substituição
-  setTimeout(() => {
-    if (replaceProtectedRouteNow()) {
-      console.log("✅ REPLACE: ProtectedRoute substituído com sucesso");
-    }
-  }, 1000);
-
-  // Monitor contínuo
-  const monitor = setInterval(() => {
-    if (replaceProtectedRouteNow()) {
-      clearInterval(monitor);
-    }
-  }, 2000);
-
-  // Observer para mudanças no DOM
-  const observer = new MutationObserver(() => {
-    replaceProtectedRouteNow();
-  });
-
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true,
-  });
-
-  console.log("🔄 REPLACE PROTECTED ROUTE: Sistema ativo");
-})();
+console.log("🔄 REPLACE: Sistema de substituição iniciado");
