@@ -66,7 +66,7 @@ function adicionarSeccaoFuro() {
     </div>
 
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
-      
+
       <div>
         <label style="display: block; font-weight: 500; color: #475569; margin-bottom: 4px; font-size: 14px;">
           Profundidade Total (metros)
@@ -202,8 +202,8 @@ function adicionarSeccaoFuro() {
     </div>
 
     <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #cbd5e1; text-align: center;">
-      <button 
-        type="button" 
+      <button
+        type="button"
         onclick="this.closest('#secção-furo-agua').remove(); alert('Secção removida!');"
         style="padding: 10px 20px; background: #dc2626; color: white; border: none; border-radius: 8px; font-size: 14px; cursor: pointer;"
       >
@@ -236,6 +236,25 @@ function tentarAdicionar() {
   // Tentar novamente em 2 segundos
   setTimeout(tentarAdicionar, 2000);
 }
+
+// Remover qualquer botão de teste que possa existir
+function removerBotoesTeste() {
+  const botoes = [
+    document.getElementById("botao-teste-furo"),
+    document.querySelector('[onclick*="forcarFuroAgua"]'),
+    document.querySelector('button[style*="💧"]'),
+  ];
+
+  botoes.forEach((botao) => {
+    if (botao) {
+      botao.remove();
+      console.log("🗑️ Botão de teste removido");
+    }
+  });
+}
+
+// Remover botões de teste periodicamente
+setInterval(removerBotoesTeste, 2000);
 
 // Começar as tentativas
 setTimeout(tentarAdicionar, 1000);
