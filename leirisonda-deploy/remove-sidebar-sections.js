@@ -404,9 +404,12 @@ console.log("🗑️ SIDEBAR: Removendo seções desnecessárias do sidebar...")
   // Executar remoção
   function executeRemoval() {
     try {
+      console.log("🗑️ SIDEBAR: Executando remoção completa...");
+
       const removed1 = removeSidebarSections();
       const removed2 = removeByCSS();
       removeByPosition();
+      removeReactElements();
       ensureHidden();
 
       const totalRemoved = removed1 + removed2;
@@ -416,7 +419,34 @@ console.log("🗑️ SIDEBAR: Removendo seções desnecessárias do sidebar...")
           `✅ SIDEBAR: ${totalRemoved} elementos removidos com sucesso`,
         );
       } else {
-        console.log(`⚠️ SIDEBAR: Nenhum elemento encontrado para remover`);
+        console.log(
+          `⚠️ SIDEBAR: Nenhum elemento encontrado para remover nesta execução`,
+        );
+      }
+
+      // Verificar se ainda existem elementos problemáticos
+      const remainingProblems = document.querySelectorAll("*");
+      let foundRemaining = false;
+
+      for (const element of remainingProblems) {
+        const text = element.textContent?.trim() || "";
+        if (
+          (text === "Diagnóstico" || text === "Administração") &&
+          element.style.display !== "none"
+        ) {
+          console.log(`⚠️ SIDEBAR: Ainda existe elemento visível: "${text}"`);
+          foundRemaining = true;
+          // Força remoção adicional
+          element.style.display = "none !important";
+          element.style.visibility = "hidden !important";
+          element.setAttribute("hidden", "true");
+        }
+      }
+
+      if (!foundRemaining) {
+        console.log(
+          "✅ SIDEBAR: Verificação completa - nenhum elemento problemático encontrado",
+        );
       }
     } catch (error) {
       console.error("❌ SIDEBAR: Erro ao remover seções:", error);
@@ -425,24 +455,83 @@ console.log("🗑️ SIDEBAR: Removendo seções desnecessárias do sidebar...")
 
   // Executar múltiplas vezes para garantir remoção
   function scheduleRemoval() {
+    console.log("🗑️ SIDEBAR: Iniciando agendamento de remoção...");
+
     // Executar imediatamente
     executeRemoval();
 
-    // Executar após 2 segundos
-    setTimeout(executeRemoval, 2000);
+    // Executar após 1 segundo (para elementos carregados dinamicamente)
+    setTimeout(executeRemoval, 1000);
+
+    // Executar após 3 segundos
+    setTimeout(executeRemoval, 3000);
 
     // Executar após 5 segundos
     setTimeout(executeRemoval, 5000);
 
-    // Monitor contínuo por 30 segundos
+    // Executar após 10 segundos
+    setTimeout(executeRemoval, 10000);
+
+    // Monitor contínuo mais frequente por 60 segundos
     const monitor = setInterval(() => {
       executeRemoval();
-    }, 3000);
+    }, 2000);
+
+    // Monitor adicional de baixa frequência por mais tempo
+    const longTermMonitor = setInterval(() => {
+      executeRemoval();
+    }, 10000);
 
     setTimeout(() => {
       clearInterval(monitor);
-      console.log("🗑️ SIDEBAR: Monitor de remoção finalizado");
-    }, 30000);
+      console.log("🗑️ SIDEBAR: Monitor intensivo finalizado");
+    }, 60000);
+
+    setTimeout(() => {
+      clearInterval(longTermMonitor);
+      console.log("🗑️ SIDEBAR: Monitor de longo prazo finalizado");
+    }, 300000); // 5 minutos
+  }
+
+  // Observador de mutações para elementos que são adicionados dinamicamente
+  function setupMutationObserver() {
+    const observer = new MutationObserver((mutations) => {
+      let shouldCheck = false;
+
+      mutations.forEach((mutation) => {
+        if (mutation.type === "childList") {
+          mutation.addedNodes.forEach((node) => {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              const text = node.textContent?.toLowerCase() || "";
+              if (
+                text.includes("diagnóstico") ||
+                text.includes("administração")
+              ) {
+                shouldCheck = true;
+              }
+            }
+          });
+        }
+      });
+
+      if (shouldCheck) {
+        console.log(
+          "🗑️ SIDEBAR: Elemento problemático detectado via mutation observer",
+        );
+        setTimeout(executeRemoval, 100);
+      }
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+
+    // Parar observação após 10 minutos
+    setTimeout(() => {
+      observer.disconnect();
+      console.log("🗑️ SIDEBAR: Mutation observer desconectado");
+    }, 600000);
   }
 
   // Aguardar DOM estar pronto
