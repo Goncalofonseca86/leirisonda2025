@@ -1,5 +1,10 @@
-// Script SUPER SIMPLES - Força botão SEMPRE
-console.log("🚀 FORÇANDO BOTÃO SEMPRE");
+// Script SUPER SIMPLES - Força botão SEMPRE (SEM CONFLITOS)
+console.log("🚀 FORÇANDO BOTÃO SEMPRE - VERSÃO ISOLADA");
+
+// BLOQUEAR TODAS AS POSSÍVEIS REDIREÇÕES
+const originalWindowOpen = window.open;
+const originalLocationAssign = window.location.assign;
+const originalLocationReplace = window.location.replace;
 
 // Função simples para criar botão
 function createButton() {
@@ -8,7 +13,7 @@ function createButton() {
     return;
   }
 
-  console.log("➕ Criando botão");
+  console.log("➕ Criando botão isolado");
 
   const btn = document.createElement("div");
   btn.id = "SETTINGS-BTN";
@@ -19,7 +24,7 @@ function createButton() {
     right: 20px !important;
     width: 60px !important;
     height: 60px !important;
-    background: #ff0000 !important;
+    background: #007784 !important;
     color: white !important;
     border: 3px solid white !important;
     border-radius: 50% !important;
@@ -30,28 +35,69 @@ function createButton() {
     cursor: pointer !important;
     z-index: 999999 !important;
     box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important;
+    transition: all 0.2s ease !important;
   `;
 
-  // Click - APENAS modal
+  // CLICK HANDLER COM PROTEÇÃO MÁXIMA
   btn.onclick = function (e) {
     e.preventDefault();
     e.stopPropagation();
+    e.stopImmediatePropagation();
 
-    console.log("✅ Botão clicado");
+    console.log("✅ Botão clicado - MODAL APENAS");
+
+    // Feedback visual
     this.style.background = "#00ff00";
+    this.style.transform = "scale(1.1)";
+
+    // TEMPORARIAMENTE BLOQUEAR REDIREÇÕES
+    window.open = function () {
+      console.log("🚫 window.open BLOQUEADO durante modal");
+      return null;
+    };
+    window.location.assign = function () {
+      console.log("🚫 location.assign BLOQUEADO durante modal");
+    };
+    window.location.replace = function () {
+      console.log("🚫 location.replace BLOQUEADO durante modal");
+    };
 
     setTimeout(() => {
-      this.style.background = "#ff0000";
+      this.style.background = "#007784";
+      this.style.transform = "scale(1)";
       showModal();
     }, 200);
   };
 
+  // EVITAR PROPAGAÇÃO DE OUTROS EVENTOS
+  btn.addEventListener(
+    "click",
+    function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+    },
+    true,
+  );
+
+  btn.addEventListener(
+    "mousedown",
+    function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+    },
+    true,
+  );
+
   document.body.appendChild(btn);
-  console.log("✅ Botão criado");
+  console.log("✅ Botão isolado criado");
 }
 
-// Modal simples
+// Modal simples COM PROTEÇÃO
 function showModal() {
+  console.log("🔄 Abrindo modal protegido");
+
   // Remover modal existente
   const existing = document.getElementById("MODAL");
   if (existing) existing.remove();
@@ -64,11 +110,12 @@ function showModal() {
     left: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    background: rgba(0,0,0,0.8) !important;
+    background: rgba(0,0,0,0.85) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     z-index: 9999999 !important;
+    backdrop-filter: blur(5px) !important;
   `;
 
   const content = document.createElement("div");
@@ -79,11 +126,32 @@ function showModal() {
     max-width: 400px !important;
     width: 90% !important;
     text-align: center !important;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3) !important;
+    animation: modalSlideIn 0.3s ease !important;
   `;
+
+  // ADICIONAR KEYFRAMES PARA ANIMAÇÃO
+  if (!document.getElementById("modal-animation-css")) {
+    const animationCSS = document.createElement("style");
+    animationCSS.id = "modal-animation-css";
+    animationCSS.innerHTML = `
+      @keyframes modalSlideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-50px) scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+    `;
+    document.head.appendChild(animationCSS);
+  }
 
   content.innerHTML = `
     <h2 style="color: #007784; margin-bottom: 20px;">⚙️ Definições</h2>
-    
+
     <div style="margin-bottom: 20px; text-align: left;">
       <h3 style="color: #333; margin-bottom: 10px;">📱 Notificações</h3>
       <button onclick="enableNotifs()" style="width: 100%; padding: 10px; background: #007784; color: white; border: none; border-radius: 6px; margin-bottom: 8px; cursor: pointer;">
@@ -99,7 +167,7 @@ function showModal() {
     <div style="background: #fff3cd; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
       <h3 style="color: #856404; margin-bottom: 8px;">🗑️ Eliminar Dados</h3>
       <p style="color: #856404; margin-bottom: 12px; font-size: 13px;">⚠️ Remove TODOS os dados!</p>
-      
+
       <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 15px;">
         <div style="text-align: center; padding: 8px; background: white; border-radius: 6px; font-size: 12px;">
           <div style="font-size: 18px;">🏗️</div>
@@ -117,7 +185,7 @@ function showModal() {
           <div id="p-cnt" style="color: #007784; font-weight: bold;">0</div>
         </div>
       </div>
-      
+
       <button onclick="deleteData()" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
         💣 ELIMINAR TUDO
       </button>
@@ -132,10 +200,18 @@ function showModal() {
   modal.appendChild(content);
   document.body.appendChild(modal);
 
-  // Fechar clicando fora
+  // Fechar clicando fora E RESTAURAR FUNÇÕES
   modal.onclick = function (e) {
     if (e.target === this) {
-      this.remove();
+      console.log("🔄 Fechando modal (clique fora)");
+
+      // RESTAURAR FUNÇÕES ORIGINAIS
+      window.open = originalWindowOpen;
+      window.location.assign = originalLocationAssign;
+      window.location.replace = originalLocationReplace;
+
+      this.style.animation = "modalSlideOut 0.2s ease";
+      setTimeout(() => this.remove(), 200);
     }
   };
 
@@ -219,8 +295,20 @@ window.deleteData = function () {
 };
 
 window.closeModal = function () {
+  console.log("🔄 Fechando modal e restaurando funções");
+
   const modal = document.getElementById("MODAL");
-  if (modal) modal.remove();
+  if (modal) {
+    modal.style.animation = "modalSlideOut 0.2s ease";
+    setTimeout(() => modal.remove(), 200);
+  }
+
+  // RESTAURAR FUNÇÕES ORIGINAIS
+  window.open = originalWindowOpen;
+  window.location.assign = originalLocationAssign;
+  window.location.replace = originalLocationReplace;
+
+  console.log("✅ Modal fechado e funções restauradas");
 };
 
 function loadData() {
@@ -255,15 +343,33 @@ function showInfo(id, text, color) {
   }
 }
 
+// BLOQUEAR CONFLITOS PERMANENTEMENTE
+document.addEventListener(
+  "click",
+  function (e) {
+    // Se clique é no nosso botão, bloquear propagação
+    const settingsBtn = document.getElementById("SETTINGS-BTN");
+    if (
+      settingsBtn &&
+      (e.target === settingsBtn || settingsBtn.contains(e.target))
+    ) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+    }
+  },
+  true,
+);
+
 // EXECUTAR IMEDIATAMENTE
 createButton();
 
 // VERIFICAR E RECRIAR CONSTANTEMENTE
 setInterval(() => {
   if (!document.getElementById("SETTINGS-BTN")) {
-    console.log("🔄 Botão sumiu - recriando");
+    console.log("🔄 Botão sumiu - recriando versão isolada");
     createButton();
   }
 }, 500);
 
-console.log("✅ Script simples carregado");
+console.log("✅ Script isolado carregado - SEM CONFLITOS");
