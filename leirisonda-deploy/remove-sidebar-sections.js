@@ -108,9 +108,14 @@ console.log("🗑️ SIDEBAR: Removendo seções desnecessárias do sidebar...")
               `🗑️ SIDEBAR: Removendo seção completa "${textContent}"`,
             );
             sectionContainer.style.display = "none !important";
-            sectionContainer.style.visibility = "hidden";
-            sectionContainer.style.height = "0";
-            sectionContainer.style.overflow = "hidden";
+            sectionContainer.style.visibility = "hidden !important";
+            sectionContainer.style.height = "0 !important";
+            sectionContainer.style.overflow = "hidden !important";
+            sectionContainer.style.opacity = "0 !important";
+            sectionContainer.style.maxHeight = "0 !important";
+            sectionContainer.setAttribute("hidden", "true");
+            sectionContainer.setAttribute("aria-hidden", "true");
+            sectionContainer.classList.add("sidebar-hidden-element");
             removedSections++;
             break;
           }
