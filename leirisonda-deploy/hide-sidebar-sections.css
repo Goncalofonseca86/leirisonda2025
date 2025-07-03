@@ -1,0 +1,117 @@
+/* HIDE SIDEBAR SECTIONS - CSS rules to permanently hide Administração e Diagnóstico */
+
+/* Hide elements containing exact diagnostic and administration text */
+span[class*="text-xs"][class*="font-semibold"][class*="text-gray-400"]:has-text(
+    "Diagnóstico"
+  ),
+span[class*="text-xs"][class*="font-semibold"][class*="text-gray-400"]:has-text(
+    "Administração"
+  ) {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Hide parent containers of diagnostic and administration sections */
+div:has(span:contains("Diagnóstico")),
+div:has(span:contains("Administração")) {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Hide buttons and links containing diagnostic terms */
+button:contains("Diagnóstico"),
+button:contains("Administração"),
+button:contains("diagnóstico"),
+button:contains("administração"),
+a:contains("Diagnóstico"),
+a:contains("Administração") {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Hide elements by text content using attribute selectors for React compiled elements */
+[data-testid*="diagnostic"],
+[data-testid*="administration"],
+[data-loc*="diagnostic"],
+[data-loc*="administration"],
+[class*="diagnostic"],
+[class*="administration"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Fallback - hide any element containing these specific text patterns */
+*[style*="display: block"]:has-text("Diagnóstico"),
+*[style*="display: flex"]:has-text("Diagnóstico"),
+*[style*="display: grid"]:has-text("Diagnóstico"),
+*[style*="display: block"]:has-text("Administração"),
+*[style*="display: flex"]:has-text("Administração"),
+*[style*="display: grid"]:has-text("Administração") {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Hide navigation items in sidebar specifically */
+nav *:contains("Diagnóstico"),
+nav *:contains("Administração"),
+aside *:contains("Diagnóstico"),
+aside *:contains("Administração"),
+.sidebar *:contains("Diagnóstico"),
+.sidebar *:contains("Administração") {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Specific targeting for React-rendered elements with these class patterns */
+.text-xs.font-semibold.text-gray-400.uppercase.tracking-wider {
+  display: block !important;
+}
+
+.text-xs.font-semibold.text-gray-400.uppercase.tracking-wider:has-text(
+    "Diagnóstico"
+  ),
+.text-xs.font-semibold.text-gray-400.uppercase.tracking-wider:has-text(
+    "Administração"
+  ) {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Hide parent divs of problematic spans */
+div:has(
+  .text-xs.font-semibold.text-gray-400.uppercase.tracking-wider:has-text(
+      "Diagnóstico"
+    )
+),
+div:has(
+  .text-xs.font-semibold.text-gray-400.uppercase.tracking-wider:has-text(
+      "Administração"
+    )
+) {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
