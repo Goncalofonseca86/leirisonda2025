@@ -280,52 +280,17 @@ function App() {
 
   // Initialize authentication state with security checks
   useEffect(() => {
-    console.log("🔒 SECURITY: App initialization started");
-
-    // Try to restore user from localStorage first
-    const storedUser =
-      localStorage.getItem("currentUser") ||
-      localStorage.getItem("mock-current-user");
-
+    // Try to restore user from localStorage once on mount
+    const storedUser = localStorage.getItem("currentUser");
     if (storedUser) {
       try {
         const user = JSON.parse(storedUser);
-        console.log(
-          "🔄 App init: Restoring user from localStorage:",
-          user.email,
-        );
         setCurrentUser(user);
         setIsAuthenticated(true);
-        console.log("✅ User session restored successfully");
-        return; // Exit early if user is restored
       } catch (e) {
-        console.warn(
-          "App init: Error parsing stored user, clearing localStorage:",
-          e,
-        );
         localStorage.removeItem("currentUser");
-        localStorage.removeItem("mock-current-user");
       }
     }
-
-    // Only clear auth state if no valid stored user found
-    console.log("🔒 No valid stored user found, ensuring clean state");
-    sessionStorage.clear(); // Clear any session data
-    setIsAuthenticated(false);
-    setCurrentUser(null);
-
-    // Firebase auth disabled to prevent crashes
-    console.log("🔒 SECURITY: Firebase auth listeners disabled for stability");
-    // Firebase auth code removed to fix syntax errors
-
-    // DO NOT initialize default admin automatically - this was causing the security issue
-    // Users must always login manually for security
-    console.log(
-      "���� SECURITY: No automatic admin initialization - manual login required",
-    );
-
-    // Return empty cleanup function since unsubscribe is handled inside the promise
-    return () => {};
   }, []);
 
   // Auth state check disabled to prevent errors
