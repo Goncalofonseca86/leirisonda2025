@@ -341,8 +341,8 @@ function App() {
       console.warn("��� Notifications not supported in this browser");
     }
 
-    // Register service worker with cache cleanup to prevent white page issues
-    registerServiceWorkerWithCleanup();
+    // Register service worker with cache cleanup to prevent white page issues - TEMPORARILY DISABLED
+    // registerServiceWorkerWithCleanup();
 
     // Handle URL hash for PWA shortcuts
     const handleHashChange = () => {
