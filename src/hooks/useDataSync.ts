@@ -81,7 +81,7 @@ const mockPools: Pool[] = [
     name: "Piscina Condomínio Sol",
     location: "Estoril",
     client: "Condomínio Sol Nascente",
-    type: "Comunitária",
+    type: "Comunit��ria",
     status: "Ativa",
     lastMaintenance: "2025-01-10",
     nextMaintenance: "2025-02-10",
@@ -720,13 +720,22 @@ export function useDataSync(): SyncState & SyncActions {
 
   const deletePool = useCallback(
     (id: string) => {
-      console.warn(
-        "⚠️ ATENÇÃO: Tentativa de apagar piscina bloqueada por proteção de dados!",
-      );
-      console.log("🔒 DeletePool chamado para ID:", id, "- Operação bloqueada");
+      setState((prev) => {
+        const updatedPools = prev.pools.filter((pool) => pool.id !== id);
 
-      // PROTEÇÃO: Não permitir apagar piscinas conforme instruções do usuário
-      return;
+        // Persist to localStorage
+        localStorage.setItem("pools", JSON.stringify(updatedPools));
+
+        return {
+          ...prev,
+          pools: updatedPools,
+        };
+      });
+
+      // Sync with Firebase if enabled
+      if (syncEnabled) {
+        syncWithFirebase();
+      }
     },
     [syncEnabled, syncWithFirebase],
   );
@@ -804,17 +813,22 @@ export function useDataSync(): SyncState & SyncActions {
 
   const deleteMaintenance = useCallback(
     (id: string) => {
-      console.warn(
-        "⚠️ ATENÇÃO: Tentativa de apagar manutenção bloqueada por proteção de dados!",
-      );
-      console.log(
-        "🔒 DeleteMaintenance chamado para ID:",
-        id,
-        "- Operação bloqueada",
-      );
+      setState((prev) => {
+        const updatedMaintenance = prev.maintenance.filter((maint) => maint.id !== id);
 
-      // PROTEÇÃO: Não permitir apagar manutenções conforme instruções do usuário
-      return;
+        // Persist to localStorage
+        localStorage.setItem("maintenance", JSON.stringify(updatedMaintenance));
+
+        return {
+          ...prev,
+          maintenance: updatedMaintenance,
+        };
+      });
+
+      // Sync with Firebase if enabled
+      if (syncEnabled) {
+        syncWithFirebase();
+      }
     },
     [syncEnabled, syncWithFirebase],
   );
@@ -877,17 +891,6 @@ export function useDataSync(): SyncState & SyncActions {
 
   const deleteWork = useCallback(
     (id: string) => {
-      console.warn(
-        "⚠️ ATENÇÃO: Tentativa de apagar obra bloqueada por proteção de dados!",
-      );
-      console.log("🔒 DeleteWork chamado para ID:", id, "- Operação bloqueada");
-
-      // PROTEÇÃO: Não permitir apagar obras conforme instruções do usuário
-      // Apenas logar a tentativa mas não executar
-      return;
-
-      // Código original comentado para proteção:
-      /*
       setState((prev) => {
         const updatedWorks = prev.works.filter((work) => work.id !== id);
 
