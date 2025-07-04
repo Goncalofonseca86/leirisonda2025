@@ -409,7 +409,7 @@ function App() {
   useEffect(() => {
     if (isAuthenticated) {
       const hash = window.location.hash.substring(1);
-      if (hash) {
+      if (hash && hash !== activeSection) {
         setActiveSection(hash);
       }
     }
