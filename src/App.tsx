@@ -1764,19 +1764,61 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
               </div>
             </div>
           );
-                      <p className="text-gray-600 text-sm mb-4">
-                        Comece por adicionar a primeira piscina ao sistema
-                      </p>
+
+        case "piscinas":
+          return (
+            <div className="min-h-screen bg-gray-50">
+              <div className="px-4 py-4 space-y-6">
+                {/* Header */}
+                <div className="bg-white rounded-lg p-4 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <Waves className="h-5 w-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <h1 className="text-xl font-bold text-gray-900">
+                          Piscinas
+                        </h1>
+                        <p className="text-gray-600 text-sm">
+                          Gestão de piscinas e clientes
+                        </p>
+                      </div>
+                    </div>
+                    {hasPermission("piscinas", "create") && (
                       <button
                         onClick={() => setActiveSection("nova-piscina")}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center space-x-2 mx-auto"
+                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center space-x-2"
                       >
                         <Plus className="h-4 w-4" />
-                        <span>Adicionar Piscina</span>
+                        <span>Nova Piscina</span>
                       </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Pool List */}
+                {pools.length === 0 ? (
+                  <div className="bg-white rounded-lg p-8 text-center">
+                    <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                      <Waves className="h-8 w-8 text-blue-600" />
                     </div>
-                  ) : (
-                    pools.map((pool) => (
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      Nenhuma piscina registada
+                    </h3>
+                    <p className="text-gray-600 text-sm mb-4">
+                      Comece por adicionar a primeira piscina ao sistema
+                    </p>
+                    <button
+                      onClick={() => setActiveSection("nova-piscina")}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center space-x-2 mx-auto"
+                    >
+                      <Plus className="h-4 w-4" />
+                      <span>Adicionar Piscina</span>
+                    </button>
+                  </div>
+                ) : (
+                  pools.map((pool) => (
                       <div
                         key={pool.id}
                         className="bg-white rounded-lg shadow-sm p-6"
@@ -4746,7 +4788,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                       <div className="text-2xl font-bold text-green-600">
                         {maintenance.length}
                       </div>
-                      <div className="text-sm text-gray-600">Manutenções</div>
+                      <div className="text-sm text-gray-600">Manuten��ões</div>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-orange-600">
