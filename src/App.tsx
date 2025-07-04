@@ -1588,207 +1588,182 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
     try {
       switch (activeSection) {
         case "dashboard":
+          const currentDate = new Date();
+          const formatDate = (date: Date) => {
+            const days = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
+            const months = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+
+            const dayName = days[date.getDay()];
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = months[date.getMonth()];
+
+            return `${dayName}, ${day} de ${month}`;
+          };
+
+          const formatTime = (date: Date) => {
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+          };
+
           return (
             <div className="min-h-screen bg-gray-50">
-              {/* Dashboard Content - Mobile First Design */}
-              <div className="px-4 py-4 space-y-4">
-                {/* Header Card */}
-                <div className="bg-white rounded-lg p-4 shadow-sm">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                      <div className="w-8 h-8 bg-white rounded-lg shadow-md p-1">
+              {/* Header */}
+              <div className="flex items-center p-4">
+                <button
+                  onClick={() => setSidebarOpen(true)}
+                  className="p-2 mr-3"
+                >
+                  <Menu className="h-6 w-6 text-gray-600" />
+                </button>
+              </div>
+
+              {/* Main Content */}
+              <div className="px-6">
+                {/* User Greeting Card */}
+                <div className="bg-white rounded-2xl p-6 shadow-sm mb-6">
+                  <div className="flex items-center space-x-4 mb-4">
+                    <div className="relative">
+                      <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
                         <img
                           src="https://cdn.builder.io/api/v1/image/assets%2F24b5ff5dbb9f4bb493659e90291d92bc%2F459ad019cfee4b38a90f9f0b3ad0daeb?format=webp&width=800"
                           alt="Leirisonda Logo"
-                          className="w-full h-full object-contain"
+                          className="w-8 h-8 object-contain"
                         />
                       </div>
+                      <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
                     </div>
-                    <div>
-                      <h1 className="text-lg font-semibold text-gray-900">
-                        Olá, {currentUser?.name || "Utilizador"}
+                    <div className="flex-1">
+                      <h1 className="text-2xl font-medium text-gray-900">
+                        Olá, {currentUser?.name?.split(' ')[0] || "Utilizador"}
                       </h1>
-                      {currentUser?.name
-                        .toLowerCase()
-                        .includes("alexandre") && (
-                        <div className="mt-2 space-y-1">
-                          <button
-                            onClick={() => {
-                              const alexandreWorks = works.filter(
-                                (w) =>
-                                  w.assignedTo
-                                    .toLowerCase()
-                                    .includes("alexandre") ||
-                                  w.assignedUsers?.some((user) =>
-                                    user.name
-                                      .toLowerCase()
-                                      .includes("alexandre"),
-                                  ),
-                              );
-
-                              const debugInfo = {
-                                currentUser: currentUser.name,
-                                totalWorks: works.length,
-                                alexandreWorks: alexandreWorks,
-                                localStorage: {
-                                  pools: JSON.parse(
-                                    localStorage.getItem("pools") || "[]",
-                                  ).length,
-                                  works: JSON.parse(
-                                    localStorage.getItem("works") || "[]",
-                                  ).length,
-                                  maintenance: JSON.parse(
-                                    localStorage.getItem("maintenance") || "[]",
-                                  ).length,
-                                },
-                                notificationsEnabled,
-                                notificationPermission: Notification.permission,
-                              };
-                              console.log(
-                                "🔍 Alexandre Debug Info:",
-                                debugInfo,
-                              );
-                              alert(
-                                `Debug Alexandre:\n` +
-                                  `Obras no sistema: ${works.length}\n` +
-                                  `Obras atribuídas ao Alexandre: ${alexandreWorks.length}\n` +
-                                  `Notificações ativadas: ${notificationsEnabled ? "Sim" : "Não"}\n` +
-                                  `Permissão notificações: ${Notification.permission}\n\n` +
-                                  `Ver console para mais detalhes`,
-                              );
-                            }}
-                            className="px-3 py-1 bg-yellow-500 text-white text-xs rounded hover:bg-yellow-600"
-                          >
-                            Debug Dados Alexandre
-                          </button>
-
-                          <button
-                            onClick={() => {
-                              console.log(
-                                "🧪 Testando notificação para Alexandre...",
-                              );
-                              sendWorkAssignmentNotification(
-                                "Obra de Teste para Alexandre",
-                                "Alexandre",
-                              );
-                            }}
-                            className="px-3 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600"
-                          >
-                            Testar Notifica����o
-                          </button>
+                      <h2 className="text-2xl font-medium text-gray-900 -mt-1">
+                        {currentUser?.name?.split(' ').slice(1).join(' ') || ""}
+                      </h2>
+                      <div className="flex items-center space-x-4 mt-2 text-gray-600">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-4 h-4 bg-gray-400 rounded flex items-center justify-center">
+                            <div className="w-2 h-2 bg-white rounded"></div>
+                          </div>
+                          <span className="text-sm">{formatDate(currentDate)}</span>
                         </div>
-                      )}
-                      <p className="text-gray-600 text-sm">
-                        Bem-vindo ao sistema Leirisonda
-                      </p>
+                        <div className="flex items-center space-x-2">
+                          <div className="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
+                            <div className="w-1 h-1 bg-white rounded-full"></div>
+                          </div>
+                          <span className="text-sm">{formatTime(currentDate)}</span>
+                        </div>
+                      </div>
                     </div>
+                  </div>
+
+                  <div className="flex items-center space-x-2 text-sm">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span className="text-gray-600">Online</span>
                   </div>
                 </div>
 
                 {/* Status Cards */}
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {/* Pendentes */}
-                  <button
-                    onClick={() => navigateToSection("obras")}
-                    className="w-full bg-white rounded-lg border-l-4 border-red-500 p-4 shadow-sm hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="text-left">
-                        <h3 className="text-lg font-semibold text-gray-900">
-                          Pendentes
-                        </h3>
-                        <p className="text-sm text-gray-500">
-                          Obras necessitam atenção
-                        </p>
+                  <div className="bg-white rounded-2xl shadow-sm border-l-4 border-red-500">
+                    <div className="p-6 flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
+                        <div className="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center">
+                          <div className="w-6 h-6 border-2 border-red-500 rounded-full relative">
+                            <div className="absolute top-1 left-1 w-1 h-3 bg-red-500 rounded-full"></div>
+                            <div className="absolute top-2 right-1 w-2 h-2 bg-red-500 rounded-full"></div>
+                          </div>
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-medium text-gray-900">Pendentes</h3>
+                          <p className="text-sm text-gray-500">Necessitam atenção</p>
+                        </div>
                       </div>
-                      <div className="text-4xl font-bold text-gray-900">
+                      <div className="text-3xl font-bold text-gray-900">
                         {works.filter((w) => w.status === "pending").length}
                       </div>
                     </div>
-                  </button>
+                  </div>
 
                   {/* Em Progresso */}
-                  <button
-                    onClick={() => navigateToSection("obras")}
-                    className="w-full bg-white rounded-lg border-l-4 border-orange-500 p-4 shadow-sm hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="text-left">
-                        <h3 className="text-lg font-semibold text-gray-900">
-                          Em Progresso
-                        </h3>
-                        <p className="text-sm text-gray-500">
-                          Obras em andamento
-                        </p>
+                  <div className="bg-white rounded-2xl shadow-sm border-l-4 border-orange-500">
+                    <div className="p-6 flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
+                        <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center">
+                          <div className="relative w-6 h-6">
+                            <div className="absolute inset-0 border-2 border-orange-500 rounded"></div>
+                            <div className="absolute bottom-0 left-0 w-3 h-1 bg-orange-500 rounded-full"></div>
+                            <div className="absolute top-1 right-1 w-1 h-2 bg-orange-500 rounded-full"></div>
+                          </div>
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-medium text-gray-900">Em Progresso</h3>
+                          <p className="text-sm text-gray-500">A decorrer</p>
+                        </div>
                       </div>
-                      <div className="text-4xl font-bold text-gray-900">
+                      <div className="text-3xl font-bold text-gray-900">
                         {works.filter((w) => w.status === "in_progress").length}
                       </div>
                     </div>
-                  </button>
+                  </div>
 
                   {/* Concluídas */}
-                  <button
-                    onClick={() => navigateToSection("obras")}
-                    className="w-full bg-white rounded-lg border-l-4 border-green-500 p-4 shadow-sm hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="text-left">
-                        <h3 className="text-lg font-semibold text-gray-900">
-                          Concluídas
-                        </h3>
-                        <p className="text-sm text-gray-500">
-                          Obras finalizadas
-                        </p>
+                  <div className="bg-white rounded-2xl shadow-sm border-l-4 border-green-500">
+                    <div className="p-6 flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
+                        <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center">
+                          <div className="w-6 h-6 border-2 border-green-500 rounded-full flex items-center justify-center">
+                            <div className="w-3 h-2 border-l-2 border-b-2 border-green-500 transform rotate-[-45deg] translate-y-[-1px]"></div>
+                          </div>
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-medium text-gray-900">Concluídas</h3>
+                          <p className="text-sm text-gray-500">Finalizadas</p>
+                        </div>
                       </div>
-                      <div className="text-4xl font-bold text-gray-900">
+                      <div className="text-3xl font-bold text-gray-900">
                         {works.filter((w) => w.status === "completed").length}
                       </div>
                     </div>
-                  </button>
+                  </div>
 
-                  {/* Falta de Folhas de Obra */}
-                  <button
-                    onClick={() => navigateToSection("obras")}
-                    className="w-full bg-white rounded-lg border-l-4 border-blue-500 p-4 shadow-sm hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="text-left">
-                        <h3 className="text-lg font-semibold text-gray-900">
-                          Falta de Folhas de Obra
-                        </h3>
-                        <p className="text-sm text-gray-500">
-                          Folhas não geradas
-                        </p>
+                  {/* Folhas por Fazer */}
+                  <div className="bg-white rounded-2xl shadow-sm border-l-4 border-red-500">
+                    <div className="p-6 flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
+                        <div className="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center">
+                          <div className="w-6 h-6 relative">
+                            <div className="w-4 h-5 border-2 border-red-500 rounded-sm"></div>
+                            <div className="absolute top-1 left-1 w-2 h-0.5 bg-red-500 rounded"></div>
+                            <div className="absolute top-2 left-1 w-2 h-0.5 bg-red-500 rounded"></div>
+                            <div className="absolute top-3 left-1 w-1 h-0.5 bg-red-500 rounded"></div>
+                          </div>
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-medium text-gray-900">Folhas por Fazer</h3>
+                          <p className="text-sm text-gray-500">Por preencher</p>
+                        </div>
                       </div>
-                      <div className="text-4xl font-bold text-gray-900">
-                        {
-                          works.filter(
-                            (w) => !w.folhaGerada && w.status !== "completed",
-                          ).length
-                        }
+                      <div className="text-3xl font-bold text-gray-900">
+                        {works.filter((w) => !w.folhaGerada && w.status !== "completed").length}
                       </div>
                     </div>
-                  </button>
+                  </div>
+                </div>
 
-                  {/* Obras Atribuídas */}
+                {/* Bottom Section */}
+                <div className="mt-8 mb-4">
                   <button
                     onClick={() => navigateToSection("obras")}
-                    className="w-full bg-white rounded-lg border-l-4 border-purple-500 p-4 shadow-sm hover:bg-gray-50 transition-colors"
+                    className="w-full bg-black text-white py-4 rounded-2xl font-medium"
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="text-left">
-                        <h3 className="text-lg font-semibold text-gray-900">
-                          Obras Atribuídas
-                        </h3>
-                        <p className="text-sm text-gray-500">Atribuídas a si</p>
-                      </div>
-                      <div className="text-4xl font-bold text-gray-900">
-                        {assignedWorks.length}
-                      </div>
-                    </div>
+                    Todas as Obras
                   </button>
                 </div>
+              </div>
+            </div>
+          );
 
                 {/* Lista de Obras Atribuídas */}
                 {assignedWorks.length > 0 && (
@@ -2759,7 +2734,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                               {maint.observations && (
                                 <div className="col-span-2">
                                   <span className="font-medium">
-                                    Observa��ões:
+                                    Observa����ões:
                                   </span>{" "}
                                   {maint.observations}
                                 </div>
@@ -7366,7 +7341,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
               <div className="space-y-1 text-sm text-gray-600">
                 <div className="flex items-center space-x-2">
                   <span>✓</span>
-                  <span>Dados da intervenção</span>
+                  <span>Dados da intervenç��o</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <span>✓</span>
