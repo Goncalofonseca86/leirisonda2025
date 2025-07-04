@@ -1719,7 +1719,10 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                   </button>
 
                   {/* Em Progresso */}
-                  <div className="bg-white rounded-2xl shadow-sm border-l-4 border-orange-500">
+                  <button
+                    onClick={() => navigateToSection("obras")}
+                    className="w-full bg-white rounded-2xl shadow-sm border-l-4 border-orange-500 hover:bg-gray-50 transition-colors"
+                  >
                     <div className="p-6 flex items-center justify-between">
                       <div className="flex items-center space-x-4">
                         <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center">
@@ -1729,7 +1732,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                             <div className="absolute top-1 right-1 w-1 h-2 bg-orange-500 rounded-full"></div>
                           </div>
                         </div>
-                        <div>
+                        <div className="text-left">
                           <h3 className="text-lg font-medium text-gray-900">
                             Em Progresso
                           </h3>
@@ -1740,7 +1743,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                         {works.filter((w) => w.status === "in_progress").length}
                       </div>
                     </div>
-                  </div>
+                  </button>
 
                   {/* Concluídas */}
                   <div className="bg-white rounded-2xl shadow-sm border-l-4 border-green-500">
