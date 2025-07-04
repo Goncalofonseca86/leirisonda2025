@@ -2078,13 +2078,6 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
   };
 
   if (!isAuthenticated || !currentUser) {
-    console.log(
-      "🔒 SECURITY: Blocking access - isAuthenticated:",
-      isAuthenticated,
-      "currentUser:",
-      !!currentUser,
-    );
-
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
