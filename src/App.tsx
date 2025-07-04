@@ -1130,11 +1130,16 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
   };
 
   // Clear photos and work type when changing sections
+  // Clear photos and work data when changing sections - SIMPLIFIED to prevent loops
   useEffect(() => {
-    if (activeSection !== "nova-obra" && activeSection !== "nova-manutencao") {
+    const shouldClearPhotos =
+      activeSection !== "nova-obra" && activeSection !== "nova-manutencao";
+    const shouldClearWork = activeSection !== "nova-obra";
+
+    if (shouldClearPhotos) {
       setUploadedPhotos([]);
     }
-    if (activeSection !== "nova-obra") {
+    if (shouldClearWork) {
       setSelectedWorkType("");
       setWorkVehicles([]);
       setWorkTechnicians([]);
