@@ -140,12 +140,18 @@ function App() {
     };
   }, []);
 
-  // No auto-login - users must login manually
+  // Initialize auth from localStorage if available
   useEffect(() => {
-    // Clear any existing auth data on app start
-    localStorage.removeItem("currentUser");
-    localStorage.removeItem("mock-current-user");
-    console.log("🔒 SECURITY: Auth data cleared - manual login required");
+    const storedUser = localStorage.getItem("currentUser");
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser);
+        setCurrentUser(user);
+        setIsAuthenticated(true);
+      } catch (e) {
+        localStorage.removeItem("currentUser");
+      }
+    }
   }, []);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("dashboard");
@@ -736,7 +742,7 @@ function App() {
   const handleDataCleanup = async () => {
     if (
       window.confirm(
-        "ATENÇÃO: Esta ação vai eliminar permanentemente todas as obras, manutenções e piscinas. Os utilizadores serão mantidos. Confirma?",
+        "ATENÇÃO: Esta a��ão vai eliminar permanentemente todas as obras, manutenções e piscinas. Os utilizadores serão mantidos. Confirma?",
       )
     ) {
       try {
