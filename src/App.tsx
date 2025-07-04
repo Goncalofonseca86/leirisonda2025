@@ -129,16 +129,16 @@ function App() {
 
   // Debug logging for authentication state changes removed to prevent loops
 
-  // Monitoramento de integridade de dados
-  useEffect(() => {
-    // Iniciar monitoramento de integridade de dados
-    dataIntegrityService.startIntegrityMonitoring();
+  // Monitoramento de integridade de dados - TEMPORARILY DISABLED
+  // useEffect(() => {
+  //   // Iniciar monitoramento de integridade de dados
+  //   dataIntegrityService.startIntegrityMonitoring();
 
-    // Cleanup ao desmontar componente
-    return () => {
-      dataIntegrityService.stopIntegrityMonitoring();
-    };
-  }, []);
+  //   // Cleanup ao desmontar componente
+  //   return () => {
+  //     dataIntegrityService.stopIntegrityMonitoring();
+  //   };
+  // }, []);
 
   // Initialize auth from localStorage if available
   useEffect(() => {
