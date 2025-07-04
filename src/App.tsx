@@ -26,29 +26,29 @@ import {
   Bell,
 } from "lucide-react";
 import jsPDF from "jspdf";
-import { FirebaseConfig } from "./components/FirebaseConfig";
-import { AdvancedSettings } from "./components/AdvancedSettings";
-import { SyncStatusDisplay } from "./components/SyncStatusDisplay";
-import { InstallPrompt } from "./components/InstallPrompt";
-import { UserPermissionsManager } from "./components/UserPermissionsManager";
-import { RegisterForm } from "./components/RegisterForm";
+// import { FirebaseConfig } from "./components/FirebaseConfig";
+// import { AdvancedSettings } from "./components/AdvancedSettings";
+// import { SyncStatusDisplay } from "./components/SyncStatusDisplay";
+// import { InstallPrompt } from "./components/InstallPrompt";
+// import { UserPermissionsManager } from "./components/UserPermissionsManager";
+// import { RegisterForm } from "./components/RegisterForm";
 
-import { AutoSyncProvider } from "./components/AutoSyncProvider";
-import { SyncStatusIcon } from "./components/SyncStatusIndicator";
-import { FirebaseQuotaWarning } from "./components/FirebaseQuotaWarning";
-import { DataIntegrityAlert } from "./components/DataIntegrityAlert";
+// import { AutoSyncProvider } from "./components/AutoSyncProvider";
+// import { SyncStatusIcon } from "./components/SyncStatusIndicator";
+// import { FirebaseQuotaWarning } from "./components/FirebaseQuotaWarning";
+// import { DataIntegrityAlert } from "./components/DataIntegrityAlert";
 // SECURITY: RegisterForm removed - only super admin can create users
-import { AdminLogin } from "./admin/AdminLogin";
-import { AdminPage } from "./admin/AdminPage";
-import { useDataSync } from "./hooks/useDataSync";
+// import { AdminLogin } from "./admin/AdminLogin";
+// import { AdminPage } from "./admin/AdminPage";
+// import { useDataSync } from "./hooks/useDataSync";
 import { authService, UserProfile } from "./services/authService";
-import { useDataCleanup } from "./hooks/useDataCleanup";
-import { useAutoSync } from "./hooks/useAutoSync";
-import { dataIntegrityService } from "./services/dataIntegrityService";
-import {
-  registerServiceWorkerWithCleanup,
-  forceReloadAndClear,
-} from "./utils/cacheCleanup";
+// import { useDataCleanup } from "./hooks/useDataCleanup";
+// import { useAutoSync } from "./hooks/useAutoSync";
+// import { dataIntegrityService } from "./services/dataIntegrityService";
+// import {
+//   registerServiceWorkerWithCleanup,
+//   forceReloadAndClear,
+// } from "./utils/cacheCleanup";
 
 // Mock users database
 const initialUsers = [
