@@ -1078,6 +1078,12 @@ export const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
             </div>
           )}
 
+          {activeTab === "cache-diagnostic" && (
+            <div className="space-y-6">
+              <CacheDiagnostic />
+            </div>
+          )}
+
           {activeTab === "configuracoes" && (
             <div className="space-y-6">
               <div className="text-center">
