@@ -45,6 +45,7 @@ import { authService, UserProfile } from "./services/authService";
 import { useDataCleanup } from "./hooks/useDataCleanup";
 import { useAutoSync } from "./hooks/useAutoSync";
 import { dataIntegrityService } from "./services/dataIntegrityService";
+import { registerServiceWorkerWithCleanup } from "./utils/cacheCleanup";
 
 // Mock users database
 const initialUsers = [
@@ -377,20 +378,8 @@ function App() {
       console.warn("��� Notifications not supported in this browser");
     }
 
-    // Register service worker for better push notification support
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker
-        .register("/sw.js")
-        .then((registration) => {
-          console.log(
-            "✅ Service Worker registered successfully:",
-            registration.scope,
-          );
-        })
-        .catch((error) => {
-          console.error("❌ Service Worker registration failed:", error);
-        });
-    }
+    // Register service worker with cache cleanup to prevent white page issues
+    registerServiceWorkerWithCleanup();
 
     // Handle URL hash for PWA shortcuts
     const handleHashChange = () => {
@@ -3426,7 +3415,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                               </div>
                               <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                  Nível da Água (m) *
+                                  Nível da ��gua (m) *
                                 </label>
                                 <input
                                   type="number"
