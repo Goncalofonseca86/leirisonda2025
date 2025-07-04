@@ -1590,19 +1590,40 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
         case "dashboard":
           const currentDate = new Date();
           const formatDate = (date: Date) => {
-            const days = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
-            const months = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+            const days = [
+              "domingo",
+              "segunda-feira",
+              "terça-feira",
+              "quarta-feira",
+              "quinta-feira",
+              "sexta-feira",
+              "sábado",
+            ];
+            const months = [
+              "janeiro",
+              "fevereiro",
+              "março",
+              "abril",
+              "maio",
+              "junho",
+              "julho",
+              "agosto",
+              "setembro",
+              "outubro",
+              "novembro",
+              "dezembro",
+            ];
 
             const dayName = days[date.getDay()];
-            const day = date.getDate().toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, "0");
             const month = months[date.getMonth()];
 
             return `${dayName}, ${day} de ${month}`;
           };
 
           const formatTime = (date: Date) => {
-            const hours = date.getHours().toString().padStart(2, '0');
-            const minutes = date.getMinutes().toString().padStart(2, '0');
+            const hours = date.getHours().toString().padStart(2, "0");
+            const minutes = date.getMinutes().toString().padStart(2, "0");
             return `${hours}:${minutes}`;
           };
 
@@ -1635,23 +1656,27 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                     </div>
                     <div className="flex-1">
                       <h1 className="text-2xl font-medium text-gray-900">
-                        Olá, {currentUser?.name?.split(' ')[0] || "Utilizador"}
+                        Olá, {currentUser?.name?.split(" ")[0] || "Utilizador"}
                       </h1>
                       <h2 className="text-2xl font-medium text-gray-900 -mt-1">
-                        {currentUser?.name?.split(' ').slice(1).join(' ') || ""}
+                        {currentUser?.name?.split(" ").slice(1).join(" ") || ""}
                       </h2>
                       <div className="flex items-center space-x-4 mt-2 text-gray-600">
                         <div className="flex items-center space-x-2">
                           <div className="w-4 h-4 bg-gray-400 rounded flex items-center justify-center">
                             <div className="w-2 h-2 bg-white rounded"></div>
                           </div>
-                          <span className="text-sm">{formatDate(currentDate)}</span>
+                          <span className="text-sm">
+                            {formatDate(currentDate)}
+                          </span>
                         </div>
                         <div className="flex items-center space-x-2">
                           <div className="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
                             <div className="w-1 h-1 bg-white rounded-full"></div>
                           </div>
-                          <span className="text-sm">{formatTime(currentDate)}</span>
+                          <span className="text-sm">
+                            {formatTime(currentDate)}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -1676,8 +1701,12 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           </div>
                         </div>
                         <div>
-                          <h3 className="text-lg font-medium text-gray-900">Pendentes</h3>
-                          <p className="text-sm text-gray-500">Necessitam atenção</p>
+                          <h3 className="text-lg font-medium text-gray-900">
+                            Pendentes
+                          </h3>
+                          <p className="text-sm text-gray-500">
+                            Necessitam atenção
+                          </p>
                         </div>
                       </div>
                       <div className="text-3xl font-bold text-gray-900">
@@ -1698,7 +1727,9 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           </div>
                         </div>
                         <div>
-                          <h3 className="text-lg font-medium text-gray-900">Em Progresso</h3>
+                          <h3 className="text-lg font-medium text-gray-900">
+                            Em Progresso
+                          </h3>
                           <p className="text-sm text-gray-500">A decorrer</p>
                         </div>
                       </div>
@@ -1718,7 +1749,9 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           </div>
                         </div>
                         <div>
-                          <h3 className="text-lg font-medium text-gray-900">Concluídas</h3>
+                          <h3 className="text-lg font-medium text-gray-900">
+                            Concluídas
+                          </h3>
                           <p className="text-sm text-gray-500">Finalizadas</p>
                         </div>
                       </div>
@@ -1741,12 +1774,18 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           </div>
                         </div>
                         <div>
-                          <h3 className="text-lg font-medium text-gray-900">Folhas por Fazer</h3>
+                          <h3 className="text-lg font-medium text-gray-900">
+                            Folhas por Fazer
+                          </h3>
                           <p className="text-sm text-gray-500">Por preencher</p>
                         </div>
                       </div>
                       <div className="text-3xl font-bold text-gray-900">
-                        {works.filter((w) => !w.folhaGerada && w.status !== "completed").length}
+                        {
+                          works.filter(
+                            (w) => !w.folhaGerada && w.status !== "completed",
+                          ).length
+                        }
                       </div>
                     </div>
                   </div>
@@ -1763,7 +1802,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                 </div>
               </div>
             </div>
-);
+          );
 
         default:
           return <div>Página não encontrada</div>;
@@ -1782,7 +1821,91 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
       !!currentUser,
     );
 
-    return <div>Login necessário</div>;
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8">
+          <div>
+            <div className="mx-auto h-20 w-20 bg-white rounded-xl shadow-lg flex items-center justify-center mb-6">
+              <img
+                src="https://cdn.builder.io/api/v1/image/assets%2F24b5ff5dbb9f4bb493659e90291d92bc%2F459ad019cfee4b38a90f9f0b3ad0daeb?format=webp&width=800"
+                alt="Leirisonda Logo"
+                className="h-12 w-12 object-contain"
+              />
+            </div>
+            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+              Leirisonda
+            </h2>
+            <p className="mt-2 text-center text-sm text-gray-600">
+              Sistema de gestão de piscinas e obras
+            </p>
+          </div>
+
+          <form className="mt-8 space-y-6" onSubmit={handleLogin}>
+            <div className="rounded-md shadow-sm -space-y-px">
+              <div>
+                <label htmlFor="email" className="sr-only">
+                  Email
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                  placeholder="Email"
+                  value={loginForm.email}
+                  onChange={(e) =>
+                    setLoginForm({ ...loginForm, email: e.target.value })
+                  }
+                />
+              </div>
+              <div>
+                <label htmlFor="password" className="sr-only">
+                  Password
+                </label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                  placeholder="Password"
+                  value={loginForm.password}
+                  onChange={(e) =>
+                    setLoginForm({ ...loginForm, password: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+
+            {loginError && (
+              <div className="text-red-600 text-sm text-center">
+                {loginError}
+              </div>
+            )}
+
+            <div>
+              <button
+                type="submit"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                Entrar
+              </button>
+            </div>
+          </form>
+
+          {/* Floating Advanced Settings Button */}
+          <button
+            onClick={() => setShowAdvancedSettings(true)}
+            className="fixed bottom-4 right-4 w-12 h-12 bg-white border border-gray-200 rounded-full shadow-lg flex items-center justify-center text-gray-500 hover:text-gray-700 hover:shadow-xl transition-all duration-200"
+          >
+            <Settings className="h-5 w-5" />
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return <div>App funcionando</div>;
