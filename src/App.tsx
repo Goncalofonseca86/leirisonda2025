@@ -1764,11 +1764,6 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
               </div>
             </div>
           );
-                                    {new Date(
-                                      work.dateAssigned,
-                                    ).toLocaleDateString("pt-PT")}
-                                  </span>
-                                </div>
                                 <span
                                   className={`inline-block px-2 py-1 text-xs rounded-full mt-2 ${
                                     work.status === "Nova"
