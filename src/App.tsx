@@ -127,16 +127,7 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
 
-  // Debug logging for authentication state changes
-  useEffect(() => {
-    console.log("�� Auth State Debug:", {
-      isAuthenticated,
-      currentUser: currentUser
-        ? `${currentUser.name} (${currentUser.email})`
-        : null,
-      timestamp: new Date().toISOString(),
-    });
-  }, [isAuthenticated, currentUser]);
+  // Debug logging for authentication state changes removed to prevent loops
 
   // Monitoramento de integridade de dados
   useEffect(() => {
