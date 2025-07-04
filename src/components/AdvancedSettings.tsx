@@ -379,16 +379,16 @@ export const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
               </div>
             </button>
             <button
-              onClick={() => setActiveTab("configuracoes")}
+              onClick={() => setActiveTab("cache-diagnostic")}
               className={`py-4 px-3 text-center font-medium transition-colors ${
-                activeTab === "configuracoes"
+                activeTab === "cache-diagnostic"
                   ? "border-b-2 border-blue-500 text-blue-600 bg-blue-50"
                   : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
               }`}
             >
               <div className="flex flex-col items-center space-y-1">
-                <Settings className="w-4 h-4" />
-                <span>Config</span>
+                <AlertCircle className="w-4 h-4" />
+                <span>Cache</span>
               </div>
             </button>
           </div>
