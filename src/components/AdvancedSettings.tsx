@@ -16,6 +16,7 @@ import {
   Key,
 } from "lucide-react";
 import { FirebaseConfig } from "./FirebaseConfig";
+import { CacheDiagnostic } from "./CacheDiagnostic";
 
 interface AdvancedSettingsProps {
   onBack: () => void;
