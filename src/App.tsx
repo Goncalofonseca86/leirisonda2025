@@ -1764,39 +1764,6 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
               </div>
             </div>
           );
-                      </h2>
-                    </div>
-                    <div className="p-4 space-y-3">
-                      {assignedWorks.map((work) => (
-                        <div
-                          key={work.id}
-                          className="border-l-4 border-purple-500 bg-purple-50 rounded-r-lg p-4"
-                        >
-                          <div className="flex items-start justify-between">
-                            <div className="flex items-start space-x-3">
-                              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                                <Building2 className="h-5 w-5 text-purple-600" />
-                              </div>
-                              <div>
-                                <h3 className="font-semibold text-gray-900">
-                                  {work.title}
-                                </h3>
-                                <div className="flex items-center space-x-1 text-gray-600 text-sm">
-                                  <span>👤</span>
-                                  <span>
-                                    Atribuída a:{" "}
-                                    {work.assignedUsers &&
-                                    work.assignedUsers.length > 0
-                                      ? work.assignedUsers
-                                          .map((u) => u.name)
-                                          .join(", ")
-                                      : work.assignedTo || "Não atribuída"}
-                                  </span>
-                                </div>
-                                <div className="flex items-center space-x-1 text-gray-500 text-sm">
-                                  <span>📍</span>
-                                  <span>
-                                    Atribuída em:{" "}
                                     {new Date(
                                       work.dateAssigned,
                                     ).toLocaleDateString("pt-PT")}
