@@ -215,8 +215,7 @@ function App() {
 
   // Data cleanup hook - TEMPORARILY DISABLED
   const cleanupLoading = false;
-    error: cleanupError,
-  } = useDataCleanup();
+  const cleanupError = null;
 
   // Auto-sync hook for automatic Firebase �� localStorage synchronization
   const autoSyncData = useAutoSync();
@@ -939,7 +938,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
   )
   .join("")}
 
-������ ${new Date().getFullYear()} Leirisonda - Sistema de Gestão
+���� ${new Date().getFullYear()} Leirisonda - Sistema de Gestão
     `;
     downloadPDF(
       content,
