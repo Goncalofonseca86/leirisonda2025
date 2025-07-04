@@ -662,7 +662,7 @@ function App() {
           // Handle any pending hash navigation after login
           const hash = window.location.hash.substring(1);
           if (hash && hash !== "login") {
-            console.log("��� Navigating to hash section:", hash);
+            console.log("🔄 Navigating to hash section:", hash);
             setActiveSection(hash);
           } else {
             // Default to dashboard when no hash is present
@@ -2021,8 +2021,8 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                 {/* App Installation Prompt */}
                 <InstallPrompt />
 
-                {/* Sync Status */}
-                <SyncStatusDisplay />
+                {/* Sync Status - TEMPORARILY DISABLED */}
+                {/* <SyncStatusDisplay /> */}
               </div>
             </div>
           );
@@ -2128,35 +2128,20 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
   if (showAdvancedSettings) {
     if (isAdvancedUnlocked) {
       return (
-        <AdvancedSettings
-          onBack={handleAdvancedSettingsBack}
-          onNavigateToSection={(section) => {
-            if (
-              section === "utilizadores" &&
-              currentUser?.role !== "super_admin"
-            ) {
-              console.log(
-                "❌ Access denied: User management requires authentication",
-              );
-              return;
-            }
-            navigateToSection(section);
-            setShowAdvancedSettings(false);
-            setIsAdvancedUnlocked(false);
-          }}
-          dataSync={dataSync}
-          notifications={{
-            pushPermission,
-            notificationsEnabled,
-            requestNotificationPermission,
-            testPushNotification: () =>
-              sendWorkAssignmentNotification(
-                "Teste de Notificação",
-                currentUser.name,
-              ),
-            sendWorkAssignmentNotification,
-          }}
-        />
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-xl font-bold mb-4">Configurações Avançadas</h2>
+            <p className="text-gray-600 mb-4">
+              Temporariamente desabilitado para debug
+            </p>
+            <button
+              onClick={handleAdvancedSettingsBack}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md"
+            >
+              Voltar
+            </button>
+          </div>
+        </div>
       );
     } else {
       return (
@@ -2212,16 +2197,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
     }
   }
 
-  return (
-    <AutoSyncProvider
-      enabled={false}
-      syncInterval={15000}
-      collections={["users", "pools", "maintenance", "works", "clients"]}
-      showNotifications={false}
-    >
-      {renderContent()}
-    </AutoSyncProvider>
-  );
+  return renderContent();
 }
 
 export default App;
