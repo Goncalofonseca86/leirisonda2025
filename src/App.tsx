@@ -361,15 +361,7 @@ function App() {
     };
   }, [isAuthenticated]);
 
-  // Handle hash routing when authentication state changes
-  useEffect(() => {
-    if (isAuthenticated) {
-      const hash = window.location.hash.substring(1);
-      if (hash && hash !== activeSection) {
-        setActiveSection(hash);
-      }
-    }
-  }, [isAuthenticated]);
+  // Hash routing handled by window.hashchange event listener instead
 
   // Notify Alexandre about assigned works when he logs in
   useEffect(() => {
@@ -1069,7 +1061,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
         // Show alert as fallback for better user experience
         setTimeout(() => {
           alert(
-            `🔔 Nova Obra Atribuída!\n\n📋 ${workTitle}\n\n👤 Atribu��da a: ${assignedTo}\n\n💡 Ative as notificações nas configurações para receber alertas automáticos.`,
+            `�� Nova Obra Atribuída!\n\n📋 ${workTitle}\n\n👤 Atribu��da a: ${assignedTo}\n\n💡 Ative as notificações nas configurações para receber alertas automáticos.`,
           );
         }, 1000);
       }
