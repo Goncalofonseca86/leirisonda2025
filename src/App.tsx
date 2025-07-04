@@ -843,7 +843,7 @@ ${index + 1}. ${pool.name}
 
   const generateMaintenancePDF = () => {
     const content = `
-LEIRISONDA - RELATÓRIO DE MANUTENÇÕES
+LEIRISONDA - RELATÓRIO DE MANUTENÇ��ES
 Data: ${new Date().toLocaleDateString("pt-PT")}
 
 RESUMO:
@@ -7767,38 +7767,6 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                 >
                   <Waves className="h-5 w-5" />
                   <span>Piscinas</span>
-                </button>
-              )}
-
-              {/* Only show Users button for super admins */}
-              {currentUser?.role === "super_admin" && (
-                <button
-                  onClick={() => {
-                    navigateToSection("utilizadores");
-                    setSidebarOpen(false);
-                  }}
-                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
-                    activeSection === "utilizadores"
-                      ? "bg-red-50 text-red-700 border-l-4 border-red-500"
-                      : "text-gray-700 hover:bg-gray-100"
-                  }`}
-                >
-                  <Users className="h-5 w-5" />
-                  <span>Utilizadores</span>
-                </button>
-              )}
-
-              {/* Administration Section - Only for super admin */}
-              {currentUser?.role === "super_admin" && (
-                <button
-                  onClick={() => {
-                    setShowAdminLogin(true);
-                    setSidebarOpen(false);
-                  }}
-                  className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors text-gray-700 hover:bg-gray-100"
-                >
-                  <Shield className="h-5 w-5" />
-                  <span>Administração</span>
                 </button>
               )}
             </nav>
