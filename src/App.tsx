@@ -797,7 +797,7 @@ ${index + 1}. ${pool.name}
 
   const generateMaintenancePDF = () => {
     const content = `
-LEIRISONDA - RELATÓRIO DE MANUTENÇ��ES
+LEIRISONDA - RELATÓRIO DE MANUTENÇ����ES
 Data: ${new Date().toLocaleDateString("pt-PT")}
 
 RESUMO:
@@ -1360,7 +1360,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
             }, 100);
           } else {
             console.log(
-              `⚠️ Utilizador ${userForm.name} criado localmente. Sincronização Firebase: ${result.error}`,
+              `���️ Utilizador ${userForm.name} criado localmente. Sincronização Firebase: ${result.error}`,
             );
           }
         } catch (syncError) {
@@ -2018,8 +2018,8 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                   </div>
                 )}
 
-                {/* App Installation Prompt */}
-                <InstallPrompt />
+                {/* App Installation Prompt - TEMPORARILY DISABLED */}
+                {/* <InstallPrompt /> */}
 
                 {/* Sync Status - TEMPORARILY DISABLED */}
                 {/* <SyncStatusDisplay /> */}
