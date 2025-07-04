@@ -814,7 +814,9 @@ export function useDataSync(): SyncState & SyncActions {
   const deleteMaintenance = useCallback(
     (id: string) => {
       setState((prev) => {
-        const updatedMaintenance = prev.maintenance.filter((maint) => maint.id !== id);
+        const updatedMaintenance = prev.maintenance.filter(
+          (maint) => maint.id !== id,
+        );
 
         // Persist to localStorage
         localStorage.setItem("maintenance", JSON.stringify(updatedMaintenance));
@@ -906,7 +908,6 @@ export function useDataSync(): SyncState & SyncActions {
       if (syncEnabled) {
         syncWithFirebase();
       }
-      */
     },
     [syncEnabled, syncWithFirebase],
   );
