@@ -1908,7 +1908,104 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
     );
   }
 
-  return <div>App funcionando</div>;
+  // Handle Advanced Settings
+  if (showAdvancedSettings) {
+    if (isAdvancedUnlocked) {
+      return (
+        <AdvancedSettings
+          onBack={handleAdvancedSettingsBack}
+          onNavigateToSection={(section) => {
+            if (
+              section === "utilizadores" &&
+              currentUser?.role !== "super_admin"
+            ) {
+              console.log(
+                "❌ Access denied: User management requires authentication",
+              );
+              return;
+            }
+            navigateToSection(section);
+            setShowAdvancedSettings(false);
+            setIsAdvancedUnlocked(false);
+          }}
+          dataSync={dataSync}
+          notifications={{
+            pushPermission,
+            notificationsEnabled,
+            requestNotificationPermission,
+            testPushNotification: () =>
+              sendWorkAssignmentNotification(
+                "Teste de Notificação",
+                currentUser.name,
+              ),
+            sendWorkAssignmentNotification,
+          }}
+        />
+      );
+    } else {
+      return (
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
+          <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">
+              Configurações Avançadas
+            </h2>
+            <p className="text-gray-600">
+              Insira a palavra-passe para aceder às configurações avançadas
+            </p>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (advancedPassword === "19867") {
+                  setIsAdvancedUnlocked(true);
+                  setSettingsPasswordError("");
+                } else {
+                  setSettingsPasswordError("Palavra-passe incorreta");
+                }
+              }}
+              className="mt-4 space-y-4"
+            >
+              <input
+                type="password"
+                value={advancedPassword}
+                onChange={(e) => setAdvancedPassword(e.target.value)}
+                placeholder="Palavra-passe"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              {settingsPasswordError && (
+                <p className="text-red-600 text-sm">{settingsPasswordError}</p>
+              )}
+              <div className="flex space-x-3">
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                >
+                  Entrar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowAdvancedSettings(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      );
+    }
+  }
+
+  return (
+    <AutoSyncProvider
+      enabled={false}
+      syncInterval={15000}
+      collections={["users", "pools", "maintenance", "works", "clients"]}
+      showNotifications={false}
+    >
+      {renderContent()}
+    </AutoSyncProvider>
+  );
 }
 
 export default App;
