@@ -1881,7 +1881,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                               <button
                                 onClick={() =>
                                   confirmDelete(
-                                    `Tem a certeza que deseja apagar a piscina "${pool.name}"?`,
+                                    `Tem a certeza que deseja apagar a piscina '${pool.name}'?`,
                                     () => dataSync.deletePool(pool.id),
                                   )
                                 }
