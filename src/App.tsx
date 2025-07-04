@@ -45,7 +45,10 @@ import { authService, UserProfile } from "./services/authService";
 import { useDataCleanup } from "./hooks/useDataCleanup";
 import { useAutoSync } from "./hooks/useAutoSync";
 import { dataIntegrityService } from "./services/dataIntegrityService";
-import { registerServiceWorkerWithCleanup } from "./utils/cacheCleanup";
+import {
+  registerServiceWorkerWithCleanup,
+  forceReloadAndClear,
+} from "./utils/cacheCleanup";
 
 // Mock users database
 const initialUsers = [
@@ -2756,7 +2759,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                               {maint.observations && (
                                 <div className="col-span-2">
                                   <span className="font-medium">
-                                    Observações:
+                                    Observa��ões:
                                   </span>{" "}
                                   {maint.observations}
                                 </div>
@@ -7600,6 +7603,17 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
 
           {/* SECURITY: Only super admin can create new accounts - removed public registration */}
         </div>
+
+        {/* Floating Debug Button - only show if localStorage debug flag is set */}
+        {localStorage.getItem("leirisonda-debug") === "true" && (
+          <button
+            onClick={forceReloadAndClear}
+            className="fixed bottom-4 left-4 w-12 h-12 bg-red-500 border border-red-600 rounded-full shadow-lg flex items-center justify-center text-white hover:bg-red-600 hover:shadow-xl transition-all duration-200"
+            title="Limpar cache e recarregar (Debug)"
+          >
+            <AlertCircle className="h-5 w-5" />
+          </button>
+        )}
 
         {/* Floating Advanced Settings Button */}
         <button
