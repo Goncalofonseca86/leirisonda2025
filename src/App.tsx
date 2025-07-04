@@ -1691,7 +1691,10 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                 {/* Status Cards */}
                 <div className="space-y-4">
                   {/* Pendentes */}
-                  <div className="bg-white rounded-2xl shadow-sm border-l-4 border-red-500">
+                  <button
+                    onClick={() => navigateToSection("obras")}
+                    className="w-full bg-white rounded-2xl shadow-sm border-l-4 border-red-500 hover:bg-gray-50 transition-colors"
+                  >
                     <div className="p-6 flex items-center justify-between">
                       <div className="flex items-center space-x-4">
                         <div className="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center">
@@ -1700,7 +1703,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                             <div className="absolute top-2 right-1 w-2 h-2 bg-red-500 rounded-full"></div>
                           </div>
                         </div>
-                        <div>
+                        <div className="text-left">
                           <h3 className="text-lg font-medium text-gray-900">
                             Pendentes
                           </h3>
@@ -1713,7 +1716,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                         {works.filter((w) => w.status === "pending").length}
                       </div>
                     </div>
-                  </div>
+                  </button>
 
                   {/* Em Progresso */}
                   <div className="bg-white rounded-2xl shadow-sm border-l-4 border-orange-500">
