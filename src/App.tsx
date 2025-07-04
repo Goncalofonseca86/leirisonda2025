@@ -2327,20 +2327,6 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                     Nenhum resultado encontrado para "
                                     {globalSearchTerm}"
                                   </p>
-                                  <p className="text-gray-400 text-xs mt-1">
-                                    Tente pesquisar por cliente, obra, piscina,
-                                    data ou técnico
-                                  </p>
-                                </div>
-                              )}
-                          </>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
           );
 
         case "piscinas":
