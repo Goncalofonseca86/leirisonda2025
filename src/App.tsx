@@ -1764,88 +1764,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
               </div>
             </div>
           );
-                                <span
-                                  className={`inline-block px-2 py-1 text-xs rounded-full mt-2 ${
-                                    work.status === "Nova"
-                                      ? "bg-blue-100 text-blue-800"
-                                      : "bg-gray-100 text-gray-800"
-                                  }`}
-                                >
-                                  {work.status}
-                                </span>
-                              </div>
-                            </div>
-                            <div className="flex space-x-2">
-                              <button
-                                onClick={() => {
-                                  const updatedWorks = assignedWorks.map((w) =>
-                                    w.id === work.id
-                                      ? { ...w, status: "Em Progresso" }
-                                      : w,
-                                  );
-                                  setAssignedWorks(updatedWorks);
-                                }}
-                                className="px-3 py-1 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700"
-                              >
-                                Iniciar
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
 
-                {/* Próximas Manutenções */}
-                <div className="bg-white rounded-lg shadow-sm">
-                  <div className="flex items-center p-4 border-b border-gray-100">
-                    <button
-                      onClick={() => navigateToSection("futuras-manutencoes")}
-                      className="p-1 mr-3 hover:bg-gray-100 rounded"
-                    >
-                      <span className="text-gray-600 text-lg">→</span>
-                    </button>
-                    <h2 className="text-lg font-semibold text-gray-900">
-                      Próximas Manutenções
-                    </h2>
-                  </div>
-
-                  <div className="p-4 space-y-3">
-                    {futureMaintenance.length === 0 ? (
-                      <div className="text-center py-8">
-                        <div className="w-12 h-12 bg-cyan-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                          <Waves className="h-6 w-6 text-cyan-600" />
-                        </div>
-                        <p className="text-gray-500 text-sm font-medium">
-                          Nenhuma manutenção agendada
-                        </p>
-                        <p className="text-gray-400 text-xs mt-1">
-                          As futuras manutenções aparecerão aqui
-                        </p>
-                        <button
-                          onClick={() => navigateToSection("nova-manutencao")}
-                          className="mt-3 px-3 py-1 bg-cyan-600 text-white text-xs rounded-lg hover:bg-cyan-700"
-                        >
-                          Agendar Manutenção
-                        </button>
-                      </div>
-                    ) : (
-                      futureMaintenance
-                        .sort(
-                          (a, b) =>
-                            new Date(a.scheduledDate).getTime() -
-                            new Date(b.scheduledDate).getTime(),
-                        )
-                        .slice(0, 4)
-                        .map((maint) => {
-                          const scheduledDate = new Date(maint.scheduledDate);
-                          const today = new Date();
-                          const diffTime =
-                            scheduledDate.getTime() - today.getTime();
-                          const diffDays = Math.ceil(
-                            diffTime / (1000 * 60 * 60 * 24),
-                          );
 
                           let timeText = "";
                           if (diffDays === 0) {
@@ -5464,7 +5383,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                       <option>Todos os tipos</option>
                       <option>Particular</option>
                       <option>Empresa</option>
-                      <option>Condomínio</option>
+                      <option>Condom��nio</option>
                     </select>
                     <select className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
                       <option>Todos os estados</option>
