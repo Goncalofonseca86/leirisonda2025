@@ -848,7 +848,7 @@ Data: ${new Date().toLocaleDateString("pt-PT")}
 
 RESUMO:
 - Total de Manutenções: ${maintenance.length}
-- Futuras Manutenções: ${futureMaintenance.length}
+- Futuras Manutenç��es: ${futureMaintenance.length}
 
 MANUTENÇÕES REALIZADAS:
 ${maintenance
@@ -1800,6 +1800,258 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                     Todas as Obras
                   </button>
                 </div>
+
+                {/* Lista de Obras Atribuídas */}
+                {assignedWorks.length > 0 && (
+                  <div className="bg-white rounded-lg shadow-sm">
+                    <div className="flex items-center p-4 border-b border-gray-100">
+                      <Building2 className="h-5 w-5 text-purple-600 mr-3" />
+                      <h2 className="text-lg font-semibold text-gray-900">
+                        Minhas Obras Atribuídas
+                      </h2>
+                    </div>
+                    <div className="p-4 space-y-3">
+                      {assignedWorks.map((work) => (
+                        <div
+                          key={work.id}
+                          className="border-l-4 border-purple-500 bg-purple-50 rounded-r-lg p-4"
+                        >
+                          <div className="flex items-start justify-between">
+                            <div className="flex items-start space-x-3">
+                              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <Building2 className="h-5 w-5 text-purple-600" />
+                              </div>
+                              <div>
+                                <h3 className="font-semibold text-gray-900">
+                                  {work.title}
+                                </h3>
+                                <div className="flex items-center space-x-1 text-gray-600 text-sm">
+                                  <span>👤</span>
+                                  <span>
+                                    Atribuída a:{" "}
+                                    {work.assignedUsers &&
+                                    work.assignedUsers.length > 0
+                                      ? work.assignedUsers
+                                          .map((u) => u.name)
+                                          .join(", ")
+                                      : work.assignedTo || "Não atribuída"}
+                                  </span>
+                                </div>
+                                <div className="flex items-center space-x-1 text-gray-500 text-sm">
+                                  <span>📍</span>
+                                  <span>
+                                    Atribuída em:{" "}
+                                    {new Date(
+                                      work.dateAssigned,
+                                    ).toLocaleDateString("pt-PT")}
+                                  </span>
+                                </div>
+                                <span
+                                  className={`inline-block px-2 py-1 text-xs rounded-full mt-2 ${
+                                    work.status === "Nova"
+                                      ? "bg-blue-100 text-blue-800"
+                                      : "bg-gray-100 text-gray-800"
+                                  }`}
+                                >
+                                  {work.status}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="flex space-x-2">
+                              <button
+                                onClick={() => {
+                                  const updatedWorks = assignedWorks.map((w) =>
+                                    w.id === work.id
+                                      ? { ...w, status: "Em Progresso" }
+                                      : w,
+                                  );
+                                  setAssignedWorks(updatedWorks);
+                                }}
+                                className="px-3 py-1 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700"
+                              >
+                                Iniciar
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    {assignedWorks.some((work) => work.status === "Nova") && (
+                      <div className="p-4 pt-0">
+                        <div className="text-center">
+                          <button
+                            onClick={() => {
+                              const updatedWorks = assignedWorks.map((w) => ({
+                                ...w,
+                                status: "Em Progresso",
+                              }));
+                              setAssignedWorks(updatedWorks);
+
+                              showNotification(
+                                "✅ Todas as suas obras foram iniciadas!",
+                                "Sucesso",
+                                true,
+                              );
+                            }}
+                            className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium"
+                          >
+                            Iniciar Todas as Minhas Obras
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Statistics Section */}
+                <div className="bg-white rounded-lg shadow-sm p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    Estatísticas Gerais
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-4 bg-blue-50 rounded-lg">
+                      <div className="text-2xl font-bold text-blue-600">
+                        {pools.length}
+                      </div>
+                      <div className="text-sm text-blue-800">
+                        Piscinas Totais
+                      </div>
+                    </div>
+                    <div className="text-center p-4 bg-green-50 rounded-lg">
+                      <div className="text-2xl font-bold text-green-600">
+                        {works.length}
+                      </div>
+                      <div className="text-sm text-green-800">Obras Totais</div>
+                    </div>
+                    <div className="text-center p-4 bg-orange-50 rounded-lg">
+                      <div className="text-2xl font-bold text-orange-600">
+                        {maintenance.length}
+                      </div>
+                      <div className="text-sm text-orange-800">
+                        Manutenções Registadas
+                      </div>
+                    </div>
+                    <div className="text-center p-4 bg-purple-50 rounded-lg">
+                      <div className="text-2xl font-bold text-purple-600">
+                        {clients.length}
+                      </div>
+                      <div className="text-sm text-purple-800">
+                        Clientes Ativos
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Notification Settings - Only for authenticated users */}
+                {currentUser && (
+                  <div className="bg-white rounded-lg shadow-sm p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          Notificações Push
+                        </h3>
+                        <p className="text-gray-600 text-sm">
+                          Ativar para receber alertas de novas atribuições
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <div
+                          className={`text-sm font-medium ${
+                            pushPermission === "granted"
+                              ? "text-green-600"
+                              : "text-gray-500"
+                          }`}
+                        >
+                          {pushPermission === "granted"
+                            ? "Ativadas"
+                            : pushPermission === "denied"
+                              ? "Bloqueadas"
+                              : "Desativadas"}
+                        </div>
+                        <div className="text-xs text-gray-400">
+                          {pushPermission}
+                        </div>
+                      </div>
+                    </div>
+
+                    {pushPermission !== "granted" && (
+                      <button
+                        onClick={requestNotificationPermission}
+                        className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors mb-3"
+                      >
+                        <Bell className="h-4 w-4 inline mr-2" />
+                        Ativar Notificações Push
+                      </button>
+                    )}
+
+                    {pushPermission === "granted" && (
+                      <div className="space-y-3">
+                        <button
+                          onClick={() => {
+                            sendWorkAssignmentNotification(
+                              "Teste de Notificação",
+                              currentUser.name,
+                            );
+                          }}
+                          className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                        >
+                          <Bell className="h-4 w-4 inline mr-2" />
+                          Testar Notificação
+                        </button>
+                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <span className="text-sm font-medium text-gray-700">
+                            Receber notificações
+                          </span>
+                          <button
+                            onClick={() =>
+                              setNotificationsEnabled(!notificationsEnabled)
+                            }
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                              notificationsEnabled
+                                ? "bg-blue-600"
+                                : "bg-gray-200"
+                            }`}
+                          >
+                            <span
+                              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                                notificationsEnabled
+                                  ? "translate-x-6"
+                                  : "translate-x-1"
+                              }`}
+                            />
+                          </button>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-xs text-gray-500">
+                            ✅ Notificações ativadas e funcionais
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {pushPermission === "denied" && (
+                      <div className="p-4 bg-red-50 rounded-lg">
+                        <p className="text-red-800 text-sm font-medium mb-2">
+                          ❌ Notificações Bloqueadas
+                        </p>
+                        <p className="text-red-700 text-xs">
+                          As notificações foram bloqueadas. Para ativar:
+                        </p>
+                        <ol className="text-red-700 text-xs mt-2 space-y-1 ml-4">
+                          <li>1. Clique no ícone do cadeado na barra de URL</li>
+                          <li>2. Altere "Notificações" para "Permitir"</li>
+                          <li>3. Recarregue a página</li>
+                        </ol>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* App Installation Prompt */}
+                <InstallPrompt />
+
+                {/* Sync Status */}
+                <SyncStatusDisplay />
               </div>
             </div>
           );
