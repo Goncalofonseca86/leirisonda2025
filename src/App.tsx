@@ -194,29 +194,27 @@ function App() {
   const [showAdminLogin, setShowAdminLogin] = useState(false);
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
 
-  // Data sync hook - manages all data with optional Firebase sync
-  const dataSync = useDataSync();
-  const {
-    pools,
-    maintenance,
-    futureMaintenance,
-    works,
-    clients,
-    isLoading: syncLoading,
-    lastSync,
-    error: syncError,
-    syncWithFirebase,
-    enableSync,
-    addPool,
-    addWork,
-    addMaintenance,
-    addClient,
-  } = dataSync;
+  // Data sync hook - TEMPORARILY DISABLED TO DEBUG LOAD ISSUE
+  // const dataSync = useDataSync();
 
-  // Data cleanup hook
-  const {
-    cleanAllData,
-    isLoading: cleanupLoading,
+  // Mock data for basic functionality
+  const [pools] = useState([]);
+  const [maintenance] = useState([]);
+  const [futureMaintenance] = useState([]);
+  const [works] = useState([]);
+  const [clients] = useState([]);
+  const syncLoading = false;
+  const lastSync = null;
+  const syncError = null;
+  const syncWithFirebase = () => {};
+  const enableSync = () => {};
+  const addPool = () => {};
+  const addWork = () => {};
+  const addMaintenance = () => {};
+  const addClient = () => {};
+
+  // Data cleanup hook - TEMPORARILY DISABLED
+  const cleanupLoading = false;
     error: cleanupError,
   } = useDataCleanup();
 
@@ -941,7 +939,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
   )
   .join("")}
 
-���� ${new Date().getFullYear()} Leirisonda - Sistema de Gestão
+������ ${new Date().getFullYear()} Leirisonda - Sistema de Gestão
     `;
     downloadPDF(
       content,
