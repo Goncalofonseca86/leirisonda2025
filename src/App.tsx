@@ -1771,7 +1771,10 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                   </button>
 
                   {/* Folhas por Fazer */}
-                  <div className="bg-white rounded-2xl shadow-sm border-l-4 border-red-500">
+                  <button
+                    onClick={() => navigateToSection("obras")}
+                    className="w-full bg-white rounded-2xl shadow-sm border-l-4 border-red-500 hover:bg-gray-50 transition-colors"
+                  >
                     <div className="p-6 flex items-center justify-between">
                       <div className="flex items-center space-x-4">
                         <div className="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center">
@@ -1782,7 +1785,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                             <div className="absolute top-3 left-1 w-1 h-0.5 bg-red-500 rounded"></div>
                           </div>
                         </div>
-                        <div>
+                        <div className="text-left">
                           <h3 className="text-lg font-medium text-gray-900">
                             Folhas por Fazer
                           </h3>
@@ -1797,7 +1800,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                         }
                       </div>
                     </div>
-                  </div>
+                  </button>
                 </div>
 
                 {/* Bottom Section */}
