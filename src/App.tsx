@@ -364,11 +364,12 @@ function App() {
   // Hash routing handled by window.hashchange event listener instead
 
   // Notify Alexandre about assigned works when he logs in - DISABLED to prevent loops
-  // useEffect(() => {
-  //   if (
-  //     currentUser?.name.toLowerCase().includes("alexandre") &&
-  //     works.length > 0
-  //   ) {
+  /*
+  useEffect(() => {
+    if (
+      currentUser?.name.toLowerCase().includes("alexandre") &&
+      works.length > 0
+    ) {
       console.log("🔍 DEBUG Alexandre - Data loaded:", {
         currentUser: currentUser.name,
         worksCount: works.length,
@@ -421,6 +422,7 @@ function App() {
       }
     }
   }, [currentUser, works, notificationsEnabled]);
+  */
 
   // Login form state
   const [loginForm, setLoginForm] = useState({
