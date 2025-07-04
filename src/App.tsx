@@ -1764,14 +1764,6 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
               </div>
             </div>
           );
-
-                {/* Lista de Obras Atribuídas */}
-                {assignedWorks.length > 0 && (
-                  <div className="bg-white rounded-lg shadow-sm">
-                    <div className="flex items-center p-4 border-b border-gray-100">
-                      <Building2 className="h-5 w-5 text-purple-600 mr-3" />
-                      <h2 className="text-lg font-semibold text-gray-900">
-                        Minhas Obras Atribuídas
                       </h2>
                     </div>
                     <div className="p-4 space-y-3">
