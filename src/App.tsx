@@ -330,7 +330,7 @@ function App() {
     // DO NOT initialize default admin automatically - this was causing the security issue
     // Users must always login manually for security
     console.log(
-      "��� SECURITY: No automatic admin initialization - manual login required",
+      "���� SECURITY: No automatic admin initialization - manual login required",
     );
 
     // Return empty cleanup function since unsubscribe is handled inside the promise
@@ -1746,7 +1746,10 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                   </button>
 
                   {/* Concluídas */}
-                  <div className="bg-white rounded-2xl shadow-sm border-l-4 border-green-500">
+                  <button
+                    onClick={() => navigateToSection("obras")}
+                    className="w-full bg-white rounded-2xl shadow-sm border-l-4 border-green-500 hover:bg-gray-50 transition-colors"
+                  >
                     <div className="p-6 flex items-center justify-between">
                       <div className="flex items-center space-x-4">
                         <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center">
@@ -1754,7 +1757,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                             <div className="w-3 h-2 border-l-2 border-b-2 border-green-500 transform rotate-[-45deg] translate-y-[-1px]"></div>
                           </div>
                         </div>
-                        <div>
+                        <div className="text-left">
                           <h3 className="text-lg font-medium text-gray-900">
                             Concluídas
                           </h3>
@@ -1765,7 +1768,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                         {works.filter((w) => w.status === "completed").length}
                       </div>
                     </div>
-                  </div>
+                  </button>
 
                   {/* Folhas por Fazer */}
                   <div className="bg-white rounded-2xl shadow-sm border-l-4 border-red-500">
