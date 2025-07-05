@@ -484,7 +484,7 @@ function App() {
         setTimeout(() => {
           showNotification(
             "Obras Atribuídas",
-            `Olá Alexandre! Tens ${alexandreWorks.length} obra${alexandreWorks.length > 1 ? "s" : ""} atribu��da${alexandreWorks.length > 1 ? "s" : ""}.`,
+            `Olá Alexandre! Tens ${alexandreWorks.length} obra${alexandreWorks.length > 1 ? "s" : ""} atribu���da${alexandreWorks.length > 1 ? "s" : ""}.`,
             "work",
           );
         }, 2000); // Delay to ensure notification system is ready
@@ -1008,7 +1008,7 @@ ${maintenance
   .map(
     (maint, index) => `
 ${index + 1}. ${maint.poolName} - ${maint.type}
-   Data: ${new Date(maint.scheduledDate).toLocaleDateString("pt-PT")} | Técnico: ${maint.technician}
+   Data: ${maint.scheduledDate ? new Date(maint.scheduledDate).toLocaleDateString("pt-PT") : "N/A"} | Técnico: ${maint.technician}
 `,
   )
   .join("")}
