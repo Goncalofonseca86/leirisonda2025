@@ -216,10 +216,10 @@ function App() {
   const cleanupLoading = false;
   const cleanupError = null;
 
-  // Auto-sync hook for automatic Firebase �� localStorage synchronization
-  const autoSyncData = useAutoSync();
-  const { syncStatus, isAutoSyncing } = autoSyncData;
-  const autoSyncLastSync = autoSyncData.lastSync;
+  // Auto-sync hook - static implementation for stability
+  const syncStatus = "idle";
+  const isAutoSyncing = false;
+  const autoSyncLastSync = null;
 
   // Keep local users state for user management
   const [users, setUsers] = useState(initialUsers);
@@ -3052,7 +3052,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                 ).toLocaleDateString("pt-PT")}
                               </span>
                               <span className="text-gray-500">
-                                👨���🔧 {maint.technician}
+                                👨‍🔧 {maint.technician}
                               </span>
                             </div>
                           </div>
