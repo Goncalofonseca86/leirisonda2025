@@ -122,7 +122,7 @@ function App() {
 
   // Debug logging for authentication state changes
   useEffect(() => {
-    console.log("���� Auth State Debug:", {
+    console.log("����� Auth State Debug:", {
       isAuthenticated,
       currentUser: currentUser
         ? `${currentUser?.name} (${currentUser?.email})`
@@ -371,7 +371,7 @@ function App() {
         console.log("⏳ Notifications permission not yet requested");
       }
     } else {
-      console.warn("����� Notifications not supported in this browser");
+      console.warn("������ Notifications not supported in this browser");
     }
 
     // Register service worker for better push notification support
@@ -489,7 +489,9 @@ function App() {
           );
         }, 2000); // Delay to ensure notification system is ready
       } else if (alexandreWorks.length > 0) {
-        console.log("ℹ️ Alexandre has works but notifications are not enabled");
+        console.log(
+          "ℹ�� Alexandre has works but notifications are not enabled",
+        );
       }
     }
   }, [currentUser, works, notificationsEnabled]);
@@ -2467,13 +2469,13 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                             {works.filter(
                               (work) =>
                                 work.title
-                                  .toLowerCase()
+                                  ?.toLowerCase()
                                   .includes(globalSearchTerm.toLowerCase()) ||
                                 work.client
-                                  .toLowerCase()
+                                  ?.toLowerCase()
                                   .includes(globalSearchTerm.toLowerCase()) ||
                                 work.location
-                                  .toLowerCase()
+                                  ?.toLowerCase()
                                   .includes(globalSearchTerm.toLowerCase()) ||
                                 (work.assignedUsers &&
                                 work.assignedUsers.length > 0
@@ -2861,7 +2863,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                 ).toLocaleDateString("pt-PT")}
                               </div>
                               <div>
-                                <span className="font-medium">Técnico:</span>{" "}
+                                <span className="font-medium">T��cnico:</span>{" "}
                                 {maint.technician}
                               </div>
                               {maint.clientName && (
