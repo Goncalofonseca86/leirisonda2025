@@ -306,7 +306,7 @@ function App() {
       try {
         const user = JSON.parse(storedUser);
         console.log(
-          "����� App init: Restoring user from localStorage:",
+          "🔒�� App init: Restoring user from localStorage:",
           user.email,
         );
         setCurrentUser(user);
@@ -330,7 +330,7 @@ function App() {
     setCurrentUser(null);
 
     // Firebase auth disabled to prevent crashes
-    console.log("��� SECURITY: Firebase auth listeners disabled for stability");
+    console.log("🔒 SECURITY: Firebase auth listeners disabled for stability");
     // Firebase auth code removed to fix syntax errors
 
     // DO NOT initialize default admin automatically - this was causing the security issue
@@ -384,7 +384,7 @@ function App() {
         console.log("⏳ Notifications permission not yet requested");
       }
     } else {
-      console.warn("��� Notifications not supported in this browser");
+      console.warn("🔒 Notifications not supported in this browser");
     }
 
     // Register service worker for better push notification support
@@ -753,7 +753,7 @@ function App() {
             setActiveSection(hash);
           } else {
             // Default to dashboard when no hash is present
-            console.log("��� Navigating to dashboard");
+            console.log("🔒 Navigating to dashboard");
             navigateToSection("dashboard");
           }
         }, 100);
@@ -786,7 +786,7 @@ function App() {
       // Perform actual logout
       await authService.logout();
 
-      console.log("��� Logout completed successfully");
+      console.log("🔒 Logout completed successfully");
     } catch (error) {
       console.error("❌ Error during logout:", error);
 
@@ -928,12 +928,12 @@ ${works
     (work, index) => `
 ${index + 1}. ${work.title}
    Cliente: ${work.client}
-   Localizaç������o: ${work.location}
+   Localizaç🔒🔒o: ${work.location}
    Tipo: ${work.type}
    Estado: ${work.status === "completed" ? "Concluída" : work.status === "pending" ? "Pendente" : "Em Progresso"}
    Data Início: ${new Date(work.startDate).toLocaleDateString("pt-PT")}
    ${work.endDate ? `Data Fim: ${new Date(work.endDate).toLocaleDateString("pt-PT")}` : ""}
-   ${work.budget ? `Or���amento: ��${work.budget.toLocaleString("pt-PT")}` : ""}
+   ${work.budget ? `Or🔒amento: ��${work.budget.toLocaleString("pt-PT")}` : ""}
    ${work.actualCost ? `Custo Real: €${work.actualCost.toLocaleString("pt-PT")}` : ""}
    Responsável: ${work.assignedTo}
    Descrição: ${work.description}
@@ -1026,7 +1026,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
   )
   .join("")}
 
-���� ${new Date().getFullYear()} Leirisonda - Sistema de Gestão
+🔒� ${new Date().getFullYear()} Leirisonda - Sistema de Gestão
     `;
     downloadPDF(
       content,
@@ -1154,7 +1154,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
         // Show alert as fallback for better user experience
         setTimeout(() => {
           alert(
-            `🔔 Nova Obra Atribuída!\n\n��� ${workTitle}\n\n👤 Atribu����da a: ${assignedTo}\n\n💡 Ative as notificações nas configurações para receber alertas automáticos.`,
+            `🔔 Nova Obra Atribuída!\n\n🔒 ${workTitle}\n\n👤 Atribu🔒�da a: ${assignedTo}\n\n💡 Ative as notificações nas configurações para receber alertas automáticos.`,
           );
         }, 1000);
       }
@@ -1167,7 +1167,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
     }
 
     // Console log for debugging purposes (admin view)
-    console.log(`����️ OBRA ATRIBUÍDA: "${workTitle}" → ${assignedTo}`);
+    console.log(`🔒�️ OBRA ATRIBUÍDA: "${workTitle}" → ${assignedTo}`);
     console.log(`📋 Total de obras atribuídas: ${assignedWorks.length + 1}`);
   };
 
@@ -1180,7 +1180,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
       );
     } else {
       alert(
-        "As notificaç����es não est�����o ativadas. Active-as primeiro nas configurações.",
+        "As notificaç🔒�es não est🔒��o ativadas. Active-as primeiro nas configurações.",
       );
     }
   };
@@ -1447,7 +1447,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
           }
         } catch (syncError) {
           console.log(
-            `����� Utilizador ${userForm.name} criado localmente. Erro de sincronizaç��o:`,
+            `🔒�� Utilizador ${userForm.name} criado localmente. Erro de sincronizaç��o:`,
             syncError,
           );
         }
@@ -1715,7 +1715,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                             }}
                             className="px-3 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600"
                           >
-                            Testar Notifica����o
+                            Testar Notifica🔒�o
                           </button>
                         </div>
                       )}
@@ -2456,7 +2456,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                             {client.name}
                                           </p>
                                           <p className="text-sm text-gray-600">
-                                            {client.email} ��� {client.phone}
+                                            {client.email} 🔒 {client.phone}
                                           </p>
                                         </div>
                                       </div>
@@ -2536,7 +2536,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                     .includes(globalSearchTerm.toLowerCase()),
                               ).length === 0 && (
                                 <div className="text-center py-8">
-                                  <div className="text-gray-400 mb-2">���</div>
+                                  <div className="text-gray-400 mb-2">🔒</div>
                                   <p className="text-gray-500 text-sm">
                                     Nenhum resultado encontrado para "
                                     {globalSearchTerm}"
@@ -2883,7 +2883,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                         }`}
                                         disabled={!enablePhoneDialer}
                                       >
-                                        ��� {maint.clientContact}
+                                        🔒 {maint.clientContact}
                                       </button>
                                     </div>
                                   )}
@@ -4006,7 +4006,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           alert(
                             `Obra "${workTitle}" criada com sucesso! ` +
                               (assignedUsers.length > 0
-                                ? `Notificações enviadas a ${assignedUsers.length} respons����vel(eis).`
+                                ? `Notificações enviadas a ${assignedUsers.length} respons🔒�vel(eis).`
                                 : "") +
                               (selectedWorkType === "furo"
                                 ? " Dados do furo registados."
@@ -5338,12 +5338,12 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                     <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                       <div className="flex items-start space-x-3">
                         <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                          ���️
+                          🔒️
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center justify-between mb-2">
                             <h4 className="font-medium text-green-900">
-                              Navega���ão Maps
+                              Navega🔒ão Maps
                             </h4>
                             <button
                               onClick={() =>
@@ -5443,7 +5443,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                 • Todas as piscinas ({pools.length} registos)
                               </li>
                               <li>
-                                ��� Dados do Firebase e armazenamento local
+                                🔒 Dados do Firebase e armazenamento local
                               </li>
                             </ul>
                             <p className="text-red-700 text-sm font-medium mb-3">
@@ -5665,7 +5665,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                         <li>• Resumo executivo</li>
                         <li>• Estatísticas gerais</li>
                         <li>• Dados consolidados</li>
-                        <li>��� An��lise de performance</li>
+                        <li>🔒 An��lise de performance</li>
                       </ul>
                     </div>
                     <button
@@ -6463,7 +6463,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                   <span className="font-medium">
                                     Orçamento:
                                   </span>{" "}
-                                  ����{work.budget}
+                                  🔒�{work.budget}
                                 </div>
                               )}
                             </div>
