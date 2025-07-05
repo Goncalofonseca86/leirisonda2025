@@ -463,7 +463,7 @@ function App() {
         (work) =>
           work &&
           work.assignedTo &&
-          (work.assignedTo.toLowerCase().includes("alexandre") ||
+          (work.assignedTo?.toLowerCase().includes("alexandre") ||
             work.assignedUsers?.some(
               (user) =>
                 user.name && user.name.toLowerCase().includes("alexandre"),
@@ -6668,7 +6668,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                             <option value="">
                               {users.length > 0
                                 ? "Selecionar usu��rio..."
-                                : "Nenhum utilizador disponível"}
+                                : "Nenhum utilizador dispon��vel"}
                             </option>
                             {users
                               .filter((user) => {
