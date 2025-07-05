@@ -5176,7 +5176,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                   </div>
                   <p className="text-gray-600 mb-6">
                     Ative as notificaç���es para receber alertas sobre novas
-                    obras atribuídas e atualizações importantes.
+                    obras atribuídas e atualiza��ões importantes.
                   </p>
 
                   <div className="space-y-4">
@@ -6638,7 +6638,11 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                         </label>
                         <input
                           type="date"
-                          defaultValue={editingWork?.startDate?.split("T")[0]}
+                          defaultValue={
+                            editingWork?.startDate
+                              ? editingWork.startDate.split("T")[0]
+                              : ""
+                          }
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
