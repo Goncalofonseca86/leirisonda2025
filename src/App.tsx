@@ -444,7 +444,7 @@ function App() {
       works.length > 0
     ) {
       console.log("🔍 DEBUG Alexandre - Data loaded:", {
-        currentUser: currentUser.name,
+        currentUser: currentUser?.name,
         worksCount: works.length,
         works: works.map((w) => ({
           id: w.id,
@@ -1111,9 +1111,13 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
     const isAssignedToCurrentUser =
       currentUser &&
       assignedTo &&
-      (assignedTo === currentUser.name ||
-        assignedTo.toLowerCase().includes(currentUser.name.toLowerCase()) ||
-        currentUser.name.toLowerCase().includes(assignedTo.toLowerCase()));
+      (assignedTo === currentUser?.name ||
+        assignedTo
+          .toLowerCase()
+          .includes(currentUser?.name?.toLowerCase() || "") ||
+        (currentUser?.name?.toLowerCase() || "").includes(
+          assignedTo.toLowerCase(),
+        ));
 
     console.log("🔍 DEBUG: Assignment check:", {
       currentUser: currentUser?.name,
@@ -1277,7 +1281,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
       alert(`Relatório "${pdfFilename}" gerado com sucesso!`);
     } catch (error) {
       console.error("Erro ao gerar PDF:", error);
-      alert("Erro ao gerar o relatório PDF. Tente novamente.");
+      alert("Erro ao gerar o relat��rio PDF. Tente novamente.");
     }
   };
 
