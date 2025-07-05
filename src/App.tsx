@@ -950,7 +950,7 @@ ${index + 1}. ${client.name}
    Telefone: ${client.phone}
    Morada: ${client.address}
    Piscinas: ${client.pools.length} associadas
-   Data Registo: ${new Date(client.createdAt).toLocaleDateString("pt-PT")}
+   Data Registo: ${client.createdAt ? new Date(client.createdAt).toLocaleDateString("pt-PT") : "N/A"}
 `,
   )
   .join("\n")}
@@ -4247,7 +4247,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                     {/* Location */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Localização Completa *
+                        Localiza��ão Completa *
                       </label>
                       <input
                         type="text"
