@@ -871,7 +871,7 @@ ${index + 1}. ${pool.name}
 
   const generateMaintenancePDF = () => {
     const content = `
-LEIRISONDA - RELAT��RIO DE MANUTENÇÕES
+LEIRISONDA - RELAT���RIO DE MANUTENÇÕES
 Data: ${new Date().toLocaleDateString("pt-PT")}
 
 RESUMO:
@@ -2428,7 +2428,9 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                         .includes(
                                           globalSearchTerm.toLowerCase(),
                                         ) ||
-                                      client.phone.includes(globalSearchTerm) ||
+                                      client.phone?.includes(
+                                        globalSearchTerm,
+                                      ) ||
                                       client.address
                                         .toLowerCase()
                                         .includes(
@@ -7786,7 +7788,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                 Área Protegida
               </h1>
               <p className="text-gray-600">
-                Insira a palavra-passe para aceder às configurações avançadas
+                Insira a palavra-passe para aceder ��s configurações avançadas
               </p>
             </div>
 
