@@ -88,14 +88,17 @@ function App() {
   // Simple static replacements for problematic hooks
   const isAutoSyncing = false;
   const autoSyncLastSync = null;
+  const syncStatus = "idle";
   const cleanAllData = () => Promise.resolve({ success: true });
 
   // Basic states
   const [users, setUsers] = useState(initialUsers);
   const [clients, setClients] = useState([]);
   const [pools, setPools] = useState([]);
-  const [works, setWorks] = useState([]);
   const [maintenance, setMaintenance] = useState([]);
+
+  // Use works from the hook instead of local state
+  const works = syncedWorks;
 
   // App states
   const [globalSearchTerm, setGlobalSearchTerm] = useState("");
