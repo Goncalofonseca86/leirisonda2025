@@ -216,10 +216,10 @@ function App() {
   const cleanupLoading = false;
   const cleanupError = null;
 
-  // Auto-sync hook for automatic Firebase �� localStorage synchronization
-  const autoSyncData = useAutoSync();
-  const { syncStatus, isAutoSyncing } = autoSyncData;
-  const autoSyncLastSync = autoSyncData.lastSync;
+  // Auto-sync hook - static implementation for stability
+  const syncStatus = "idle";
+  const isAutoSyncing = false;
+  const autoSyncLastSync = null;
 
   // Keep local users state for user management
   const [users, setUsers] = useState(initialUsers);
@@ -1840,7 +1840,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                               // Simple debug logging for assigned works
                               if (assignedWorks.length > 0) {
                                 console.log(
-                                  `✅ ${assignedWorks.length} obra(s) atribuída(s) a ${currentUser.name}`,
+                                  `�� ${assignedWorks.length} obra(s) atribuída(s) a ${currentUser.name}`,
                                 );
                               }
 
@@ -3225,7 +3225,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                               placeholder="Deixe vazio se ainda não terminou"
                             />
                             <p className="text-xs text-gray-500 mt-1">
-                              Deixe vazio se ainda não terminou
+                              Deixe vazio se ainda n��o terminou
                             </p>
                           </div>
                         </div>
