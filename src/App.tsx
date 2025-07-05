@@ -43,7 +43,8 @@ import { authService, UserProfile } from "./services/authService";
 // Mock users database
 const initialUsers = [
   {
-    id: 1,
+    uid: "goncalo-main-user",
+        id: 1,
     name: "Gonçalo Fonseca",
     email: "gongonsilva@gmail.com",
     password: "19867gsf",
@@ -7679,6 +7680,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
   useEffect(() => {
     if (!currentUser) {
       const testUser = {
+        uid: "goncalo-main-user",
         id: 1,
         name: "Gonçalo Fonseca",
         email: "gongonsilva@gmail.com",
