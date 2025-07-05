@@ -132,35 +132,126 @@ const initialUsers = [
 ];
 
 function App() {
-  const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
+  // SECURITY: Always start as not authenticated - NUNCA mudar para true
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
 
-  // Auto-login setup para desenvolvimento
+  // Debug logging for authentication state changes
   useEffect(() => {
-    console.log("🔒 SECURITY: Auto-login initializing");
-    const mainUser = {
-      uid: "goncalo-main-user", // Propriedade uid obrigatória
-      id: 1,
-      name: "Gonçalo Fonseca",
-      email: "gongonsilva@gmail.com",
-      role: "super_admin" as const,
-      permissions: {
-        obras: { view: true, create: true, edit: true, delete: true },
-        manutencoes: { view: true, create: true, edit: true, delete: true },
-        piscinas: { view: true, create: true, edit: true, delete: true },
-        relatorios: { view: true, create: true, edit: true, delete: true },
-        utilizadores: { view: true, create: true, edit: true, delete: true },
-        admin: { view: true, create: true, edit: true, delete: true },
-        dashboard: { view: true },
-        clientes: { view: true, create: true, edit: true, delete: true },
-      },
-      active: true,
-      createdAt: "2024-01-01",
+    console.log("🔐 Auth State Debug:", {
+      isAuthenticated,
+      currentUser: currentUser
+        ? `${currentUser.name} (${currentUser.email})`
+        : null,
+      timestamp: new Date().toISOString(),
+    });
+  }, [isAuthenticated, currentUser]);
+
+  // Monitoramento de integridade de dados
+  useEffect(() => {
+    // Cleanup ao desmontar componente
+    return () => {
+      // Cleanup functions if needed
     };
-    setCurrentUser(mainUser);
-    setIsAuthenticated(true);
-    console.log("✅ Auto-login completed for:", mainUser.name);
   }, []);
+
+  // Auto-login setup para desenvolvimento - REMOVIDO para segurança
+  useEffect(() => {
+    console.log("🔒 SECURITY: App initialization started");
+
+    // Try to restore user from localStorage first
+    const storedUser =
+      localStorage.getItem("currentUser") ||
+      localStorage.getItem("mock-current-user");
+
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser);
+        console.log(
+          "👤 App init: Restoring user from localStorage:",
+          user.email,
+          user.role,
+        );
+
+        // Validate user data structure
+        if (
+          user.id &&
+          user.name &&
+          user.email &&
+          user.role &&
+          user.permissions
+        ) {
+          // Validate user against mock database
+          const validUser = initialUsers.find(
+            (u) => u.email === user.email && u.id === user.id,
+          );
+
+          if (validUser && validUser.active) {
+            setCurrentUser(user);
+            setIsAuthenticated(true);
+            console.log(
+              "✅ SECURITY: User restored and validated from localStorage",
+            );
+          } else {
+            console.warn("⚠️ SECURITY: User not found in database or inactive");
+            localStorage.removeItem("currentUser");
+            localStorage.removeItem("mock-current-user");
+          }
+        } else {
+          console.warn("⚠️ SECURITY: Invalid user data structure");
+          localStorage.removeItem("currentUser");
+          localStorage.removeItem("mock-current-user");
+        }
+      } catch (error) {
+        console.error(
+          "❌ SECURITY: Error parsing user from localStorage:",
+          error,
+        );
+        localStorage.removeItem("currentUser");
+        localStorage.removeItem("mock-current-user");
+      }
+    }
+
+    // PWA Service Worker registration
+    if ("serviceWorker" in navigator) {
+      setTimeout(() => {
+        navigator.serviceWorker
+          .register("/sw.js")
+          .then((registration) => {
+            console.log(
+              "✅ Service Worker registered successfully:",
+              registration,
+            );
+            if (registration.waiting) {
+              registration.waiting.postMessage({ type: "SKIP_WAITING" });
+            }
+          })
+          .catch((error) => {
+            console.error("❌ Service Worker registration failed:", error);
+          });
+      }, 1000);
+    }
+
+    // Handle URL hash for PWA shortcuts
+    const handleHashChange = () => {
+      const hash = window.location.hash.substring(1); // Remove the '#'
+      if (hash && isAuthenticated) {
+        setActiveSection(hash);
+      }
+    };
+
+    // Check initial hash on load if authenticated
+    if (isAuthenticated) {
+      handleHashChange();
+    }
+
+    // Listen for hash changes
+    window.addEventListener("hashchange", handleHashChange);
+
+    return () => {
+      window.removeEventListener("hashchange", handleHashChange);
+    };
+  }, [isAuthenticated]);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("dashboard");
@@ -292,105 +383,6 @@ function App() {
     status: "completed",
   });
 
-  // Initialize authentication state with security checks
-  useEffect(() => {
-    console.log("�� SECURITY: App initialization started");
-
-    // Try to restore user from localStorage first
-    const storedUser =
-      localStorage.getItem("currentUser") ||
-      localStorage.getItem("mock-current-user");
-
-    if (storedUser) {
-      try {
-        const user = JSON.parse(storedUser);
-        console.log(
-          "👤 App init: Restoring user from localStorage:",
-          user.email,
-          user.role,
-        );
-
-        // Validate user data structure
-        if (
-          user.id &&
-          user.name &&
-          user.email &&
-          user.role &&
-          user.permissions
-        ) {
-          // Validate user against mock database
-          const validUser = initialUsers.find(
-            (u) => u.email === user.email && u.id === user.id,
-          );
-
-          if (validUser && validUser.active) {
-            setCurrentUser(user);
-            setIsAuthenticated(true);
-            console.log(
-              "✅ SECURITY: User restored and validated from localStorage",
-            );
-          } else {
-            console.warn("⚠️ SECURITY: User not found in database or inactive");
-            localStorage.removeItem("currentUser");
-            localStorage.removeItem("mock-current-user");
-          }
-        } else {
-          console.warn("⚠️ SECURITY: Invalid user data structure");
-          localStorage.removeItem("currentUser");
-          localStorage.removeItem("mock-current-user");
-        }
-      } catch (error) {
-        console.error(
-          "❌ SECURITY: Error parsing user from localStorage:",
-          error,
-        );
-        localStorage.removeItem("currentUser");
-        localStorage.removeItem("mock-current-user");
-      }
-    }
-
-    // PWA Service Worker registration
-    if ("serviceWorker" in navigator) {
-      setTimeout(() => {
-        navigator.serviceWorker
-          .register("/sw.js")
-          .then((registration) => {
-            console.log(
-              "✅ Service Worker registered successfully:",
-              registration,
-            );
-            if (registration.waiting) {
-              registration.waiting.postMessage({ type: "SKIP_WAITING" });
-            }
-          })
-          .catch((error) => {
-            console.error("❌ Service Worker registration failed:", error);
-          });
-      }, 1000);
-    }
-
-    // Handle URL hash for PWA shortcuts
-    const handleHashChange = () => {
-      const hash = window.location.hash.substring(1); // Remove the '#'
-      if (hash && isAuthenticated) {
-        setActiveSection(hash);
-      }
-    };
-
-    // Check initial hash on load if authenticated
-    if (isAuthenticated) {
-      handleHashChange();
-    }
-
-    // Listen for hash changes
-    window.addEventListener("hashchange", handleHashChange);
-
-    return () => {
-      window.removeEventListener("hashchange", handleHashChange);
-    };
-  }, [isAuthenticated]);
-
-  // Continue with rest of the app implementation...
   // Login form state
   const [loginForm, setLoginForm] = useState({
     email: "",
@@ -415,6 +407,133 @@ function App() {
     active: true,
   });
 
+  // Authentication functions
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError("");
+
+    // Validate input first
+    if (!loginForm.email || !loginForm.password) {
+      setLoginError("Por favor, preencha todos os campos");
+      return;
+    }
+
+    try {
+      console.log("🔐 Attempting login for:", loginForm.email);
+      console.log("🔐 Email:", loginForm.email);
+      console.log("🔐 Password length:", loginForm.password?.length || 0);
+
+      const result = await authService.login(
+        loginForm.email,
+        loginForm.password,
+      );
+
+      console.log("🔐 Auth result:", result);
+
+      if (result.success && result.user) {
+        console.log("✅ Login successful for:", result.user.email);
+
+        // Clear any previous auth state
+        setLoginError("");
+
+        // Set user state and authentication
+        setCurrentUser(result.user);
+        setIsAuthenticated(true);
+        localStorage.setItem("currentUser", JSON.stringify(result.user));
+
+        // Clear login form
+        setLoginForm({ email: "", password: "" });
+
+        console.log("✅ Login state updated", {
+          user: result.user.email,
+          role: result.user.role,
+          isAuthenticated: true,
+        });
+
+        // Use setTimeout to ensure state is set before navigation
+        setTimeout(() => {
+          // Handle any pending hash navigation after login
+          const hash = window.location.hash.substring(1);
+          if (hash && hash !== "login") {
+            console.log("🔄 Navigating to hash section:", hash);
+            setActiveSection(hash);
+          } else {
+            // Default to dashboard when no hash is present
+            console.log("🏠 Navigating to dashboard");
+            navigateToSection("dashboard");
+          }
+        }, 100);
+      } else {
+        console.warn("⚠️ Login failed:", result.error);
+        setLoginError(result.error || "Credenciais inválidas");
+      }
+    } catch (error) {
+      console.error("❌ Login error:", error);
+      setLoginError("Erro de sistema. Por favor, tente novamente.");
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      console.log("🚪 Initiating logout process...");
+
+      // Close sidebar immediately
+      setSidebarOpen(false);
+
+      // Clear current user state immediately for better UX
+      setCurrentUser(null);
+      setIsAuthenticated(false);
+      localStorage.removeItem("currentUser");
+
+      // Clear form and navigate to dashboard
+      setLoginForm({ email: "", password: "" });
+      navigateToSection("dashboard");
+
+      // Perform actual logout
+      await authService.logout();
+
+      console.log("✅ Logout completed successfully");
+    } catch (error) {
+      console.error("❌ Error during logout:", error);
+
+      // Force clear state even if logout service fails
+      setSidebarOpen(false);
+      setCurrentUser(null);
+      setIsAuthenticated(false);
+      localStorage.removeItem("currentUser");
+      setLoginForm({ email: "", password: "" });
+      navigateToSection("dashboard");
+
+      console.log("🔧 Forced logout state clear completed");
+    }
+  };
+
+  // Settings functions
+  const handleSettingsPasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (settingsPassword === "19867") {
+      setShowSettingsPasswordModal(false);
+      setShowSettingsPage(true);
+      setSettingsPassword("");
+      setSettingsPasswordError("");
+    } else {
+      setSettingsPasswordError("Palavra-passe incorreta");
+    }
+  };
+
+  const closeSettings = () => {
+    setShowSettingsPage(false);
+    setShowSettingsPasswordModal(false);
+    setSettingsPassword("");
+    setSettingsPasswordError("");
+  };
+
+  // Permission check function
+  const hasPermission = (module: string, action: string): boolean => {
+    if (!currentUser || !currentUser.permissions) return false;
+    return currentUser.permissions[module]?.[action] || false;
+  };
+
   // Se não estiver autenticado, mostrar tela de login
   if (!isAuthenticated) {
     return (
@@ -426,12 +545,7 @@ function App() {
             <p className="text-gray-600">Sistema de Gestão</p>
           </div>
 
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              // Logic for login will be implemented here
-            }}
-          >
+          <form onSubmit={handleLogin}>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -516,12 +630,7 @@ function App() {
               </div>
 
               <button
-                onClick={() => {
-                  setCurrentUser(null);
-                  setIsAuthenticated(false);
-                  localStorage.removeItem("currentUser");
-                  localStorage.removeItem("mock-current-user");
-                }}
+                onClick={handleLogout}
                 className="text-gray-500 hover:text-gray-700"
                 title="Sair"
               >
@@ -559,10 +668,10 @@ function App() {
                   { id: "utilizadores", label: "Utilizadores", icon: Users },
                 ].map((item) => {
                   const Icon = item.icon;
-                  const hasPermission =
-                    currentUser?.permissions?.[item.id]?.view !== false;
+                  const hasViewPermission =
+                    hasPermission(item.id, "view") || item.id === "dashboard";
 
-                  if (!hasPermission && item.id !== "dashboard") return null;
+                  if (!hasViewPermission) return null;
 
                   return (
                     <button
@@ -703,7 +812,57 @@ function App() {
         />
       )}
 
-      {/* Modals e componentes adicionais serão implementados aqui */}
+      {/* Settings Password Modal */}
+      {showSettingsPasswordModal && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div className="mt-3">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Acesso às Configurações
+              </h3>
+              <form onSubmit={handleSettingsPasswordSubmit}>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Palavra-passe de Administrador
+                  </label>
+                  <input
+                    type="password"
+                    value={settingsPassword}
+                    onChange={(e) => setSettingsPassword(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Digite a palavra-passe"
+                    required
+                  />
+                </div>
+                {settingsPasswordError && (
+                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <p className="text-sm text-red-600">
+                      {settingsPasswordError}
+                    </p>
+                  </div>
+                )}
+                <div className="flex justify-end space-x-2">
+                  <button
+                    type="button"
+                    onClick={closeSettings}
+                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  >
+                    Acessar
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modais e componentes adicionais serão implementados aqui */}
       <InstallPrompt />
     </div>
   );
