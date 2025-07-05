@@ -4206,7 +4206,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           <button
                             type="button"
                             onClick={() => {
-                              if (newClientForm.name.trim()) {
+                              if (newClientForm.name?.trim()) {
                                 // Add client to the system
                                 const newClient = {
                                   name: newClientForm.name,
