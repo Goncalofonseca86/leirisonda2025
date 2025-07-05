@@ -234,10 +234,10 @@ function App() {
   const cleanupLoading = false;
   const cleanupError = null;
 
-  // Auto-sync hook - temporarily disabled to debug hooks issue
-  const syncStatus = "completed";
-  const isAutoSyncing = false;
-  const autoSyncLastSync = new Date();
+  // Auto-sync hook for automatic Firebase ↔ localStorage synchronization
+  const autoSyncData = useAutoSync();
+  const { syncStatus, isAutoSyncing } = autoSyncData;
+  const autoSyncLastSync = autoSyncData.lastSync;
 
   // Keep local users state for user management
   const [users, setUsers] = useState(initialUsers);
@@ -1607,7 +1607,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
   const renderContent = () => {
     // Add loading state check with timeout
     if (!currentUser || !isAuthenticated) {
-      console.log("���� renderContent: Waiting for auth state", {
+      console.log("🔄 renderContent: Waiting for auth state", {
         currentUser: !!currentUser,
         isAuthenticated,
         activeSection,
