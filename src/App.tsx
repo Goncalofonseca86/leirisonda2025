@@ -922,7 +922,7 @@ ${index + 1}. ${work.title}
    Estado: ${work.status === "completed" ? "Concluída" : work.status === "pending" ? "Pendente" : "Em Progresso"}
    Data Início: ${work.startDate ? new Date(work.startDate).toLocaleDateString("pt-PT") : "N/A"}
    ${work.endDate ? `Data Fim: ${new Date(work.endDate).toLocaleDateString("pt-PT")}` : ""}
-   ${work.budget ? `Or���amento: ��${work.budget.toLocaleString("pt-PT")}` : ""}
+   ${work.budget ? `Or���amento: ����${work.budget.toLocaleString("pt-PT")}` : ""}
    ${work.actualCost ? `Custo Real: €${work.actualCost.toLocaleString("pt-PT")}` : ""}
    Responsável: ${work.assignedTo}
    Descri��ão: ${work.description}
@@ -1440,7 +1440,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
           }
         } catch (syncError) {
           console.log(
-            `����� Utilizador ${userForm.name} criado localmente. Erro de sincronizaç��o:`,
+            `������� Utilizador ${userForm.name} criado localmente. Erro de sincronizaç��o:`,
             syncError,
           );
         }
@@ -2289,17 +2289,17 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                   .filter(
                                     (pool) =>
                                       pool.name
-                                        .toLowerCase()
+                                        ?.toLowerCase()
                                         .includes(
                                           globalSearchTerm.toLowerCase(),
                                         ) ||
                                       pool.client
-                                        .toLowerCase()
+                                        ?.toLowerCase()
                                         .includes(
                                           globalSearchTerm.toLowerCase(),
                                         ) ||
                                       pool.location
-                                        .toLowerCase()
+                                        ?.toLowerCase()
                                         .includes(
                                           globalSearchTerm.toLowerCase(),
                                         ),
