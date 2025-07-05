@@ -369,7 +369,7 @@ function App() {
         console.log("⏳ Notifications permission not yet requested");
       }
     } else {
-      console.warn("��� Notifications not supported in this browser");
+      console.warn("���� Notifications not supported in this browser");
     }
 
     // Register service worker for better push notification support
@@ -7994,3 +7994,17 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                       ? "bg-red-50 text-red-700 border-l-4 border-red-500"
                       : "text-gray-700 hover:bg-gray-100"
                   }`}
+                >
+                  <Wrench className="h-5 w-5" />
+                  <span>Manutenções</span>
+                </button>
+              )}
+            </div>
+          </nav>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default App;
