@@ -1173,7 +1173,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
       );
     } else {
       alert(
-        "As notifica�������es não est�����o ativadas. Active-as primeiro nas configurações.",
+        "As notifica���������es não est�����o ativadas. Active-as primeiro nas configurações.",
       );
     }
   };
@@ -2335,13 +2335,13 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                               (maint) =>
                                 maint.poolName
                                   ?.toLowerCase()
-                                  .includes(globalSearchTerm.toLowerCase()) ||
+                                  ?.includes(globalSearchTerm.toLowerCase()) ||
                                 maint.type
                                   ?.toLowerCase()
-                                  .includes(globalSearchTerm.toLowerCase()) ||
+                                  ?.includes(globalSearchTerm.toLowerCase()) ||
                                 maint.technician
                                   ?.toLowerCase()
-                                  .includes(globalSearchTerm.toLowerCase()) ||
+                                  ?.includes(globalSearchTerm.toLowerCase()) ||
                                 maint.scheduledDate?.includes(globalSearchTerm),
                             ).length > 0 && (
                               <div>
