@@ -1877,7 +1877,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                       (user) =>
                         user.name &&
                         user.name.toLowerCase() ===
-                          currentUser.name.toLowerCase(),
+                          (currentUser?.name?.toLowerCase() || ""),
                     );
 
                     return assignedToMatch || assignedUsersMatch;
@@ -2255,7 +2255,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                             {work.title}
                                           </p>
                                           <p className="text-sm text-gray-600">
-                                            {work.client} • {work.location}
+                                            {work.client} ��� {work.location}
                                           </p>
                                         </div>
                                       </div>
@@ -5171,8 +5171,8 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                     </h3>
                   </div>
                   <p className="text-gray-600 mb-6">
-                    Ative as notificações para receber alertas sobre novas obras
-                    atribuídas e atualizações importantes.
+                    Ative as notificaç��es para receber alertas sobre novas
+                    obras atribuídas e atualizações importantes.
                   </p>
 
                   <div className="space-y-4">
