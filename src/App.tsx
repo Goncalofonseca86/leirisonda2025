@@ -915,7 +915,7 @@ ${works
     (work, index) => `
 ${index + 1}. ${work.title}
    Cliente: ${work.client}
-   Localizaç������o: ${work.location}
+   Localizaç�������o: ${work.location}
    Tipo: ${work.type}
    Estado: ${work.status === "completed" ? "Concluída" : work.status === "pending" ? "Pendente" : "Em Progresso"}
    Data Início: ${work.startDate ? new Date(work.startDate).toLocaleDateString("pt-PT") : "N/A"}
@@ -3359,7 +3359,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                               type="button"
                               onClick={() => {
                                 if (
-                                  currentTechnician.trim() &&
+                                  currentTechnician?.trim() &&
                                   !workTechnicians.includes(
                                     currentTechnician.trim(),
                                   )
