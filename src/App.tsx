@@ -40,7 +40,7 @@ import { FirebaseQuotaWarning } from "./components/FirebaseQuotaWarning";
 // SECURITY: RegisterForm removed - only super admin can create users
 import { AdminLogin } from "./admin/AdminLogin";
 import { AdminPage } from "./admin/AdminPage";
-import { useDataSync } from "./hooks/useDataSync";
+import { useDataSync } from "./hooks/useDataSync_simple";
 import { authService, UserProfile } from "./services/authService";
 import { useDataCleanup } from "./hooks/useDataCleanup";
 import { useAutoSync } from "./hooks/useAutoSync";
@@ -2702,7 +2702,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                             </div>
                             {pool.nextMaintenance && (
                               <p className="text-sm text-blue-600 mt-1">
-                                Próxima manutenção:{" "}
+                                Próxima manutenç��o:{" "}
                                 {new Date(
                                   pool.nextMaintenance,
                                 ).toLocaleDateString("pt-PT")}
@@ -6468,7 +6468,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                   <span className="font-medium">
                                     Orçamento:
                                   </span>{" "}
-                                  �����{work.budget}
+                                  ����{work.budget}
                                 </div>
                               )}
                             </div>
@@ -7383,7 +7383,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           const actualDuration = inputs[5].value; // Duração Real
                           const cost = inputs[6].value; // Custo
                           const priority = inputs[7].value; // Prioridade
-                          const completedDate = inputs[8].value; // Data de Conclusão
+                          const completedDate = inputs[8].value; // Data de Conclus��o
                           const materialsUsed = inputs[9].value; // Materiais Utilizados
                           const observations = inputs[10].value; // Observações
 
