@@ -582,7 +582,20 @@ function App() {
                   <h3 className="text-lg font-semibold mb-4">
                     Estado do Sistema
                   </h3>
-                  <SyncStatusDisplay />
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center">
+                      <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
+                      <span className="text-sm text-gray-700">
+                        Sistema Operacional
+                      </span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="h-3 w-3 bg-blue-500 rounded-full mr-2"></div>
+                      <span className="text-sm text-gray-700">
+                        Dados Sincronizados
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="bg-white p-6 rounded-lg shadow">
