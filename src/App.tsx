@@ -76,11 +76,13 @@ function App() {
 
   // Data states using simple hooks
   const {
-    data: syncData,
+    works: syncedWorks,
     isLoading: syncLoading,
     lastSync,
-    syncStatus,
     error: syncError,
+    addWork,
+    updateWork,
+    deleteWork,
   } = useDataSync();
 
   // Simple static replacements for problematic hooks
