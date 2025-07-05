@@ -1659,7 +1659,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                               );
 
                               const debugInfo = {
-                                currentUser: currentUser.name,
+                                currentUser: currentUser?.name,
                                 totalWorks: works.length,
                                 alexandreWorks: alexandreWorks,
                                 localStorage: {
@@ -5644,7 +5644,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           Relatório Completo
                         </h3>
                         <p className="text-sm text-gray-600">
-                          Todas as informações
+                          Todas as informa��ões
                         </p>
                       </div>
                     </div>
