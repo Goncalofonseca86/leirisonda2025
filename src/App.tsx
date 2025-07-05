@@ -2332,13 +2332,13 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                             {maintenance.filter(
                               (maint) =>
                                 maint.poolName
-                                  .toLowerCase()
+                                  ?.toLowerCase()
                                   .includes(globalSearchTerm.toLowerCase()) ||
                                 maint.type
-                                  .toLowerCase()
+                                  ?.toLowerCase()
                                   .includes(globalSearchTerm.toLowerCase()) ||
                                 maint.technician
-                                  .toLowerCase()
+                                  ?.toLowerCase()
                                   .includes(globalSearchTerm.toLowerCase()) ||
                                 maint.scheduledDate?.includes(globalSearchTerm),
                             ).length > 0 && (
