@@ -1870,7 +1870,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                       work.assignedTo
                         .split(",")
                         .map((name) => name.trim().toLowerCase())
-                        .includes(currentUser.name.toLowerCase());
+                        .includes(currentUser?.name?.toLowerCase() || "");
 
                     // Check if user is in assignedUsers array (exact match)
                     const assignedUsersMatch = work.assignedUsers?.some(
@@ -6457,7 +6457,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                   <span className="font-medium">
                                     Orçamento:
                                   </span>{" "}
-                                  ����{work.budget}
+                                  �����{work.budget}
                                 </div>
                               )}
                             </div>
@@ -6877,7 +6877,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                             "input, select, textarea",
                           );
 
-                          const title = inputs[0].value; // Título da Obra
+                          const title = inputs[0].value; // T��tulo da Obra
                           const client = inputs[1].value; // Cliente
                           const location = inputs[2].value; // Local
                           const status = inputs[3].value; // Estado
