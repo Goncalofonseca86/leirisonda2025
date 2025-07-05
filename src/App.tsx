@@ -885,9 +885,9 @@ ${maintenance
 ${index + 1}. ${maint.poolName}
    Tipo: ${maint.type}
    Estado: ${maint.status === "completed" ? "Concluída" : maint.status === "pending" ? "Pendente" : "Em Progresso"}
-   Data Agendada: ${new Date(maint.scheduledDate).toLocaleDateString("pt-PT")}
+   Data Agendada: ${maint.scheduledDate ? new Date(maint.scheduledDate).toLocaleDateString("pt-PT") : "N/A"}
    Técnico: ${maint.technician}
-   Descrição: ${maint.description}
+   Descri��ão: ${maint.description}
    ${maint.notes ? `Observações: ${maint.notes}` : ""}
 `,
   )
@@ -5212,7 +5212,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                   });
                                 } else {
                                   alert(
-                                    "Notificações foram bloqueadas. Por favor, ative-as nas configura����es do navegador.",
+                                    "Notificações foram bloqueadas. Por favor, ative-as nas configura������es do navegador.",
                                   );
                                 }
                               } else {
