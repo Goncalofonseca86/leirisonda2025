@@ -841,7 +841,7 @@ function App() {
   // PDF Generation Functions
   const generatePoolsPDF = () => {
     const content = `
-LEIRISONDA - RELATÓRIO DE PISCINAS
+LEIRISONDA - RELAT��RIO DE PISCINAS
 Data: ${new Date().toLocaleDateString("pt-PT")}
 
 RESUMO:
@@ -1827,7 +1827,9 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                   work.assignedTo
                                     .split(",")
                                     .map((name) => name.trim().toLowerCase())
-                                    .includes(currentUser.name.toLowerCase());
+                                    .includes(
+                                      currentUser?.name?.toLowerCase() || "",
+                                    );
 
                                 // Check if user is in assignedUsers array (exact match)
                                 const assignedUsersMatch =
