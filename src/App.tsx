@@ -3661,7 +3661,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                                   required
                                 >
-                                  <option value="">Selecionar pot��ncia</option>
+                                  <option value="">Selecionar potência</option>
                                   <option value="0.5">0.5 HP</option>
                                   <option value="0.75">0.75 HP</option>
                                   <option value="1">1 HP</option>
@@ -5576,7 +5576,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                       </p>
                       <ul className="text-xs text-gray-500 space-y-1">
                         <li>• Orçamentos e custos</li>
-                        <li>• Prazos e cronogramas</li>
+                        <li>��� Prazos e cronogramas</li>
                         <li>• Equipas responsáveis</li>
                         <li>• Estados de progresso</li>
                       </ul>
@@ -7914,8 +7914,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                     <p className="text-sm text-gray-500">Gestão de Serviços</p>
                   </div>
                 </div>
-                {/* Sync Status Indicator */}
-                <SyncStatusIcon className="ml-2" />
+                {/* Sync Status removido para evitar loops */}
                 {/* Close button for mobile */}
                 <button
                   onClick={() => setSidebarOpen(false)}
