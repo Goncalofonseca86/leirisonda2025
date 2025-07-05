@@ -438,7 +438,7 @@ function App() {
   // Notify Alexandre about assigned works when he logs in
   useEffect(() => {
     if (
-      currentUser?.name.toLowerCase().includes("alexandre") &&
+      currentUser?.name?.toLowerCase().includes("alexandre") &&
       works.length > 0
     ) {
       console.log("🔍 DEBUG Alexandre - Data loaded:", {
@@ -6854,7 +6854,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                         defaultValue={editingWork?.technicalNotes}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         rows={3}
-                        placeholder="Observações técnicas, materiais necessários, etc."
+                        placeholder="Observa��ões técnicas, materiais necessários, etc."
                       />
                     </div>
 
