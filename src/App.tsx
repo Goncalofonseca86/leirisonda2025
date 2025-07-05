@@ -145,10 +145,10 @@ function App() {
   useEffect(() => {
     // Auto-login automático para funcionar
     const mainUser = {
-      id: 1,
+      uid: "goncalo-main-user",
       name: "Gonçalo Fonseca",
       email: "gongonsilva@gmail.com",
-      role: "super_admin",
+      role: "super_admin" as const,
       permissions: {
         obras: { view: true, create: true, edit: true, delete: true },
         manutencoes: { view: true, create: true, edit: true, delete: true },
@@ -159,8 +159,6 @@ function App() {
         admin: { view: true, create: true, edit: true, delete: true },
         dashboard: { view: true },
       },
-      active: true,
-      createdAt: "2024-01-01",
     };
 
     setCurrentUser(mainUser);
@@ -3179,7 +3177,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                             <option value="">Selecionar tipo</option>
                             <option value="piscina">Piscina</option>
                             <option value="manutencao">Manutenção</option>
-                            <option value="instalacao">Instalaç��o</option>
+                            <option value="instalacao">Instalação</option>
                             <option value="reparacao">Reparação</option>
                             <option value="limpeza">Limpeza</option>
                             <option value="furo">Furo de Água</option>
