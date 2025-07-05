@@ -234,10 +234,10 @@ function App() {
   const cleanupLoading = false;
   const cleanupError = null;
 
-  // Auto-sync hook for automatic Firebase �� localStorage synchronization
-  const autoSyncData = useAutoSync();
-  const { syncStatus, isAutoSyncing } = autoSyncData;
-  const autoSyncLastSync = autoSyncData.lastSync;
+  // Auto-sync hook - temporarily disabled to debug hooks issue
+  const syncStatus = "completed";
+  const isAutoSyncing = false;
+  const autoSyncLastSync = new Date();
 
   // Keep local users state for user management
   const [users, setUsers] = useState(initialUsers);
@@ -1172,7 +1172,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
     }
 
     // Console log for debugging purposes (admin view)
-    console.log(`����️ OBRA ATRIBUÍDA: "${workTitle}" → ${assignedTo}`);
+    console.log(`�����️ OBRA ATRIBUÍDA: "${workTitle}" → ${assignedTo}`);
     console.log(`📋 Total de obras atribuídas: ${assignedWorks.length + 1}`);
   };
 
@@ -2461,7 +2461,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                             {client.name}
                                           </p>
                                           <p className="text-sm text-gray-600">
-                                            {client.email} ��� {client.phone}
+                                            {client.email} ���� {client.phone}
                                           </p>
                                         </div>
                                       </div>
