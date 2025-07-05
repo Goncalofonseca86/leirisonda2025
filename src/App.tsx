@@ -2340,7 +2340,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                 maint.technician
                                   .toLowerCase()
                                   .includes(globalSearchTerm.toLowerCase()) ||
-                                maint.scheduledDate.includes(globalSearchTerm),
+                                maint.scheduledDate?.includes(globalSearchTerm),
                             ).length > 0 && (
                               <div>
                                 <h4 className="text-sm font-medium text-gray-700 mb-2">
