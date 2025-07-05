@@ -336,7 +336,7 @@ function App() {
     // DO NOT initialize default admin automatically - this was causing the security issue
     // Users must always login manually for security
     console.log(
-      "��� SECURITY: No automatic admin initialization - manual login required",
+      "🔒 SECURITY: No automatic admin initialization - manual login required",
     );
 
     // Return empty cleanup function since unsubscribe is handled inside the promise
