@@ -438,7 +438,7 @@ function App() {
   // Notify Alexandre about assigned works when he logs in
   useEffect(() => {
     if (
-      currentUser?.name?.toLowerCase().includes("alexandre") &&
+      currentUser?.name?.toLowerCase()?.includes("alexandre") &&
       works.length > 0
     ) {
       console.log("�� DEBUG Alexandre - Data loaded:", {
@@ -463,10 +463,10 @@ function App() {
         (work) =>
           work &&
           work.assignedTo &&
-          (work.assignedTo?.toLowerCase().includes("alexandre") ||
+          (work.assignedTo?.toLowerCase()?.includes("alexandre") ||
             work.assignedUsers?.some(
               (user) =>
-                user.name && user.name?.toLowerCase().includes("alexandre"),
+                user.name && user.name?.toLowerCase()?.includes("alexandre"),
             )),
       );
 
