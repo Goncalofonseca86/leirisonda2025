@@ -33,9 +33,6 @@ import { InstallPrompt } from "./components/InstallPrompt";
 import { UserPermissionsManager } from "./components/UserPermissionsManager";
 import { RegisterForm } from "./components/RegisterForm";
 
-import { AutoSyncProvider } from "./components/AutoSyncProvider";
-import { SyncStatusIcon } from "./components/SyncStatusIndicator";
-import { FirebaseQuotaWarning } from "./components/FirebaseQuotaWarning";
 
 // SECURITY: RegisterForm removed - only super admin can create users
 import { AdminLogin } from "./admin/AdminLogin";
@@ -7923,7 +7920,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                   </div>
                 </div>
                 {/* Sync Status Indicator */}
-                <SyncStatusIcon className="ml-2" />
+                
                 {/* Close button for mobile */}
                 <button
                   onClick={() => setSidebarOpen(false)}
@@ -8423,7 +8420,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
           </div>
         )}
       </div>
-    </AutoSyncProvider>
+    </div>
   );
 }
 
