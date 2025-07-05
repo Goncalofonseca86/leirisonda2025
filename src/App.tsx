@@ -26,8 +26,6 @@ import {
   Bell,
 } from "lucide-react";
 import jsPDF from "jspdf";
-import { SyncStatusDisplay } from "./components/SyncStatusDisplay";
-import { InstallPrompt } from "./components/InstallPrompt";
 import { useDataSync } from "./hooks/useDataSync_simple";
 import { authService, UserProfile } from "./services/authService";
 
@@ -1153,8 +1151,6 @@ function App() {
           </div>
         </div>
       )}
-
-      <InstallPrompt />
     </div>
   );
 }
