@@ -197,7 +197,7 @@ function App() {
     error: syncError,
     addWork,
     updateWork,
-    deleteWork,
+    deleteWork
   } = useDataSync();
 
   // Initialize other data states locally
@@ -207,15 +207,9 @@ function App() {
   const [clients, setClients] = useState([]);
 
   // Simplified functions for other data types
-  const addPool = (pool) =>
-    setPools((prev) => [...prev, { ...pool, id: Date.now().toString() }]);
-  const addMaintenance = (maint) =>
-    setMaintenance((prev) => [
-      ...prev,
-      { ...maint, id: Date.now().toString() },
-    ]);
-  const addClient = (client) =>
-    setClients((prev) => [...prev, { ...client, id: Date.now().toString() }]);
+  const addPool = (pool) => setPools(prev => [...prev, { ...pool, id: Date.now().toString() }]);
+  const addMaintenance = (maint) => setMaintenance(prev => [...prev, { ...maint, id: Date.now().toString() }]);
+  const addClient = (client) => setClients(prev => [...prev, { ...client, id: Date.now().toString() }]);
   const syncWithFirebase = () => Promise.resolve();
   const enableSync = () => {};
 
@@ -369,7 +363,7 @@ function App() {
 
   // Initialize notification permission state and register service worker
   useEffect(() => {
-    console.log("�� Initializing notifications...");
+    console.log("🔔 Initializing notifications...");
     if ("Notification" in window) {
       const permission = Notification.permission;
       console.log("🔔 Current notification permission:", permission);
@@ -1693,7 +1687,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                 `Debug Alexandre:\n` +
                                   `Obras no sistema: ${works.length}\n` +
                                   `Obras atribuídas ao Alexandre: ${alexandreWorks.length}\n` +
-                                  `Notificaç����es ativadas: ${notificationsEnabled ? "Sim" : "Não"}\n` +
+                                  `Notificaç��es ativadas: ${notificationsEnabled ? "Sim" : "Não"}\n` +
                                   `Permissão notificações: ${Notification.permission}\n\n` +
                                   `Ver console para mais detalhes`,
                               );
@@ -7907,12 +7901,6 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
   }
 
   return (
-    <AutoSyncProvider
-      enabled={false}
-      syncInterval={15000}
-      collections={["users", "pools", "maintenance", "works", "clients"]}
-      showNotifications={false}
-    >
       <div className="min-h-screen bg-gray-50">
         {/* Sidebar */}
         <div
