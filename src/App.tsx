@@ -141,28 +141,12 @@ function App() {
     };
   }, []);
 
-  // Auto-login para teste
+  // No auto-login - users must login manually
   useEffect(() => {
-    const mainUser = {
-      uid: "goncalo-main-user",
-      name: "Gonçalo Fonseca",
-      email: "gongonsilva@gmail.com",
-      role: "super_admin" as const,
-      permissions: {
-        obras: { view: true, create: true, edit: true, delete: true },
-        manutencoes: { view: true, create: true, edit: true, delete: true },
-        piscinas: { view: true, create: true, edit: true, delete: true },
-        utilizadores: { view: true, create: true, edit: true, delete: true },
-        relatorios: { view: true, create: true, edit: true, delete: true },
-        clientes: { view: true, create: true, edit: true, delete: true },
-        admin: { view: true, create: true, edit: true, delete: true },
-        dashboard: { view: true },
-      },
-    };
-
-    setCurrentUser(mainUser);
-    setIsAuthenticated(true);
-    console.log("✅ Auto-login efetuado com sucesso");
+    // Clear any existing auth data on app start
+    localStorage.removeItem("currentUser");
+    localStorage.removeItem("mock-current-user");
+    console.log("🔒 SECURITY: Auth data cleared - manual login required");
   }, []);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("dashboard");
@@ -2888,7 +2872,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                         }`}
                                         disabled={!enablePhoneDialer}
                                       >
-                                        ���� {maint.clientContact}
+                                        ��� {maint.clientContact}
                                       </button>
                                     </div>
                                   )}
