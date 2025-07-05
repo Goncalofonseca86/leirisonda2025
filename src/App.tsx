@@ -40,7 +40,7 @@ import { FirebaseQuotaWarning } from "./components/FirebaseQuotaWarning";
 // SECURITY: RegisterForm removed - only super admin can create users
 import { AdminLogin } from "./admin/AdminLogin";
 import { AdminPage } from "./admin/AdminPage";
-import { useDataSync } from "./hooks/useDataSync";
+import { useDataSync } from "./hooks/useDataSync_simple";
 import { authService, UserProfile } from "./services/authService";
 import { useDataCleanup } from "./hooks/useDataCleanup";
 import { useAutoSync } from "./hooks/useAutoSync";
@@ -141,12 +141,28 @@ function App() {
     };
   }, []);
 
-  // No auto-login - users must login manually
+  // Auto-login para funcionar
   useEffect(() => {
-    // Clear any existing auth data on app start
-    localStorage.removeItem("currentUser");
-    localStorage.removeItem("mock-current-user");
-    console.log("🔒 SECURITY: Auth data cleared - manual login required");
+    const mainUser = {
+      uid: "goncalo-main-user", // Propriedade uid obrigatória
+      name: "Gonçalo Fonseca",
+      email: "gongonsilva@gmail.com",
+      role: "super_admin" as const,
+      permissions: {
+        obras: { view: true, create: true, edit: true, delete: true },
+        manutencoes: { view: true, create: true, edit: true, delete: true },
+        piscinas: { view: true, create: true, edit: true, delete: true },
+        utilizadores: { view: true, create: true, edit: true, delete: true },
+        relatorios: { view: true, create: true, edit: true, delete: true },
+        clientes: { view: true, create: true, edit: true, delete: true },
+        admin: { view: true, create: true, edit: true, delete: true },
+        dashboard: { view: true },
+      },
+    };
+
+    setCurrentUser(mainUser);
+    setIsAuthenticated(true);
+    console.log("✅ Auto-login efetuado com sucesso");
   }, []);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("dashboard");
@@ -1143,7 +1159,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
         // Show alert as fallback for better user experience
         setTimeout(() => {
           alert(
-            `🔔 Nova Obra Atribuída!\n\n📋 ${workTitle}\n\n👤 Atribu����da a: ${assignedTo}\n\n💡 Ative as notificações nas configurações para receber alertas automáticos.`,
+            `🔔 Nova Obra Atribuída!\n\n📋 ${workTitle}\n\n��� Atribu����da a: ${assignedTo}\n\n💡 Ative as notificações nas configurações para receber alertas automáticos.`,
           );
         }, 1000);
       }
