@@ -17,10 +17,10 @@ function App() {
   // Auto-login para teste
   useEffect(() => {
     const testUser = {
-      id: 1,
+      uid: "goncalo-main-user", // Propriedade uid obrigatória
       name: "Gonçalo Fonseca",
       email: "gongonsilva@gmail.com",
-      role: "super_admin",
+      role: "super_admin" as const,
       permissions: {
         obras: { view: true, create: true, edit: true, delete: true },
         manutencoes: { view: true, create: true, edit: true, delete: true },
