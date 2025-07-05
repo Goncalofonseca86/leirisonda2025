@@ -4525,7 +4525,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           }
 
                           // Clear form after successful creation
-                          form.reset();
+                          if (form) form.reset();
 
                           alert(
                             `Piscina "${poolData.name}" criada com sucesso!`,
