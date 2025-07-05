@@ -5654,7 +5654,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                         <li>• Resumo executivo</li>
                         <li>• Estatísticas gerais</li>
                         <li>• Dados consolidados</li>
-                        <li>• An��lise de performance</li>
+                        <li>��� An��lise de performance</li>
                       </ul>
                     </div>
                     <button
@@ -7684,6 +7684,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
   useEffect(() => {
     if (!currentUser) {
       const testUser = {
+        uid: "goncalo-main-user",
         id: 1,
         name: "Gonçalo Fonseca",
         email: "gongonsilva@gmail.com",
