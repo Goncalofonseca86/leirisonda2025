@@ -2344,7 +2344,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                             ).length > 0 && (
                               <div>
                                 <h4 className="text-sm font-medium text-gray-700 mb-2">
-                                  Manutenções
+                                  Manutenç��es
                                 </h4>
                                 {maintenance
                                   .filter(
@@ -5149,7 +5149,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                     </div>
                     <div className="flex justify-between py-2 border-b border-gray-100">
                       <span className="text-gray-600">Utilizador Ativo</span>
-                      <span className="font-medium">{currentUser.name}</span>
+                      <span className="font-medium">{currentUser?.name}</span>
                     </div>
                     <div className="flex justify-between py-2 border-b border-gray-100">
                       <span className="text-gray-600">Perfil</span>
@@ -5212,7 +5212,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                   });
                                 } else {
                                   alert(
-                                    "Notificações foram bloqueadas. Por favor, ative-as nas configura��ões do navegador.",
+                                    "Notificações foram bloqueadas. Por favor, ative-as nas configura����es do navegador.",
                                   );
                                 }
                               } else {
