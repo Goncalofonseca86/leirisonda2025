@@ -42,8 +42,8 @@ import { AdminLogin } from "./admin/AdminLogin";
 import { AdminPage } from "./admin/AdminPage";
 import { useDataSync } from "./hooks/useDataSync_simple";
 import { authService, UserProfile } from "./services/authService";
-import { useDataCleanup } from "./hooks/useDataCleanup";
-import { useAutoSync } from "./hooks/useAutoSync";
+// import { useDataCleanup } from "./hooks/useDataCleanup"; // Temporarily disabled
+// import { useAutoSync } from "./hooks/useAutoSync"; // Temporarily disabled
 
 // Mock users database
 const initialUsers = [
@@ -2702,7 +2702,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                             </div>
                             {pool.nextMaintenance && (
                               <p className="text-sm text-blue-600 mt-1">
-                                Próxima manutenç��o:{" "}
+                                Próxima manutenção:{" "}
                                 {new Date(
                                   pool.nextMaintenance,
                                 ).toLocaleDateString("pt-PT")}
@@ -3556,7 +3556,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           {/* Medições do Furo */}
                           <div>
                             <h4 className="text-md font-medium text-gray-900 mb-4">
-                              Medições do Furo
+                              Mediç��es do Furo
                             </h4>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                               <div>
@@ -5452,7 +5452,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                               </li>
                             </ul>
                             <p className="text-red-700 text-sm font-medium mb-3">
-                              ��️ ATENÇÃO: Esta operação é irreversível!
+                              ��️ ATENÇÃO: Esta operação �� irreversível!
                             </p>
                             <button
                               onClick={handleDataCleanup}
@@ -7383,7 +7383,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           const actualDuration = inputs[5].value; // Duração Real
                           const cost = inputs[6].value; // Custo
                           const priority = inputs[7].value; // Prioridade
-                          const completedDate = inputs[8].value; // Data de Conclus��o
+                          const completedDate = inputs[8].value; // Data de Conclusão
                           const materialsUsed = inputs[9].value; // Materiais Utilizados
                           const observations = inputs[10].value; // Observações
 
