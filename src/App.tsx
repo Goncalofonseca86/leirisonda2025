@@ -1123,7 +1123,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
       exactMatch: currentUser?.name === assignedTo,
       partialMatch: assignedTo
         .toLowerCase()
-        .includes(currentUser?.name.toLowerCase()),
+        .includes(currentUser?.name?.toLowerCase() || ""),
       isAssignedToCurrentUser,
     });
 
