@@ -1171,7 +1171,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
       );
     } else {
       alert(
-        "As notifica������es não est�����o ativadas. Active-as primeiro nas configurações.",
+        "As notifica������es n��o est�����o ativadas. Active-as primeiro nas configurações.",
       );
     }
   };
@@ -4961,7 +4961,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Próxima Manutenção
+                          Próxima Manuten��ão
                         </label>
                         <input
                           type="date"
@@ -5176,7 +5176,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                   </div>
                   <p className="text-gray-600 mb-6">
                     Ative as notificaç���es para receber alertas sobre novas
-                    obras atribuídas e atualiza��ões importantes.
+                    obras atribuídas e atualizações importantes.
                   </p>
 
                   <div className="space-y-4">
@@ -6653,7 +6653,9 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                         <input
                           type="date"
                           defaultValue={
-                            editingWork?.expectedEndDate?.split("T")[0]
+                            editingWork?.expectedEndDate
+                              ? editingWork.expectedEndDate.split("T")[0]
+                              : ""
                           }
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
