@@ -1171,7 +1171,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
       );
     } else {
       alert(
-        "As notifica������es não est������o ativadas. Active-as primeiro nas configurações.",
+        "As notifica��������es não est�����o ativadas. Active-as primeiro nas configurações.",
       );
     }
   };
@@ -7222,7 +7222,9 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                         <input
                           type="date"
                           defaultValue={
-                            editingMaintenance?.scheduledDate?.split("T")[0]
+                            editingMaintenance?.scheduledDate
+                              ? editingMaintenance.scheduledDate.split("T")[0]
+                              : ""
                           }
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                           required
