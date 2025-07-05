@@ -604,7 +604,7 @@ function App() {
         | "in_progress"
         | "completed"
         | "cancelled",
-      description: maintenanceForm.workPerformed || "Manutenção realizada",
+      description: maintenanceForm.workPerformed || "Manuten��ão realizada",
       notes: maintenanceForm.observations,
     };
 
@@ -5161,7 +5161,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                   </div>
                   <p className="text-gray-600 mb-6">
                     Ative as notificações para receber alertas sobre novas obras
-                    atribuídas e atualizações importantes.
+                    atribu��das e atualizações importantes.
                   </p>
 
                   <div className="space-y-4">
@@ -5419,7 +5419,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                 • Todas as obras ({works.length} registos)
                               </li>
                               <li>
-                                �� Todas as manutenções ({maintenance.length}{" "}
+                                • Todas as manutenções ({maintenance.length}{" "}
                                 registos)
                               </li>
                               <li>
@@ -7890,8 +7890,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
   }
 
   return (
-    <AutoSyncProvider
-      enabled={false}
+    <div
       syncInterval={15000}
       collections={["users", "pools", "maintenance", "works", "clients"]}
       showNotifications={false}
@@ -8420,7 +8419,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
           </div>
         )}
       </div>
-    </AutoSyncProvider>
+    </div>
   );
 }
 
