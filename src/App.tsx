@@ -1909,7 +1909,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                               (user) =>
                                 user.name &&
                                 user.name.toLowerCase() ===
-                                  currentUser.name.toLowerCase(),
+                                  (currentUser?.name?.toLowerCase() || ""),
                             );
 
                             return assignedToMatch || assignedUsersMatch;
