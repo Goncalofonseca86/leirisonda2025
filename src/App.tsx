@@ -2528,7 +2528,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                   client.email
                                     .toLowerCase()
                                     .includes(globalSearchTerm.toLowerCase()) ||
-                                  client.phone.includes(globalSearchTerm) ||
+                                  client.phone?.includes(globalSearchTerm) ||
                                   client.address
                                     .toLowerCase()
                                     .includes(globalSearchTerm.toLowerCase()),
@@ -8184,7 +8184,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                       }`}
                       disabled={!enableMapsRedirect}
                     >
-                      📍 {selectedWork.location}
+                      ���� {selectedWork.location}
                     </button>
                   </div>
                   <div>
