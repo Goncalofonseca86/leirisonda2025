@@ -42,8 +42,8 @@ import { AdminLogin } from "./admin/AdminLogin";
 import { AdminPage } from "./admin/AdminPage";
 import { useDataSync } from "./hooks/useDataSync_simple";
 import { authService, UserProfile } from "./services/authService";
-import { useDataCleanup } from "./hooks/useDataCleanup";
-import { useAutoSync } from "./hooks/useAutoSync";
+// import { useDataCleanup } from "./hooks/useDataCleanup"; // Temporarily disabled
+// import { useAutoSync } from "./hooks/useAutoSync"; // Temporarily disabled
 
 // Mock users database
 const initialUsers = [
@@ -7376,7 +7376,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           );
 
                           const scheduledDate = inputs[0].value; // Data
-                          const technician = inputs[1].value; // Técnico
+                          const technician = inputs[1].value; // T��cnico
                           const type = inputs[2].value; // Tipo de Manutenção
                           const status = inputs[3].value; // Estado
                           const estimatedDuration = inputs[4].value; // Duração Estimada
