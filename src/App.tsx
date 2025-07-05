@@ -3921,7 +3921,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           const description =
                             (
                               form.querySelector(
-                                'textarea[placeholder*="Descrição"]',
+                                'textarea[placeholder*="Descriç��o"]',
                               ) as HTMLTextAreaElement
                             )?.value || "";
                           const budget =
@@ -6200,7 +6200,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           <textarea
                             rows={4}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                            placeholder="Informações relevantes sobre o cliente, prefer��ncias, histórico, etc."
+                            placeholder="Informações relevantes sobre o cliente, prefer����ncias, histórico, etc."
                           />
                         </div>
                       </div>
@@ -7903,12 +7903,6 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
   }
 
   return (
-    <AutoSyncProvider
-      enabled={false}
-      syncInterval={15000}
-      collections={["users", "pools", "maintenance", "works", "clients"]}
-      showNotifications={false}
-    >
       <div className="min-h-screen bg-gray-50">
         {/* Sidebar */}
         <div
