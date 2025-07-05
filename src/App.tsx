@@ -7911,12 +7911,6 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
   }
 
   return (
-    <AutoSyncProvider
-      enabled={false}
-      syncInterval={15000}
-      collections={["users", "pools", "maintenance", "works", "clients"]}
-      showNotifications={false}
-    >
       <div className="min-h-screen bg-gray-50">
         {/* Sidebar */}
         <div
