@@ -33,7 +33,6 @@ import { InstallPrompt } from "./components/InstallPrompt";
 import { UserPermissionsManager } from "./components/UserPermissionsManager";
 import { RegisterForm } from "./components/RegisterForm";
 
-
 // SECURITY: RegisterForm removed - only super admin can create users
 import { AdminLogin } from "./admin/AdminLogin";
 import { AdminPage } from "./admin/AdminPage";
@@ -44,7 +43,7 @@ import { authService, UserProfile } from "./services/authService";
 const initialUsers = [
   {
     uid: "goncalo-main-user",
-        id: 1,
+    id: 1,
     name: "Gonçalo Fonseca",
     email: "gongonsilva@gmail.com",
     password: "19867gsf",
@@ -7892,7 +7891,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
   }
 
   return (
-    <AutoSyncProvider
+    <div
       enabled={false}
       syncInterval={15000}
       collections={["users", "pools", "maintenance", "works", "clients"]}
@@ -7922,7 +7921,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                   </div>
                 </div>
                 {/* Sync Status Indicator */}
-                
+
                 {/* Close button for mobile */}
                 <button
                   onClick={() => setSidebarOpen(false)}
