@@ -2364,7 +2364,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                         .includes(
                                           globalSearchTerm.toLowerCase(),
                                         ) ||
-                                      maint.scheduledDate.includes(
+                                      maint.scheduledDate?.includes(
                                         globalSearchTerm,
                                       ),
                                   )
