@@ -431,7 +431,7 @@ function App() {
                 </div>
 
                 <div className="p-4 space-y-3">
-                  {futureMaintenance.length === 0 ? (
+                  {(futureMaintenance || []).length === 0 ? (
                     <div className="text-center py-8">
                       <div className="w-12 h-12 bg-cyan-100 rounded-lg flex items-center justify-center mx-auto mb-3">
                         <Waves className="h-6 w-6 text-cyan-600" />
