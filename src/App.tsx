@@ -293,7 +293,7 @@ function App() {
       try {
         const user = JSON.parse(storedUser);
         console.log(
-          "���������� App init: Restoring user from localStorage:",
+          "����������� App init: Restoring user from localStorage:",
           user.email,
         );
         setCurrentUser(user);
@@ -2525,14 +2525,14 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                               clients.filter(
                                 (client) =>
                                   client.name
-                                    .toLowerCase()
+                                    ?.toLowerCase()
                                     .includes(globalSearchTerm.toLowerCase()) ||
                                   client.email
-                                    .toLowerCase()
+                                    ?.toLowerCase()
                                     .includes(globalSearchTerm.toLowerCase()) ||
                                   client.phone?.includes(globalSearchTerm) ||
                                   client.address
-                                    .toLowerCase()
+                                    ?.toLowerCase()
                                     .includes(globalSearchTerm.toLowerCase()),
                               ).length === 0 && (
                                 <div className="text-center py-8">
@@ -7941,7 +7941,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                   />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm text-gray-500">Gestão de Serviços</p>
+                  <p className="text-sm text-gray-500">Gest��o de Serviços</p>
                 </div>
               </div>
               {/* Sync Status Indicator - Removed for stability */}
