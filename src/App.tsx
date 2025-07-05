@@ -42,8 +42,8 @@ import { AdminLogin } from "./admin/AdminLogin";
 import { AdminPage } from "./admin/AdminPage";
 import { useDataSync } from "./hooks/useDataSync_simple";
 import { authService, UserProfile } from "./services/authService";
-import { useDataCleanup } from "./hooks/useDataCleanup";
-import { useAutoSync } from "./hooks/useAutoSync";
+// import { useDataCleanup } from "./hooks/useDataCleanup"; // Temporarily disabled
+// import { useAutoSync } from "./hooks/useAutoSync"; // Temporarily disabled
 
 // Mock users database
 const initialUsers = [
@@ -1159,7 +1159,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
         // Show alert as fallback for better user experience
         setTimeout(() => {
           alert(
-            `🔔 Nova Obra Atribuída!\n\n📋 ${workTitle}\n\n��� Atribu����da a: ${assignedTo}\n\n💡 Ative as notificações nas configurações para receber alertas automáticos.`,
+            `🔔 Nova Obra Atribuída!\n\n📋 ${workTitle}\n\n👤 Atribu����da a: ${assignedTo}\n\n💡 Ative as notificações nas configurações para receber alertas automáticos.`,
           );
         }, 1000);
       }
@@ -1598,7 +1598,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
     {
       id: "admin",
       icon: Shield,
-      label: "Administração",
+      label: "Administraç��o",
       path: "/admin",
       requiresAuth: true,
     },
