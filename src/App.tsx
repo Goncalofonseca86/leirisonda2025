@@ -1,52 +1,99 @@
 import React, { useState, useEffect } from "react";
-import { AutoSyncProvider } from "./components/AutoSyncProvider";
-import { useDataSync } from "./hooks/useDataSync";
+import {
+  Building2,
+  Menu,
+  X,
+  Home,
+  Plus,
+  Wrench,
+  Waves,
+  BarChart3,
+  Users,
+  UserCheck,
+  Settings,
+  LogOut,
+  Eye,
+  EyeOff,
+  Edit2,
+  Trash2,
+  Save,
+  UserPlus,
+  Shield,
+  Check,
+  AlertCircle,
+  Download,
+  ArrowLeft,
+  Bell,
+} from "lucide-react";
+import jsPDF from "jspdf";
+import { FirebaseConfig } from "./components/FirebaseConfig";
+import { AdvancedSettings } from "./components/AdvancedSettings";
+import { SyncStatusDisplay } from "./components/SyncStatusDisplay";
+import { InstallPrompt } from "./components/InstallPrompt";
+import { UserPermissionsManager } from "./components/UserPermissionsManager";
+import { RegisterForm } from "./components/RegisterForm";
 
-interface UserProfile {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-  permissions: any;
-}
+import { SyncStatusIcon } from "./components/SyncStatusIndicator";
+import { FirebaseQuotaWarning } from "./components/FirebaseQuotaWarning";
 
-function App() {
-  const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+// SECURITY: RegisterForm removed - only super admin can create users
+import { AdminLogin } from "./admin/AdminLogin";
+import { AdminPage } from "./admin/AdminPage";
+import { useDataSync } from "./hooks/useDataSync_simple";
+import { authService, UserProfile } from "./services/authService";
 
-  // Auto-login para teste
-  useEffect(() => {
-    const testUser = {
-      uid: "goncalo-main-user", // Propriedade uid obrigatória
-      name: "Gonçalo Fonseca",
-      email: "gongonsilva@gmail.com",
-      role: "super_admin" as const,
-      permissions: {
-        obras: { view: true, create: true, edit: true, delete: true },
-        manutencoes: { view: true, create: true, edit: true, delete: true },
-        piscinas: { view: true, create: true, edit: true, delete: true },
-        relatorios: { view: true, create: true, edit: true, delete: true },
-        utilizadores: { view: true, create: true, edit: true, delete: true },
-        admin: { view: true, create: true, edit: true, delete: true },
-        dashboard: { view: true },
-      },
-    };
-    setCurrentUser(testUser);
-    setIsAuthenticated(true);
-  }, []);
-
-  const dataSync = useDataSync();
-  const { works, addWork } = dataSync;
-
-  const createTestWork = () => {
-    const testWork = {
-      title: "Obra de Teste " + Date.now(),
-      type: "piscina",
-      client: "Cliente Teste",
-      contact: "912345678",
-      location: "Local Teste",
-      startTime: "09:00",
-      endTime: "17:00",
+// Mock users database
+const initialUsers = [
+  {
+    id: 1,
+    name: "Gonçalo Fonseca",
+    email: "gongonsilva@gmail.com",
+    password: "19867gsf",
+    role: "super_admin",
+    permissions: {
+      obras: { view: true, create: true, edit: true, delete: true },
+      manutencoes: { view: true, create: true, edit: true, delete: true },
+      piscinas: { view: true, create: true, edit: true, delete: true },
+      utilizadores: { view: true, create: true, edit: true, delete: true },
+      relatorios: { view: true, create: true, edit: true, delete: true },
+      clientes: { view: true, create: true, edit: true, delete: true },
+    },
+    active: true,
+    createdAt: "2024-01-01",
+  },
+  {
+    id: 2,
+    name: "Maria Silva",
+    email: "maria.silva@leirisonda.pt",
+    password: "123456",
+    role: "manager",
+    permissions: {
+      obras: { view: true, create: true, edit: true, delete: false },
+      manutencoes: { view: true, create: true, edit: true, delete: false },
+      piscinas: { view: true, create: true, edit: true, delete: false },
+      utilizadores: { view: true, create: false, edit: false, delete: false },
+      relatorios: { view: true, create: true, edit: false, delete: false },
+      clientes: { view: true, create: true, edit: true, delete: false },
+    },
+    active: true,
+    createdAt: "2024-01-15",
+  },
+  {
+    id: 3,
+    name: "João Santos",
+    email: "joao.santos@leirisonda.pt",
+    password: "123456",
+    role: "technician",
+    permissions: {
+      obras: { view: true, create: false, edit: true, delete: false },
+      manutencoes: { view: true, create: true, edit: true, delete: false },
+      piscinas: { view: true, create: false, edit: true, delete: false },
+      utilizadores: { view: false, create: false, edit: false, delete: false },
+      relatorios: { view: true, create: false, edit: false, delete: false },
+      clientes: { view: true, create: false, edit: false, delete: false },
+    },
+    active: true,
+    createdAt: "2024-02-01",
       status: "pending",
       description: "Descrição de teste",
       budget: 1000,
