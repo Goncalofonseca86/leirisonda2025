@@ -243,6 +243,13 @@ function App() {
       );
     }
 
+    // Ensure all arrays are defined
+    const safeWorks = works || [];
+    const safePools = pools || [];
+    const safeMaintenance = maintenance || [];
+    const safeFutureMaintenance = futureMaintenance || [];
+    const safeClients = clients || [];
+
     switch (activeSection) {
       case "dashboard":
         return (
