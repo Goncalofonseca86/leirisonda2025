@@ -785,7 +785,7 @@ function App() {
       setLoginForm({ email: "", password: "" });
       navigateToSection("dashboard");
 
-      console.log("🔧 Forced logout state clear completed");
+      console.log("�� Forced logout state clear completed");
     }
   };
 
@@ -7682,6 +7682,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
   useEffect(() => {
     if (!currentUser) {
       const testUser = {
+        uid: "goncalo-main-user", // Propriedade uid obrigatória
         id: 1,
         name: "Gonçalo Fonseca",
         email: "gongonsilva@gmail.com",
