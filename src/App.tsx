@@ -293,7 +293,7 @@ function App() {
       try {
         const user = JSON.parse(storedUser);
         console.log(
-          "������� App init: Restoring user from localStorage:",
+          "�������� App init: Restoring user from localStorage:",
           user.email,
         );
         setCurrentUser(user);
@@ -893,7 +893,7 @@ ${index + 1}. ${maint.poolName}
   )
   .join("\n")}
 
-�� ${new Date().getFullYear()} Leirisonda - Sistema de Gest��o
+��� ${new Date().getFullYear()} Leirisonda - Sistema de Gest��o
     `;
     downloadPDF(
       content,
@@ -7926,8 +7926,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                   <p className="text-sm text-gray-500">Gestão de Serviços</p>
                 </div>
               </div>
-              {/* Sync Status Indicator */}
-              <SyncStatusIcon className="ml-2" />
+              {/* Sync Status Indicator - Removed for stability */}
               {/* Close button for mobile */}
               <button
                 onClick={() => setSidebarOpen(false)}
