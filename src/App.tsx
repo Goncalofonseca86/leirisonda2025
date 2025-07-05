@@ -33,10 +33,6 @@ import { InstallPrompt } from "./components/InstallPrompt";
 import { UserPermissionsManager } from "./components/UserPermissionsManager";
 import { RegisterForm } from "./components/RegisterForm";
 
-import { AutoSyncProvider } from "./components/AutoSyncProvider";
-import { SyncStatusIcon } from "./components/SyncStatusIndicator";
-import { FirebaseQuotaWarning } from "./components/FirebaseQuotaWarning";
-
 // SECURITY: RegisterForm removed - only super admin can create users
 import { AdminLogin } from "./admin/AdminLogin";
 import { AdminPage } from "./admin/AdminPage";
@@ -785,7 +781,7 @@ function App() {
       setLoginForm({ email: "", password: "" });
       navigateToSection("dashboard");
 
-      console.log("�� Forced logout state clear completed");
+      console.log("🔧 Forced logout state clear completed");
     }
   };
 
@@ -5423,7 +5419,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                 • Todas as obras ({works.length} registos)
                               </li>
                               <li>
-                                • Todas as manutenções ({maintenance.length}{" "}
+                                �� Todas as manutenções ({maintenance.length}{" "}
                                 registos)
                               </li>
                               <li>
