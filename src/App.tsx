@@ -5968,7 +5968,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                 </button>
                               </div>
                               <div>
-                                <p className="font-medium">Informações:</p>
+                                <p className="font-medium">Informa��ões:</p>
                                 <p>Tipo: {client.type}</p>
                                 <p>
                                   Cliente desde:{" "}
@@ -8267,7 +8267,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                   {selectedWork.photos && selectedWork.photos.length > 0 && (
                     <div className="md:col-span-2">
                       <label className="block text-sm font-medium text-gray-700">
-                        Fotografias ({selectedWork.photos.length})
+                        Fotografias ({selectedWork.photos?.length || 0})
                       </label>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-2">
                         {selectedWork.photos?.map((photo, index) => (
