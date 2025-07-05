@@ -3728,7 +3728,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           <Building2 className="h-4 w-4 text-blue-600" />
                         </div>
                         <h3 className="text-lg font-semibold text-gray-900">
-                          Observações e Trabalho
+                          Observaç��es e Trabalho
                         </h3>
                       </div>
 
@@ -4292,7 +4292,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           <option value="ativa">Ativa</option>
                           <option value="inativa">Inativa</option>
                           <option value="manutencao">Em Manutenção</option>
-                          <option value="construcao">Em Construç��o</option>
+                          <option value="construcao">Em Construç���o</option>
                         </select>
                       </div>
                     </div>
@@ -5626,7 +5626,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                         <li>• Dados de contacto</li>
                         <li>• Piscinas associadas</li>
                         <li>• Histórico de serviços</li>
-                        <li>• Informações contratuais</li>
+                        <li>• Informaç��es contratuais</li>
                       </ul>
                     </div>
                     <button
@@ -6439,9 +6439,11 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                               </div>
                               <div>
                                 <span className="font-medium">Início:</span>{" "}
-                                {new Date(work.startDate).toLocaleDateString(
-                                  "pt-PT",
-                                )}
+                                {work.startDate
+                                  ? new Date(work.startDate).toLocaleDateString(
+                                      "pt-PT",
+                                    )
+                                  : "N/A"}
                               </div>
                               <div>
                                 <span className="font-medium">
