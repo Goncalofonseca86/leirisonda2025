@@ -1145,7 +1145,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
         // Show alert as fallback for better user experience
         setTimeout(() => {
           alert(
-            `🔔 Nova Obra Atribuída!\n\n📋 ${workTitle}\n\n👤 Atribu����da a: ${assignedTo}\n\n💡 Ative as notificações nas configurações para receber alertas automáticos.`,
+            `🔔 Nova Obra Atribuída!\n\n📋 ${workTitle}\n\n��� Atribu����da a: ${assignedTo}\n\n💡 Ative as notificações nas configurações para receber alertas automáticos.`,
           );
         }, 1000);
       }
@@ -8055,7 +8055,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                 </div>
                 <div>
                   <p className="font-medium text-gray-900">
-                    {currentUser.name}
+                    {currentUser?.name}
                   </p>
                   <p className="text-sm text-gray-500">{currentUser.role}</p>
                 </div>
