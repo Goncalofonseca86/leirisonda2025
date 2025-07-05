@@ -40,7 +40,7 @@ import { FirebaseQuotaWarning } from "./components/FirebaseQuotaWarning";
 // SECURITY: RegisterForm removed - only super admin can create users
 import { AdminLogin } from "./admin/AdminLogin";
 import { AdminPage } from "./admin/AdminPage";
-import { useDataSync } from "./hooks/useDataSync_simple";
+import { useDataSync } from "./hooks/useDataSync";
 import { authService, UserProfile } from "./services/authService";
 import { useDataCleanup } from "./hooks/useDataCleanup";
 import { useAutoSync } from "./hooks/useAutoSync";
@@ -560,7 +560,7 @@ function App() {
     // SECURITY: Check if user has permission to create maintenance
     if (!currentUser?.permissions?.manutencoes?.create) {
       alert(
-        "Não tem permiss��o para criar manutenções. Contacte o administrador.",
+        "Não tem permissão para criar manutenções. Contacte o administrador.",
       );
       return;
     }
@@ -659,7 +659,7 @@ function App() {
       }
     }
 
-    console.log("Manutenção salva com sucesso:", interventionData);
+    console.log("Manuten��ão salva com sucesso:", interventionData);
 
     let alertMessage = `Manutenção salva com sucesso! Piscina: ${interventionData.poolName}, Técnico: ${interventionData.technician}`;
 
@@ -5195,7 +5195,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                             Notificações de Obras
                           </h4>
                           <p className="text-blue-700 text-sm mb-3">
-                            Receba notifica��ões quando uma nova obra for
+                            Receba notificações quando uma nova obra for
                             atribuída a si.
                           </p>
                           <button
@@ -5632,7 +5632,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                         <strong>{clients.length}</strong> clientes registados
                       </p>
                       <ul className="text-xs text-gray-500 space-y-1">
-                        <li>• Dados de contacto</li>
+                        <li>�� Dados de contacto</li>
                         <li>• Piscinas associadas</li>
                         <li>• Histórico de serviços</li>
                         <li>• Informações contratuais</li>
