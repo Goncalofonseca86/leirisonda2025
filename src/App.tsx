@@ -33,7 +33,7 @@ import { InstallPrompt } from "./components/InstallPrompt";
 import { UserPermissionsManager } from "./components/UserPermissionsManager";
 import { RegisterForm } from "./components/RegisterForm";
 
-import { AutoSyncProvider } from "./components/AutoSyncProvider";
+// import { AutoSyncProvider } from "./components/AutoSyncProvider"; // Temporarily disabled
 import { SyncStatusIcon } from "./components/SyncStatusIndicator";
 import { FirebaseQuotaWarning } from "./components/FirebaseQuotaWarning";
 
@@ -879,7 +879,7 @@ ${index + 1}. ${pool.name}
   )
   .join("\n")}
 
-© ${new Date().getFullYear()} Leirisonda - Sistema de Gest��o
+© ${new Date().getFullYear()} Leirisonda - Sistema de Gest����o
     `;
     downloadPDF(
       content,
