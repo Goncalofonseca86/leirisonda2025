@@ -33,7 +33,7 @@ import { InstallPrompt } from "./components/InstallPrompt";
 import { UserPermissionsManager } from "./components/UserPermissionsManager";
 import { RegisterForm } from "./components/RegisterForm";
 
-// import { AutoSyncProvider } from "./components/AutoSyncProvider"; // Temporarily disabled
+import { AutoSyncProvider } from "./components/AutoSyncProvider";
 import { SyncStatusIcon } from "./components/SyncStatusIndicator";
 import { FirebaseQuotaWarning } from "./components/FirebaseQuotaWarning";
 
@@ -2760,7 +2760,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           Manutenções
                         </h1>
                         <p className="text-gray-600 text-sm">
-                          Histórico de manutenções realizadas
+                          Histórico de manutenç��es realizadas
                         </p>
                       </div>
                     </div>
@@ -5391,7 +5391,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           </h4>
                           <ul className="text-gray-700 text-sm space-y-1">
                             <li>
-                              • As defini����es são guardadas localmente no
+                              • As defini��ões são guardadas localmente no
                               dispositivo
                             </li>
                             <li>
@@ -5526,7 +5526,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                         <strong>{pools.length}</strong> piscinas registadas
                       </p>
                       <ul className="text-xs text-gray-500 space-y-1">
-                        <li>�� Estado e localização</li>
+                        <li>���� Estado e localização</li>
                         <li>• Informações de clientes</li>
                         <li>• Histórico de manutenções</li>
                         <li>• Próximas intervenções</li>
