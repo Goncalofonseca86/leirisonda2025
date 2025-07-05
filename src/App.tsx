@@ -140,19 +140,50 @@ function App() {
     console.log("✅ Auto-login completed successfully");
   }, []);
 
-  // Data sync hook
-  const dataSync = useDataSync();
-  const {
-    pools = [],
-    maintenance = [],
-    futureMaintenance = [],
-    works = [],
-    clients = [],
-    addPool,
-    addWork,
-    addMaintenance,
-    addClient,
-  } = dataSync || {};
+  // Data management - usando localStorage diretamente para evitar loops
+  const [works, setWorks] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("works") || "[]");
+    } catch {
+      return [];
+    }
+  });
+
+  const [pools, setPools] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("pools") || "[]");
+    } catch {
+      return [];
+    }
+  });
+
+  const addWork = (work: any) => {
+    const newWork = {
+      ...work,
+      id: Date.now(),
+      createdAt: new Date().toISOString(),
+    };
+    const updatedWorks = [...works, newWork];
+    setWorks(updatedWorks);
+    localStorage.setItem("works", JSON.stringify(updatedWorks));
+  };
+
+  const addPool = (pool: any) => {
+    const newPool = {
+      ...pool,
+      id: Date.now(),
+      createdAt: new Date().toISOString(),
+    };
+    const updatedPools = [...pools, newPool];
+    setPools(updatedPools);
+    localStorage.setItem("pools", JSON.stringify(updatedPools));
+  };
+
+  const maintenance = [];
+  const futureMaintenance = [];
+  const clients = [];
+  const addMaintenance = () => {};
+  const addClient = () => {};
 
   // Navigation
   const navigateToSection = (section: string) => {
