@@ -33,9 +33,9 @@ import { InstallPrompt } from "./components/InstallPrompt";
 import { UserPermissionsManager } from "./components/UserPermissionsManager";
 import { RegisterForm } from "./components/RegisterForm";
 
-import { AutoSyncProvider } from "./components/AutoSyncProvider";
-import { SyncStatusIcon } from "./components/SyncStatusIndicator";
-import { FirebaseQuotaWarning } from "./components/FirebaseQuotaWarning";
+// import { AutoSyncProvider } from "./components/AutoSyncProvider";
+// import { SyncStatusIcon } from "./components/SyncStatusIndicator";
+// import { FirebaseQuotaWarning } from "./components/FirebaseQuotaWarning";
 
 // SECURITY: RegisterForm removed - only super admin can create users
 import { AdminLogin } from "./admin/AdminLogin";
@@ -1683,7 +1683,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                   `Obras no sistema: ${works.length}\n` +
                                   `Obras atribuídas ao Alexandre: ${alexandreWorks.length}\n` +
                                   `Notificaç��es ativadas: ${notificationsEnabled ? "Sim" : "Não"}\n` +
-                                  `Permissão notificações: ${Notification.permission}\n\n` +
+                                  `Permissão notifica��ões: ${Notification.permission}\n\n` +
                                   `Ver console para mais detalhes`,
                               );
                             }}
@@ -4553,7 +4553,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                         Nova Manuten��ão
                       </h1>
                       <p className="text-gray-600 text-sm">
-                        Registar intervenção de manutenção
+                        Registar intervenção de manuten��ão
                       </p>
                     </div>
                   </div>
