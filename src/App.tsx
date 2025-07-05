@@ -33,7 +33,7 @@ import { InstallPrompt } from "./components/InstallPrompt";
 import { UserPermissionsManager } from "./components/UserPermissionsManager";
 import { RegisterForm } from "./components/RegisterForm";
 
-import { AutoSyncProvider } from "./components/AutoSyncProvider";
+// import { AutoSyncProvider } from "./components/AutoSyncProvider"; // Temporarily disabled
 import { SyncStatusIcon } from "./components/SyncStatusIndicator";
 import { FirebaseQuotaWarning } from "./components/FirebaseQuotaWarning";
 
@@ -879,7 +879,7 @@ ${index + 1}. ${pool.name}
   )
   .join("\n")}
 
-© ${new Date().getFullYear()} Leirisonda - Sistema de Gest��o
+© ${new Date().getFullYear()} Leirisonda - Sistema de Gest����o
     `;
     downloadPDF(
       content,
@@ -2800,7 +2800,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <input
                       type="text"
-                      placeholder="Pesquisar manuten��ões..."
+                      placeholder="Pesquisar manutenções..."
                       className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <select className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -4370,7 +4370,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           <option value="cartucho">Filtro de Cartucho</option>
                           <option value="diatomaceas">Terra Diatomáceas</option>
                           <option value="uv">Sistema UV</option>
-                          <option value="sal">Eletrólise de Sal</option>
+                          <option value="sal">Eletr��lise de Sal</option>
                         </select>
                       </div>
                       <div>
@@ -6941,7 +6941,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                         }}
                         className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
                       >
-                        Guardar Alteraç��es
+                        Guardar Alterações
                       </button>
                     </div>
                   </form>
