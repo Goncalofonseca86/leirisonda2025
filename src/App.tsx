@@ -33,9 +33,9 @@ import { InstallPrompt } from "./components/InstallPrompt";
 import { UserPermissionsManager } from "./components/UserPermissionsManager";
 import { RegisterForm } from "./components/RegisterForm";
 
-import { AutoSyncProvider } from "./components/AutoSyncProvider";
-import { SyncStatusIcon } from "./components/SyncStatusIndicator";
-import { FirebaseQuotaWarning } from "./components/FirebaseQuotaWarning";
+// import { AutoSyncProvider } from "./components/AutoSyncProvider";
+// import { SyncStatusIcon } from "./components/SyncStatusIndicator";
+// import { FirebaseQuotaWarning } from "./components/FirebaseQuotaWarning";
 
 // SECURITY: RegisterForm removed - only super admin can create users
 import { AdminLogin } from "./admin/AdminLogin";
@@ -1171,7 +1171,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
       );
     } else {
       alert(
-        "As notificaç����es não est�����o ativadas. Active-as primeiro nas configurações.",
+        "As notifica������es não est�����o ativadas. Active-as primeiro nas configurações.",
       );
     }
   };
@@ -5517,7 +5517,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                         <strong>{pools.length}</strong> piscinas registadas
                       </p>
                       <ul className="text-xs text-gray-500 space-y-1">
-                        <li>�� Estado e localização</li>
+                        <li>�� Estado e localizaç��o</li>
                         <li>• Informações de clientes</li>
                         <li>• Histórico de manutenções</li>
                         <li>• Próximas intervenções</li>
