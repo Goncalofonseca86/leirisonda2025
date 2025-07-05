@@ -2406,7 +2406,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                 client.email
                                   .toLowerCase()
                                   .includes(globalSearchTerm.toLowerCase()) ||
-                                client.phone.includes(globalSearchTerm) ||
+                                client.phone?.includes(globalSearchTerm) ||
                                 client.address
                                   .toLowerCase()
                                   .includes(globalSearchTerm.toLowerCase()),
