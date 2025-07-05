@@ -442,7 +442,7 @@ function App() {
       works.length > 0
     ) {
       console.log("🔍 DEBUG Alexandre - Data loaded:", {
-        currentUser: currentUser.name,
+        currentUser: currentUser?.name,
         worksCount: works.length,
         works: works.map((w) => ({
           id: w.id,
@@ -923,7 +923,7 @@ ${index + 1}. ${work.title}
    ${work.budget ? `Or���amento: ��${work.budget.toLocaleString("pt-PT")}` : ""}
    ${work.actualCost ? `Custo Real: €${work.actualCost.toLocaleString("pt-PT")}` : ""}
    Responsável: ${work.assignedTo}
-   Descrição: ${work.description}
+   Descri��ão: ${work.description}
 `,
   )
   .join("\n")}
@@ -2985,7 +2985,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                       Manutenções
                     </button>
                     <button className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg font-medium">
-                      Futuras Manutenções
+                      Futuras Manuten��ões
                     </button>
                   </div>
                 </div>
@@ -7057,7 +7057,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Data de Instalação
+                          Data de Instala��ão
                         </label>
                         <input
                           type="date"
