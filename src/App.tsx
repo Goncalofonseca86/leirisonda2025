@@ -1145,7 +1145,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
         // Show alert as fallback for better user experience
         setTimeout(() => {
           alert(
-            `🔔 Nova Obra Atribuída!\n\n📋 ${workTitle}\n\n��� Atribu����da a: ${assignedTo}\n\n💡 Ative as notificações nas configurações para receber alertas automáticos.`,
+            `🔔 Nova Obra Atribuída!\n\n📋 ${workTitle}\n\n👤 Atribu����da a: ${assignedTo}\n\n💡 Ative as notificações nas configurações para receber alertas automáticos.`,
           );
         }, 1000);
       }
@@ -5590,7 +5590,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                       <ul className="text-xs text-gray-500 space-y-1">
                         <li>• Orçamentos e custos</li>
                         <li>• Prazos e cronogramas</li>
-                        <li>• Equipas responsáveis</li>
+                        <li>• Equipas respons��veis</li>
                         <li>• Estados de progresso</li>
                       </ul>
                     </div>
@@ -8057,7 +8057,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                   <p className="font-medium text-gray-900">
                     {currentUser?.name}
                   </p>
-                  <p className="text-sm text-gray-500">{currentUser.role}</p>
+                  <p className="text-sm text-gray-500">{currentUser?.role}</p>
                 </div>
               </div>
               <button
