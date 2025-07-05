@@ -893,7 +893,7 @@ ${index + 1}. ${maint.poolName}
   )
   .join("\n")}
 
-��� ${new Date().getFullYear()} Leirisonda - Sistema de Gest��o
+���� ${new Date().getFullYear()} Leirisonda - Sistema de Gest��o
     `;
     downloadPDF(
       content,
@@ -918,7 +918,7 @@ ${index + 1}. ${work.title}
    Localizaç������o: ${work.location}
    Tipo: ${work.type}
    Estado: ${work.status === "completed" ? "Concluída" : work.status === "pending" ? "Pendente" : "Em Progresso"}
-   Data Início: ${new Date(work.startDate).toLocaleDateString("pt-PT")}
+   Data Início: ${work.startDate ? new Date(work.startDate).toLocaleDateString("pt-PT") : "N/A"}
    ${work.endDate ? `Data Fim: ${new Date(work.endDate).toLocaleDateString("pt-PT")}` : ""}
    ${work.budget ? `Or���amento: ��${work.budget.toLocaleString("pt-PT")}` : ""}
    ${work.actualCost ? `Custo Real: €${work.actualCost.toLocaleString("pt-PT")}` : ""}
@@ -2879,7 +2879,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                         }`}
                                         disabled={!enablePhoneDialer}
                                       >
-                                        ��� {maint.clientContact}
+                                        ���� {maint.clientContact}
                                       </button>
                                     </div>
                                   )}
@@ -3709,7 +3709,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           {/* Observações Específicas do Furo */}
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Observaç��es Específicas do Furo
+                              Observaç��es Espec��ficas do Furo
                             </label>
                             <textarea
                               rows={3}
@@ -5555,7 +5555,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                       <ul className="text-xs text-gray-500 space-y-1">
                         <li>• Trabalhos realizados</li>
                         <li>• Técnicos respons��veis</li>
-                        <li>• Datas e durações</li>
+                        <li>• Datas e duraç��es</li>
                         <li>• Estados e observaç��es</li>
                       </ul>
                     </div>
