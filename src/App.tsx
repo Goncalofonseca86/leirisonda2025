@@ -441,7 +441,7 @@ function App() {
       currentUser?.name?.toLowerCase().includes("alexandre") &&
       works.length > 0
     ) {
-      console.log("🔍 DEBUG Alexandre - Data loaded:", {
+      console.log("�� DEBUG Alexandre - Data loaded:", {
         currentUser: currentUser?.name,
         worksCount: works.length,
         works: works.map((w) => ({
@@ -1171,7 +1171,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
       );
     } else {
       alert(
-        "As notifica��������es não est�����o ativadas. Active-as primeiro nas configurações.",
+        "As notifica�������es não est�����o ativadas. Active-as primeiro nas configurações.",
       );
     }
   };
@@ -3063,7 +3063,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                 ).toLocaleDateString("pt-PT")}
                               </span>
                               <span className="text-gray-500">
-                                👨‍🔧 {maint.technician}
+                                👨���🔧 {maint.technician}
                               </span>
                             </div>
                           </div>
@@ -3409,7 +3409,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
 
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Usuários Atribuídos ({users.length} utilizadores
+                            Usuários Atribu��dos ({users.length} utilizadores
                             disponíveis)
                           </label>
                           <p className="text-sm text-gray-600 mb-2">
@@ -5434,7 +5434,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                 • Todas as obras ({works.length} registos)
                               </li>
                               <li>
-                                • Todas as manutenções ({maintenance.length}{" "}
+                                • Todas as manuten��ões ({maintenance.length}{" "}
                                 registos)
                               </li>
                               <li>
@@ -6590,7 +6590,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           type="text"
                           defaultValue={editingWork?.title}
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder="Ex: Instalação de Piscina"
+                          placeholder="Ex: Instalaç��o de Piscina"
                           required
                         />
                       </div>
@@ -7253,7 +7253,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           <option value="Limpeza">Limpeza</option>
                           <option value="Tratamento">Tratamento</option>
                           <option value="Manutenção">Manutenção</option>
-                          <option value="Reparaç��o">Reparação</option>
+                          <option value="Reparaç����o">Reparação</option>
                         </select>
                       </div>
                       <div>
@@ -7329,7 +7329,9 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                         <input
                           type="date"
                           defaultValue={
-                            editingMaintenance?.completedDate?.split("T")[0]
+                            editingMaintenance?.completedDate
+                              ? editingMaintenance.completedDate.split("T")[0]
+                              : ""
                           }
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
