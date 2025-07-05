@@ -887,7 +887,7 @@ ${index + 1}. ${maint.poolName}
    Estado: ${maint.status === "completed" ? "Concluída" : maint.status === "pending" ? "Pendente" : "Em Progresso"}
    Data Agendada: ${maint.scheduledDate ? new Date(maint.scheduledDate).toLocaleDateString("pt-PT") : "N/A"}
    Técnico: ${maint.technician}
-   Descri��ão: ${maint.description}
+   Descri����o: ${maint.description}
    ${maint.notes ? `Observações: ${maint.notes}` : ""}
 `,
   )
@@ -7786,7 +7786,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                 Área Protegida
               </h1>
               <p className="text-gray-600">
-                Insira a palavra-passe para aceder às configurações avançadas
+                Insira a palavra-passe para aceder às configurações avan��adas
               </p>
             </div>
 
@@ -8214,9 +8214,11 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                       Data de Início
                     </label>
                     <p className="text-gray-900">
-                      {new Date(selectedWork.startDate).toLocaleDateString(
-                        "pt-PT",
-                      )}
+                      {selectedWork.startDate
+                        ? new Date(selectedWork.startDate).toLocaleDateString(
+                            "pt-PT",
+                          )
+                        : "N/A"}
                     </p>
                   </div>
                   <div>
