@@ -1840,7 +1840,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                               // Simple debug logging for assigned works
                               if (assignedWorks.length > 0) {
                                 console.log(
-                                  `�� ${assignedWorks.length} obra(s) atribuída(s) a ${currentUser.name}`,
+                                  `✅ ${assignedWorks.length} obra(s) atribuída(s) a ${currentUser.name}`,
                                 );
                               }
 
@@ -3225,7 +3225,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                               placeholder="Deixe vazio se ainda não terminou"
                             />
                             <p className="text-xs text-gray-500 mt-1">
-                              Deixe vazio se ainda n��o terminou
+                              Deixe vazio se ainda não terminou
                             </p>
                           </div>
                         </div>
@@ -7682,6 +7682,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
   useEffect(() => {
     if (!currentUser) {
       const testUser = {
+        uid: "goncalo-main-user", // Propriedade uid obrigatória
         id: 1,
         name: "Gonçalo Fonseca",
         email: "gongonsilva@gmail.com",
