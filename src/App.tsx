@@ -141,12 +141,28 @@ function App() {
     };
   }, []);
 
-  // No auto-login - users must login manually
+  // Auto-login para funcionar
   useEffect(() => {
-    // Clear any existing auth data on app start
-    localStorage.removeItem("currentUser");
-    localStorage.removeItem("mock-current-user");
-    console.log("🔒 SECURITY: Auth data cleared - manual login required");
+    const mainUser = {
+      uid: "goncalo-main-user",
+      name: "Gonçalo Fonseca",
+      email: "gongonsilva@gmail.com",
+      role: "super_admin" as const,
+      permissions: {
+        obras: { view: true, create: true, edit: true, delete: true },
+        manutencoes: { view: true, create: true, edit: true, delete: true },
+        piscinas: { view: true, create: true, edit: true, delete: true },
+        utilizadores: { view: true, create: true, edit: true, delete: true },
+        relatorios: { view: true, create: true, edit: true, delete: true },
+        clientes: { view: true, create: true, edit: true, delete: true },
+        admin: { view: true, create: true, edit: true, delete: true },
+        dashboard: { view: true },
+      },
+    };
+
+    setCurrentUser(mainUser);
+    setIsAuthenticated(true);
+    console.log("✅ Auto-login efetuado");
   }, []);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("dashboard");
@@ -1682,7 +1698,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                 `Debug Alexandre:\n` +
                                   `Obras no sistema: ${works.length}\n` +
                                   `Obras atribuídas ao Alexandre: ${alexandreWorks.length}\n` +
-                                  `Notificaç��es ativadas: ${notificationsEnabled ? "Sim" : "Não"}\n` +
+                                  `Notificaç����es ativadas: ${notificationsEnabled ? "Sim" : "Não"}\n` +
                                   `Permissão notificações: ${Notification.permission}\n\n` +
                                   `Ver console para mais detalhes`,
                               );
