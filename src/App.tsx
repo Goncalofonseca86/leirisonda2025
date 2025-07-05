@@ -1405,7 +1405,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
       } else {
         // Add new user
         const newUser = {
-          id: Math.max(...users.map((u) => u.id)) + 1,
+          id: users.length > 0 ? Math.max(...users.map((u) => u.id)) + 1 : 1,
           ...userForm,
           createdAt: new Date().toISOString().split("T")[0],
         };
