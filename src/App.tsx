@@ -3661,7 +3661,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                                   required
                                 >
-                                  <option value="">Selecionar potência</option>
+                                  <option value="">Selecionar pot��ncia</option>
                                   <option value="0.5">0.5 HP</option>
                                   <option value="0.75">0.75 HP</option>
                                   <option value="1">1 HP</option>
@@ -7890,11 +7890,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
   }
 
   return (
-    <div
-      syncInterval={15000}
-      collections={["users", "pools", "maintenance", "works", "clients"]}
-      showNotifications={false}
-    >
+    <div>
       <div className="min-h-screen bg-gray-50">
         {/* Sidebar */}
         <div
