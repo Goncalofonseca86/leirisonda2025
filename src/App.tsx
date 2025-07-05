@@ -234,10 +234,10 @@ function App() {
   const cleanupLoading = false;
   const cleanupError = null;
 
-  // Auto-sync hook for automatic Firebase �� localStorage synchronization
-  const autoSyncData = useAutoSync();
-  const { syncStatus, isAutoSyncing } = autoSyncData;
-  const autoSyncLastSync = autoSyncData.lastSync;
+  // Auto-sync hook - temporarily disabled to debug hooks issue
+  const syncStatus = "completed";
+  const isAutoSyncing = false;
+  const autoSyncLastSync = new Date();
 
   // Keep local users state for user management
   const [users, setUsers] = useState(initialUsers);
@@ -879,7 +879,7 @@ ${index + 1}. ${pool.name}
   )
   .join("\n")}
 
-© ${new Date().getFullYear()} Leirisonda - Sistema de Gest��o
+© ${new Date().getFullYear()} Leirisonda - Sistema de Gest���o
     `;
     downloadPDF(
       content,
