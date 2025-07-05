@@ -371,7 +371,7 @@ function App() {
         console.log("⏳ Notifications permission not yet requested");
       }
     } else {
-      console.warn("������ Notifications not supported in this browser");
+      console.warn("������� Notifications not supported in this browser");
     }
 
     // Register service worker for better push notification support
@@ -2510,13 +2510,13 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                               maintenance.filter(
                                 (maint) =>
                                   maint.poolName
-                                    .toLowerCase()
+                                    ?.toLowerCase()
                                     .includes(globalSearchTerm.toLowerCase()) ||
                                   maint.type
-                                    .toLowerCase()
+                                    ?.toLowerCase()
                                     .includes(globalSearchTerm.toLowerCase()) ||
                                   maint.technician
-                                    .toLowerCase()
+                                    ?.toLowerCase()
                                     .includes(globalSearchTerm.toLowerCase()) ||
                                   maint.scheduledDate?.includes(
                                     globalSearchTerm,
