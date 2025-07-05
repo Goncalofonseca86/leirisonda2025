@@ -1900,7 +1900,9 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                               work.assignedTo
                                 .split(",")
                                 .map((name) => name.trim().toLowerCase())
-                                .includes(currentUser.name.toLowerCase());
+                                .includes(
+                                  currentUser?.name?.toLowerCase() || "",
+                                );
 
                             // Check if user is in assignedUsers array (exact match)
                             const assignedUsersMatch = work.assignedUsers?.some(
@@ -5263,7 +5265,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                               navegador
                             </li>
                             <li>
-                              • Em dispositivos móveis, adicione a app ao ecrã
+                              ��� Em dispositivos móveis, adicione a app ao ecrã
                               inicial
                             </li>
                           </ul>
