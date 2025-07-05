@@ -2272,13 +2272,13 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                             {pools.filter(
                               (pool) =>
                                 pool.name
-                                  .toLowerCase()
+                                  ?.toLowerCase()
                                   .includes(globalSearchTerm.toLowerCase()) ||
                                 pool.client
-                                  .toLowerCase()
+                                  ?.toLowerCase()
                                   .includes(globalSearchTerm.toLowerCase()) ||
                                 pool.location
-                                  .toLowerCase()
+                                  ?.toLowerCase()
                                   .includes(globalSearchTerm.toLowerCase()),
                             ).length > 0 && (
                               <div>
