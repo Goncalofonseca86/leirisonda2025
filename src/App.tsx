@@ -364,7 +364,7 @@ function App() {
       setNotificationsEnabled(permission === "granted");
 
       if (permission === "granted") {
-        console.log("✅ Notifications already granted");
+        console.log("��� Notifications already granted");
       } else if (permission === "denied") {
         console.warn("❌ Notifications denied by user");
       } else {
@@ -2498,13 +2498,13 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                               pools.filter(
                                 (pool) =>
                                   pool.name
-                                    .toLowerCase()
+                                    ?.toLowerCase()
                                     .includes(globalSearchTerm.toLowerCase()) ||
                                   pool.client
-                                    .toLowerCase()
+                                    ?.toLowerCase()
                                     .includes(globalSearchTerm.toLowerCase()) ||
                                   pool.location
-                                    .toLowerCase()
+                                    ?.toLowerCase()
                                     .includes(globalSearchTerm.toLowerCase()),
                               ).length === 0 &&
                               maintenance.filter(
