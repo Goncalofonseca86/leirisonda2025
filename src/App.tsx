@@ -747,7 +747,7 @@ function App() {
           }
         }, 100);
       } else {
-        console.warn("�� Login failed:", result.error);
+        console.warn("���� Login failed:", result.error);
         setLoginError(result.error || "Credenciais inválidas");
       }
     } catch (error) {
@@ -2321,7 +2321,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                             {pool.name}
                                           </p>
                                           <p className="text-sm text-gray-600">
-                                            {pool.client} �� {pool.location}
+                                            {pool.client} • {pool.location}
                                           </p>
                                         </div>
                                       </div>
@@ -2820,7 +2820,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                         Nenhuma manutenção registada
                       </h3>
                       <p className="text-gray-600 text-sm">
-                        As manutenções aparecerão aqui quando forem criadas
+                        As manutenções aparecer��o aqui quando forem criadas
                       </p>
                     </div>
                   ) : (
@@ -8036,7 +8036,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                 }`}
               >
                 <Plus className="h-5 w-5" />
-                <span>Nova Manuten��ão</span>
+                <span>Nova Manuten����ão</span>
               </button>
             )}
 
