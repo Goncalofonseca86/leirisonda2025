@@ -293,7 +293,7 @@ function App() {
       try {
         const user = JSON.parse(storedUser);
         console.log(
-          "����� App init: Restoring user from localStorage:",
+          "������� App init: Restoring user from localStorage:",
           user.email,
         );
         setCurrentUser(user);
@@ -1847,7 +1847,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                               // Simple debug logging for assigned works
                               if (assignedWorks.length > 0) {
                                 console.log(
-                                  `✅ ${assignedWorks.length} obra(s) atribuída(s) a ${currentUser.name}`,
+                                  `✅ ${assignedWorks.length} obra(s) atribuída(s) a ${currentUser?.name}`,
                                 );
                               }
 
@@ -7237,7 +7237,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           <option value="Limpeza">Limpeza</option>
                           <option value="Tratamento">Tratamento</option>
                           <option value="Manutenção">Manutenção</option>
-                          <option value="Reparação">Reparação</option>
+                          <option value="Reparaç��o">Reparação</option>
                         </select>
                       </div>
                       <div>
