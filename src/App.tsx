@@ -40,7 +40,7 @@ import { FirebaseQuotaWarning } from "./components/FirebaseQuotaWarning";
 // SECURITY: RegisterForm removed - only super admin can create users
 import { AdminLogin } from "./admin/AdminLogin";
 import { AdminPage } from "./admin/AdminPage";
-import { useDataSync } from "./hooks/useDataSync";
+import { useDataSync } from "./hooks/useDataSync_simple";
 import { authService, UserProfile } from "./services/authService";
 import { useDataCleanup } from "./hooks/useDataCleanup";
 import { useAutoSync } from "./hooks/useAutoSync";
@@ -560,7 +560,7 @@ function App() {
     // SECURITY: Check if user has permission to create maintenance
     if (!currentUser?.permissions?.manutencoes?.create) {
       alert(
-        "Não tem permissão para criar manutenções. Contacte o administrador.",
+        "Não tem permiss��o para criar manutenções. Contacte o administrador.",
       );
       return;
     }
@@ -1698,7 +1698,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                 `Debug Alexandre:\n` +
                                   `Obras no sistema: ${works.length}\n` +
                                   `Obras atribuídas ao Alexandre: ${alexandreWorks.length}\n` +
-                                  `Notificaç����es ativadas: ${notificationsEnabled ? "Sim" : "Não"}\n` +
+                                  `Notificaç��es ativadas: ${notificationsEnabled ? "Sim" : "Não"}\n` +
                                   `Permissão notificações: ${Notification.permission}\n\n` +
                                   `Ver console para mais detalhes`,
                               );
@@ -5195,7 +5195,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                             Notificações de Obras
                           </h4>
                           <p className="text-blue-700 text-sm mb-3">
-                            Receba notificações quando uma nova obra for
+                            Receba notifica��ões quando uma nova obra for
                             atribuída a si.
                           </p>
                           <button
