@@ -7359,7 +7359,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
 
                           const scheduledDate = inputs[0].value; // Data
                           const technician = inputs[1].value; // Técnico
-                          const type = inputs[2].value; // Tipo de Manutenção
+                          const type = inputs[2].value; // Tipo de Manuten��ão
                           const status = inputs[3].value; // Estado
                           const estimatedDuration = inputs[4].value; // Duração Estimada
                           const actualDuration = inputs[5].value; // Duração Real
@@ -7682,6 +7682,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
   useEffect(() => {
     if (!currentUser) {
       const testUser = {
+        uid: "goncalo-main-user", // Propriedade uid obrigatória
         id: 1,
         name: "Gonçalo Fonseca",
         email: "gongonsilva@gmail.com",
