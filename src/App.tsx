@@ -42,8 +42,8 @@ import { AdminLogin } from "./admin/AdminLogin";
 import { AdminPage } from "./admin/AdminPage";
 import { useDataSync } from "./hooks/useDataSync_simple";
 import { authService, UserProfile } from "./services/authService";
-// import { useDataCleanup } from "./hooks/useDataCleanup"; // Temporarily disabled
-// import { useAutoSync } from "./hooks/useAutoSync"; // Temporarily disabled
+import { useDataCleanup } from "./hooks/useDataCleanup";
+import { useAutoSync } from "./hooks/useAutoSync";
 
 // Mock users database
 const initialUsers = [
@@ -832,7 +832,7 @@ function App() {
   const handleDataCleanup = async () => {
     if (
       window.confirm(
-        "ATENÇÃO: Esta ação vai eliminar permanentemente todas as obras, manutenç��es e piscinas. Os utilizadores serão mantidos. Confirma?",
+        "ATENÇÃO: Esta ação vai eliminar permanentemente todas as obras, manutenções e piscinas. Os utilizadores serão mantidos. Confirma?",
       )
     ) {
       try {
@@ -1607,7 +1607,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
   const renderContent = () => {
     // Add loading state check with timeout
     if (!currentUser || !isAuthenticated) {
-      console.log("🔄 renderContent: Waiting for auth state", {
+      console.log("���� renderContent: Waiting for auth state", {
         currentUser: !!currentUser,
         isAuthenticated,
         activeSection,
@@ -3420,7 +3420,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                             disponíveis)
                           </label>
                           <p className="text-sm text-gray-600 mb-2">
-                            Selecione os usuários respons��veis por esta obra
+                            Selecione os usuários responsáveis por esta obra
                           </p>
                           <div className="flex space-x-2">
                             <select
