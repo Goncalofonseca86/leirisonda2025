@@ -122,7 +122,7 @@ function App() {
 
   // Debug logging for authentication state changes
   useEffect(() => {
-    console.log("�� Auth State Debug:", {
+    console.log("���� Auth State Debug:", {
       isAuthenticated,
       currentUser: currentUser
         ? `${currentUser?.name} (${currentUser?.email})`
@@ -371,7 +371,7 @@ function App() {
         console.log("⏳ Notifications permission not yet requested");
       }
     } else {
-      console.warn("��� Notifications not supported in this browser");
+      console.warn("����� Notifications not supported in this browser");
     }
 
     // Register service worker for better push notification support
@@ -756,7 +756,7 @@ function App() {
 
   const handleLogout = async () => {
     try {
-      console.log("�� Initiating logout process...");
+      console.log("��� Initiating logout process...");
 
       // Close sidebar immediately
       setSidebarOpen(false);
@@ -2181,13 +2181,13 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                             {works.filter(
                               (work) =>
                                 work.title
-                                  .toLowerCase()
+                                  ?.toLowerCase()
                                   .includes(globalSearchTerm.toLowerCase()) ||
                                 work.client
-                                  .toLowerCase()
+                                  ?.toLowerCase()
                                   .includes(globalSearchTerm.toLowerCase()) ||
                                 work.location
-                                  .toLowerCase()
+                                  ?.toLowerCase()
                                   .includes(globalSearchTerm.toLowerCase()) ||
                                 (work.assignedUsers &&
                                 work.assignedUsers.length > 0
@@ -5651,7 +5651,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           Relatório Completo
                         </h3>
                         <p className="text-sm text-gray-600">
-                          Todas as informa��ões
+                          Todas as informa���ões
                         </p>
                       </div>
                     </div>
