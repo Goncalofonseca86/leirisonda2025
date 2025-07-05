@@ -1026,7 +1026,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
   )
   .join("")}
 
-🔒� ${new Date().getFullYear()} Leirisonda - Sistema de Gestão
+🔒ã ${new Date().getFullYear()} Leirisonda - Sistema de Gestão
     `;
     downloadPDF(
       content,
@@ -1154,7 +1154,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
         // Show alert as fallback for better user experience
         setTimeout(() => {
           alert(
-            `🔔 Nova Obra Atribuída!\n\n🔒 ${workTitle}\n\n👤 Atribu🔒�da a: ${assignedTo}\n\n💡 Ative as notificações nas configurações para receber alertas automáticos.`,
+            `🔔 Nova Obra Atribuída!\n\n🔒 ${workTitle}\n\n👤 Atribu🔒ãda a: ${assignedTo}\n\n💡 Ative as notificações nas configurações para receber alertas automáticos.`,
           );
         }, 1000);
       }
@@ -1167,7 +1167,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
     }
 
     // Console log for debugging purposes (admin view)
-    console.log(`🔒�️ OBRA ATRIBUÍDA: "${workTitle}" → ${assignedTo}`);
+    console.log(`🔒ã️ OBRA ATRIBUÍDA: "${workTitle}" → ${assignedTo}`);
     console.log(`📋 Total de obras atribuídas: ${assignedWorks.length + 1}`);
   };
 
@@ -1180,7 +1180,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
       );
     } else {
       alert(
-        "As notificaç🔒�es não est🔒•o ativadas. Active-as primeiro nas configurações.",
+        "As notificaç🔒ães não est🔒•o ativadas. Active-as primeiro nas configurações.",
       );
     }
   };
@@ -1715,7 +1715,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                             }}
                             className="px-3 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600"
                           >
-                            Testar Notifica🔒�o
+                            Testar Notifica🔒ão
                           </button>
                         </div>
                       )}
@@ -4006,7 +4006,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           alert(
                             `Obra "${workTitle}" criada com sucesso! ` +
                               (assignedUsers.length > 0
-                                ? `Notificações enviadas a ${assignedUsers.length} respons🔒�vel(eis).`
+                                ? `Notificações enviadas a ${assignedUsers.length} respons🔒ãvel(eis).`
                                 : "") +
                               (selectedWorkType === "furo"
                                 ? " Dados do furo registados."
@@ -6463,7 +6463,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                   <span className="font-medium">
                                     Orçamento:
                                   </span>{" "}
-                                  🔒�{work.budget}
+                                  🔒ã{work.budget}
                                 </div>
                               )}
                             </div>
