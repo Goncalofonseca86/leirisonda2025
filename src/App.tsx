@@ -1331,8 +1331,8 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
 
   // Permission check function
   const hasPermission = (module: string, action: string): boolean => {
-    if (!currentUser || !currentUser.permissions) return false;
-    return currentUser.permissions[module]?.[action] || false;
+    if (!currentUser || !currentUser?.permissions) return false;
+    return currentUser?.permissions[module]?.[action] || false;
   };
 
   // Utility functions for clickable links
@@ -4287,7 +4287,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           <option value="ativa">Ativa</option>
                           <option value="inativa">Inativa</option>
                           <option value="manutencao">Em Manutenção</option>
-                          <option value="construcao">Em Construção</option>
+                          <option value="construcao">Em Construç��o</option>
                         </select>
                       </div>
                     </div>
@@ -4552,7 +4552,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                     </div>
                     <div>
                       <h1 className="text-2xl font-bold text-gray-900">
-                        Nova Manuten��ão
+                        Nova Manuten���ão
                       </h1>
                       <p className="text-gray-600 text-sm">
                         Registar intervenção de manutenção
