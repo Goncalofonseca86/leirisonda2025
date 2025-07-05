@@ -1158,7 +1158,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
     }
 
     // Console log for debugging purposes (admin view)
-    console.log(`����️ OBRA ATRIBUÍDA: "${workTitle}" → ${assignedTo}`);
+    console.log(`�����️ OBRA ATRIBUÍDA: "${workTitle}" → ${assignedTo}`);
     console.log(`📋 Total de obras atribuídas: ${assignedWorks.length + 1}`);
   };
 
@@ -3297,7 +3297,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                               type="button"
                               onClick={() => {
                                 if (
-                                  currentVehicle.trim() &&
+                                  currentVehicle?.trim() &&
                                   !workVehicles.includes(currentVehicle.trim())
                                 ) {
                                   setWorkVehicles([
@@ -7659,7 +7659,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                 </div>
                 <div className="flex items-center space-x-2">
                   <span>✓</span>
-                  <span>Observações e próxima manutenção</span>
+                  <span>Observa��ões e próxima manutenção</span>
                 </div>
               </div>
             </div>
