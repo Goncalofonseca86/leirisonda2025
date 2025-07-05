@@ -5154,7 +5154,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                     <div className="flex justify-between py-2 border-b border-gray-100">
                       <span className="text-gray-600">Perfil</span>
                       <span className="font-medium capitalize">
-                        {currentUser.role.replace("_", " ")}
+                        {currentUser?.role?.replace("_", " ")}
                       </span>
                     </div>
                     <div className="flex justify-between py-2">
@@ -6200,7 +6200,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           <textarea
                             rows={4}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                            placeholder="Informações relevantes sobre o cliente, preferências, histórico, etc."
+                            placeholder="Informações relevantes sobre o cliente, prefer��ncias, histórico, etc."
                           />
                         </div>
                       </div>
