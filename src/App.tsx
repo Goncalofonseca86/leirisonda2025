@@ -8270,7 +8270,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                         Fotografias ({selectedWork.photos.length})
                       </label>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-2">
-                        {selectedWork.photos.map((photo, index) => (
+                        {selectedWork.photos?.map((photo, index) => (
                           <div key={photo.id || index} className="relative">
                             <img
                               src={photo.data || photo.url}
