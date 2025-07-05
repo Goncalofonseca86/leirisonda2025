@@ -224,15 +224,12 @@ function App() {
     addClient,
   } = dataSync;
 
-  // Data cleanup hook - temporarily disabled to debug hooks issue
-  // const {
-  //   cleanAllData,
-  //   isLoading: cleanupLoading,
-  //   error: cleanupError,
-  // } = useDataCleanup();
-  const cleanAllData = () => Promise.resolve({ success: true });
-  const cleanupLoading = false;
-  const cleanupError = null;
+  // Data cleanup hook
+  const {
+    cleanAllData,
+    isLoading: cleanupLoading,
+    error: cleanupError,
+  } = useDataCleanup();
 
   // Auto-sync hook for automatic Firebase ↔ localStorage synchronization
   const autoSyncData = useAutoSync();
@@ -933,7 +930,7 @@ ${works
     (work, index) => `
 ${index + 1}. ${work.title}
    Cliente: ${work.client}
-   Localizaç������o: ${work.location}
+   Localizaç�������o: ${work.location}
    Tipo: ${work.type}
    Estado: ${work.status === "completed" ? "Concluída" : work.status === "pending" ? "Pendente" : "Em Progresso"}
    Data Início: ${new Date(work.startDate).toLocaleDateString("pt-PT")}
