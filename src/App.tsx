@@ -189,24 +189,35 @@ function App() {
   const [showAdminLogin, setShowAdminLogin] = useState(false);
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
 
-  // Data sync hook - manages all data with optional Firebase sync
-  const dataSync = useDataSync();
+  // Data sync hook - simplified version
   const {
-    pools,
-    maintenance,
-    futureMaintenance,
     works,
-    clients,
     isLoading: syncLoading,
     lastSync,
     error: syncError,
-    syncWithFirebase,
-    enableSync,
-    addPool,
     addWork,
-    addMaintenance,
-    addClient,
-  } = dataSync;
+    updateWork,
+    deleteWork,
+  } = useDataSync();
+
+  // Initialize other data states locally
+  const [pools, setPools] = useState([]);
+  const [maintenance, setMaintenance] = useState([]);
+  const [futureMaintenance, setFutureMaintenance] = useState([]);
+  const [clients, setClients] = useState([]);
+
+  // Simplified functions for other data types
+  const addPool = (pool) =>
+    setPools((prev) => [...prev, { ...pool, id: Date.now().toString() }]);
+  const addMaintenance = (maint) =>
+    setMaintenance((prev) => [
+      ...prev,
+      { ...maint, id: Date.now().toString() },
+    ]);
+  const addClient = (client) =>
+    setClients((prev) => [...prev, { ...client, id: Date.now().toString() }]);
+  const syncWithFirebase = () => Promise.resolve();
+  const enableSync = () => {};
 
   // Data cleanup hook - temporarily disabled to debug hooks issue
   // const {
@@ -358,7 +369,7 @@ function App() {
 
   // Initialize notification permission state and register service worker
   useEffect(() => {
-    console.log("🔔 Initializing notifications...");
+    console.log("�� Initializing notifications...");
     if ("Notification" in window) {
       const permission = Notification.permission;
       console.log("🔔 Current notification permission:", permission);
@@ -1682,7 +1693,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                 `Debug Alexandre:\n` +
                                   `Obras no sistema: ${works.length}\n` +
                                   `Obras atribuídas ao Alexandre: ${alexandreWorks.length}\n` +
-                                  `Notificaç��es ativadas: ${notificationsEnabled ? "Sim" : "Não"}\n` +
+                                  `Notificaç����es ativadas: ${notificationsEnabled ? "Sim" : "Não"}\n` +
                                   `Permissão notificações: ${Notification.permission}\n\n` +
                                   `Ver console para mais detalhes`,
                               );
