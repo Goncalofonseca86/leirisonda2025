@@ -5173,7 +5173,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                     </h3>
                   </div>
                   <p className="text-gray-600 mb-6">
-                    Ative as notificaç��es para receber alertas sobre novas
+                    Ative as notificaç���es para receber alertas sobre novas
                     obras atribuídas e atualizações importantes.
                   </p>
 
@@ -5402,7 +5402,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                 </div>
 
                 {/* Data Management Section - Only for Super Admin */}
-                {currentUser.role === "super_admin" && (
+                {currentUser?.role === "super_admin" && (
                   <div className="bg-white rounded-lg p-6 shadow-sm">
                     <div className="flex items-center mb-4">
                       <Trash2 className="h-6 w-6 text-red-600 mr-3" />
