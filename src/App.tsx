@@ -1109,9 +1109,13 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
     const isAssignedToCurrentUser =
       currentUser &&
       assignedTo &&
-      (assignedTo === currentUser.name ||
-        assignedTo.toLowerCase().includes(currentUser.name.toLowerCase()) ||
-        currentUser.name.toLowerCase().includes(assignedTo.toLowerCase()));
+      (assignedTo === currentUser?.name ||
+        assignedTo
+          .toLowerCase()
+          .includes(currentUser?.name?.toLowerCase() || "") ||
+        (currentUser?.name?.toLowerCase() || "").includes(
+          assignedTo.toLowerCase(),
+        ));
 
     console.log("🔍 DEBUG: Assignment check:", {
       currentUser: currentUser?.name,
@@ -5203,7 +5207,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                   });
                                 } else {
                                   alert(
-                                    "Notificações foram bloqueadas. Por favor, ative-as nas configurações do navegador.",
+                                    "Notificações foram bloqueadas. Por favor, ative-as nas configura��ões do navegador.",
                                   );
                                 }
                               } else {
