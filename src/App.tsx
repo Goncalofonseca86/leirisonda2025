@@ -127,7 +127,7 @@ function App() {
     console.log("�� Auth State Debug:", {
       isAuthenticated,
       currentUser: currentUser
-        ? `${currentUser.name} (${currentUser.email})`
+        ? `${currentUser?.name} (${currentUser?.email})`
         : null,
       timestamp: new Date().toISOString(),
     });
@@ -1333,8 +1333,8 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
 
   // Permission check function
   const hasPermission = (module: string, action: string): boolean => {
-    if (!currentUser || !currentUser.permissions) return false;
-    return currentUser.permissions[module]?.[action] || false;
+    if (!currentUser || !currentUser?.permissions) return false;
+    return currentUser?.permissions[module]?.[action] || false;
   };
 
   // Utility functions for clickable links
@@ -1661,7 +1661,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                               );
 
                               const debugInfo = {
-                                currentUser: currentUser.name,
+                                currentUser: currentUser?.name,
                                 totalWorks: works.length,
                                 alexandreWorks: alexandreWorks,
                                 localStorage: {
@@ -1829,7 +1829,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                   work.assignedTo
                                     .split(",")
                                     .map((name) => name.trim().toLowerCase())
-                                    .includes(currentUser.name.toLowerCase());
+                                    .includes(currentUser?.name.toLowerCase());
 
                                 // Check if user is in assignedUsers array (exact match)
                                 const assignedUsersMatch =
@@ -1837,7 +1837,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                                     (user) =>
                                       user.name &&
                                       user.name.toLowerCase() ===
-                                        currentUser.name.toLowerCase(),
+                                        currentUser?.name.toLowerCase(),
                                   );
 
                                 return assignedToMatch || assignedUsersMatch;
@@ -1869,14 +1869,14 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                       work.assignedTo
                         .split(",")
                         .map((name) => name.trim().toLowerCase())
-                        .includes(currentUser.name.toLowerCase());
+                        .includes(currentUser?.name.toLowerCase());
 
                     // Check if user is in assignedUsers array (exact match)
                     const assignedUsersMatch = work.assignedUsers?.some(
                       (user) =>
                         user.name &&
                         user.name.toLowerCase() ===
-                          currentUser.name.toLowerCase(),
+                          currentUser?.name.toLowerCase(),
                     );
 
                     return assignedToMatch || assignedUsersMatch;
@@ -1899,14 +1899,14 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                               work.assignedTo
                                 .split(",")
                                 .map((name) => name.trim().toLowerCase())
-                                .includes(currentUser.name.toLowerCase());
+                                .includes(currentUser?.name.toLowerCase());
 
                             // Check if user is in assignedUsers array (exact match)
                             const assignedUsersMatch = work.assignedUsers?.some(
                               (user) =>
                                 user.name &&
                                 user.name.toLowerCase() ===
-                                  currentUser.name.toLowerCase(),
+                                  currentUser?.name.toLowerCase(),
                             );
 
                             return assignedToMatch || assignedUsersMatch;
@@ -5146,12 +5146,12 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                     </div>
                     <div className="flex justify-between py-2 border-b border-gray-100">
                       <span className="text-gray-600">Utilizador Ativo</span>
-                      <span className="font-medium">{currentUser.name}</span>
+                      <span className="font-medium">{currentUser?.name}</span>
                     </div>
                     <div className="flex justify-between py-2 border-b border-gray-100">
                       <span className="text-gray-600">Perfil</span>
                       <span className="font-medium capitalize">
-                        {currentUser.role.replace("_", " ")}
+                        {currentUser?.role.replace("_", " ")}
                       </span>
                     </div>
                     <div className="flex justify-between py-2">
@@ -5399,7 +5399,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                 </div>
 
                 {/* Data Management Section - Only for Super Admin */}
-                {currentUser.role === "super_admin" && (
+                {currentUser?.role === "super_admin" && (
                   <div className="bg-white rounded-lg p-6 shadow-sm">
                     <div className="flex items-center mb-4">
                       <Trash2 className="h-6 w-6 text-red-600 mr-3" />
@@ -8051,9 +8051,9 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                 </div>
                 <div>
                   <p className="font-medium text-gray-900">
-                    {currentUser.name}
+                    {currentUser?.name}
                   </p>
-                  <p className="text-sm text-gray-500">{currentUser.role}</p>
+                  <p className="text-sm text-gray-500">{currentUser?.role}</p>
                 </div>
               </div>
               <button
