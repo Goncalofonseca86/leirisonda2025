@@ -40,10 +40,10 @@ import { FirebaseQuotaWarning } from "./components/FirebaseQuotaWarning";
 // SECURITY: RegisterForm removed - only super admin can create users
 import { AdminLogin } from "./admin/AdminLogin";
 import { AdminPage } from "./admin/AdminPage";
-import { useDataSync } from "./hooks/useDataSync";
+import { useDataSync } from "./hooks/useDataSync_simple";
 import { authService, UserProfile } from "./services/authService";
-import { useDataCleanup } from "./hooks/useDataCleanup";
-import { useAutoSync } from "./hooks/useAutoSync";
+// import { useDataCleanup } from "./hooks/useDataCleanup"; // Temporarily disabled
+// import { useAutoSync } from "./hooks/useAutoSync"; // Temporarily disabled
 
 // Mock users database
 const initialUsers = [
@@ -141,12 +141,28 @@ function App() {
     };
   }, []);
 
-  // No auto-login - users must login manually
+  // Auto-login para teste
   useEffect(() => {
-    // Clear any existing auth data on app start
-    localStorage.removeItem("currentUser");
-    localStorage.removeItem("mock-current-user");
-    console.log("🔒 SECURITY: Auth data cleared - manual login required");
+    const mainUser = {
+      uid: "goncalo-main-user",
+      name: "Gonçalo Fonseca",
+      email: "gongonsilva@gmail.com",
+      role: "super_admin" as const,
+      permissions: {
+        obras: { view: true, create: true, edit: true, delete: true },
+        manutencoes: { view: true, create: true, edit: true, delete: true },
+        piscinas: { view: true, create: true, edit: true, delete: true },
+        utilizadores: { view: true, create: true, edit: true, delete: true },
+        relatorios: { view: true, create: true, edit: true, delete: true },
+        clientes: { view: true, create: true, edit: true, delete: true },
+        admin: { view: true, create: true, edit: true, delete: true },
+        dashboard: { view: true },
+      },
+    };
+
+    setCurrentUser(mainUser);
+    setIsAuthenticated(true);
+    console.log("✅ Auto-login efetuado com sucesso");
   }, []);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("dashboard");
@@ -295,7 +311,7 @@ function App() {
       try {
         const user = JSON.parse(storedUser);
         console.log(
-          "����� App init: Restoring user from localStorage:",
+          "������ App init: Restoring user from localStorage:",
           user.email,
         );
         setCurrentUser(user);
@@ -895,7 +911,7 @@ ${index + 1}. ${maint.poolName}
   )
   .join("\n")}
 
-�� ${new Date().getFullYear()} Leirisonda - Sistema de Gest��o
+�� ${new Date().getFullYear()} Leirisonda - Sistema de Gest���o
     `;
     downloadPDF(
       content,
