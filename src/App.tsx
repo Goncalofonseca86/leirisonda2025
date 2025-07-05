@@ -125,7 +125,7 @@ function App() {
     console.log("�� Auth State Debug:", {
       isAuthenticated,
       currentUser: currentUser
-        ? `${currentUser.name} (${currentUser.email})`
+        ? `${currentUser?.name} (${currentUser?.email})`
         : null,
       timestamp: new Date().toISOString(),
     });
