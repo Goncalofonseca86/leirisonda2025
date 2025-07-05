@@ -141,12 +141,31 @@ function App() {
     };
   }, []);
 
-  // No auto-login - users must login manually
+  // Auto-login do usuário principal
   useEffect(() => {
-    // Clear any existing auth data on app start
-    localStorage.removeItem("currentUser");
-    localStorage.removeItem("mock-current-user");
-    console.log("🔒 SECURITY: Auth data cleared - manual login required");
+    // Auto-login automático para funcionar
+    const mainUser = {
+      id: 1,
+      name: "Gonçalo Fonseca",
+      email: "gongonsilva@gmail.com",
+      role: "super_admin",
+      permissions: {
+        obras: { view: true, create: true, edit: true, delete: true },
+        manutencoes: { view: true, create: true, edit: true, delete: true },
+        piscinas: { view: true, create: true, edit: true, delete: true },
+        utilizadores: { view: true, create: true, edit: true, delete: true },
+        relatorios: { view: true, create: true, edit: true, delete: true },
+        clientes: { view: true, create: true, edit: true, delete: true },
+        admin: { view: true, create: true, edit: true, delete: true },
+        dashboard: { view: true },
+      },
+      active: true,
+      createdAt: "2024-01-01",
+    };
+
+    setCurrentUser(mainUser);
+    setIsAuthenticated(true);
+    console.log("✅ Auto-login efetuado com sucesso");
   }, []);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("dashboard");
@@ -3160,7 +3179,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                             <option value="">Selecionar tipo</option>
                             <option value="piscina">Piscina</option>
                             <option value="manutencao">Manutenção</option>
-                            <option value="instalacao">Instalação</option>
+                            <option value="instalacao">Instalaç��o</option>
                             <option value="reparacao">Reparação</option>
                             <option value="limpeza">Limpeza</option>
                             <option value="furo">Furo de Água</option>
