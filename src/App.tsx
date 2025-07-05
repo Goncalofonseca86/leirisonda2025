@@ -293,7 +293,7 @@ function App() {
       try {
         const user = JSON.parse(storedUser);
         console.log(
-          "�������� App init: Restoring user from localStorage:",
+          "���������� App init: Restoring user from localStorage:",
           user.email,
         );
         setCurrentUser(user);
@@ -887,7 +887,7 @@ ${index + 1}. ${maint.poolName}
    Estado: ${maint.status === "completed" ? "Concluída" : maint.status === "pending" ? "Pendente" : "Em Progresso"}
    Data Agendada: ${maint.scheduledDate ? new Date(maint.scheduledDate).toLocaleDateString("pt-PT") : "N/A"}
    Técnico: ${maint.technician}
-   Descri����o: ${maint.description}
+   Descri��ão: ${maint.description}
    ${maint.notes ? `Observações: ${maint.notes}` : ""}
 `,
   )
@@ -949,7 +949,7 @@ ${index + 1}. ${client.name}
    Email: ${client.email}
    Telefone: ${client.phone}
    Morada: ${client.address}
-   Piscinas: ${client.pools.length} associadas
+   Piscinas: ${client.pools?.length || 0} associadas
    Data Registo: ${client.createdAt ? new Date(client.createdAt).toLocaleDateString("pt-PT") : "N/A"}
 `,
   )
@@ -5540,7 +5540,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                       </div>
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900">
-                          Relatório de Manutenções
+                          Relat��rio de Manutenções
                         </h3>
                         <p className="text-sm text-gray-600">
                           Histórico de intervenções
@@ -7786,7 +7786,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                 Área Protegida
               </h1>
               <p className="text-gray-600">
-                Insira a palavra-passe para aceder às configurações avan��adas
+                Insira a palavra-passe para aceder às configurações avançadas
               </p>
             </div>
 
