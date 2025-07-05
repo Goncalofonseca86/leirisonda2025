@@ -466,7 +466,7 @@ function App() {
           (work.assignedTo?.toLowerCase().includes("alexandre") ||
             work.assignedUsers?.some(
               (user) =>
-                user.name && user.name.toLowerCase().includes("alexandre"),
+                user.name && user.name?.toLowerCase().includes("alexandre"),
             )),
       );
 
@@ -3751,7 +3751,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                           <textarea
                             rows={4}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Descrição do trabalho realizado..."
+                            placeholder="Descri��ão do trabalho realizado..."
                           />
                         </div>
                       </div>
@@ -6668,7 +6668,7 @@ ${index + 1}. ${maint.poolName} - ${maint.type}
                             <option value="">
                               {users.length > 0
                                 ? "Selecionar usu��rio..."
-                                : "Nenhum utilizador dispon��vel"}
+                                : "Nenhum utilizador disponível"}
                             </option>
                             {users
                               .filter((user) => {
